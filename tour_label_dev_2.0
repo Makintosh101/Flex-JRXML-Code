@@ -1,0 +1,1146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- BE Case Label A5 - Layout B - A5 Landscape 595x420 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    name="BE Case Label A5 - Layout B"
+    printOrder="Horizontal"
+    pageWidth="595" pageHeight="420"
+    orientation="Landscape"
+    whenNoDataType="AllSectionsNoDetail"
+    columnWidth="595"
+    leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0"
+    uuid="880e5803-6dcb-4650-b7b6-6c6c06be84ae">
+
+  <property name="com.jaspersoft.studio.data.defaultdataadapter" value="blueelephantuk_dev"/>
+  <property name="net.sf.jasperreports.style.evaluation.time.enabled" value="true"/>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       STYLES
+       ══════════════════════════════════════════════════════════════ -->
+
+  <style name="textStyle" isDefault="true" hTextAlign="Left" isBlankWhenNull="true"
+         fontName="Arial" fontSize="9"/>
+
+  <style name="Barcode" hTextAlign="Right" hImageAlign="Right"
+         vTextAlign="Middle" vImageAlign="Middle"/>
+
+  <!-- Section header labels e.g. "CONTENTS:" -->
+  <style name="SectionLabel" style="textStyle" fontSize="7" isBold="true"/>
+
+  <!-- Large dynamic-size case/job name - colour band -->
+  <style name="CaseHeader" style="textStyle" isBold="true" fontSize="14" vTextAlign="Middle"/>
+
+  <style name="JobName" style="textStyle" isBold="true" fontSize="16" vTextAlign="Middle">
+    <conditionalStyle>
+      <conditionExpression><![CDATA[$F{element_name} != null && $F{element_name}.length() > 24]]></conditionExpression>
+      <style fontSize="14"/>
+    </conditionalStyle>
+    <conditionalStyle>
+      <conditionExpression><![CDATA[$F{element_name} != null && $F{element_name}.length() > 32]]></conditionExpression>
+      <style fontSize="12"/>
+    </conditionalStyle>
+    <conditionalStyle>
+      <conditionExpression><![CDATA[$F{element_name} != null && $F{element_name}.length() > 42]]></conditionExpression>
+      <style fontSize="10"/>
+    </conditionalStyle>
+  </style>
+
+  <!-- Contents list items - adapts to list length -->
+  <style name="ContentsQty" style="textStyle" fontSize="8" isBold="true" hTextAlign="Right">
+    <conditionalStyle>
+      <conditionExpression><![CDATA[$P{list_count}+$P{long_list} > 20 && $P{list_count}+$P{long_list} <= 30]]></conditionExpression>
+      <style fontSize="7"/>
+    </conditionalStyle>
+    <conditionalStyle>
+      <conditionExpression><![CDATA[$P{list_count}+$P{long_list} > 30]]></conditionExpression>
+      <style fontSize="6"/>
+    </conditionalStyle>
+  </style>
+
+  <style name="ContentsItem" style="textStyle" fontSize="8">
+    <conditionalStyle>
+      <conditionExpression><![CDATA[$P{list_count}+$P{long_list} > 20 && $P{list_count}+$P{long_list} <= 30]]></conditionExpression>
+      <style fontSize="7"/>
+    </conditionalStyle>
+    <conditionalStyle>
+      <conditionExpression><![CDATA[$P{list_count}+$P{long_list} > 30]]></conditionExpression>
+      <style fontSize="6"/>
+    </conditionalStyle>
+  </style>
+
+  <!-- Footer small text -->
+  <style name="FooterText" style="textStyle" fontSize="7"/>
+  <style name="FooterLabel" style="textStyle" fontSize="7" isBold="true"/>
+
+  <!-- Manifest label styles -->
+  <style name="MfstSectionLabel" style="textStyle" fontSize="8" isBold="true"/>
+  <style name="MfstFieldValue" style="textStyle" fontSize="9"/>
+  <style name="MfstJobName" style="textStyle" fontSize="16" isBold="true" vTextAlign="Middle">
+    <conditionalStyle>
+      <conditionExpression><![CDATA[$F{element_name} != null && $F{element_name}.length() > 30]]></conditionExpression>
+      <style fontSize="13"/>
+    </conditionalStyle>
+    <conditionalStyle>
+      <conditionExpression><![CDATA[$F{element_name} != null && $F{element_name}.length() > 42]]></conditionExpression>
+      <style fontSize="10"/>
+    </conditionalStyle>
+  </style>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-DATASETS
+       ══════════════════════════════════════════════════════════════ -->
+
+  <!-- Contents list — uses SQL LIMIT/OFFSET for column pagination (Dev approach) -->
+  <subDataset name="Contents" uuid="38765270-f855-439a-a172-2c5e25a18097">
+    <parameter name="LINE_ITEM_ID"       class="java.lang.String"/>
+    <parameter name="list_count"         class="java.lang.Integer"/>
+    <parameter name="long_list"          class="java.lang.Integer"/>
+    <parameter name="CONTENT_FONT_MAX"   class="java.lang.Integer"/>
+    <parameter name="CONTENT_FONT_SMALL" class="java.lang.Integer"/>
+    <parameter name="MAX_CONTENT_ROWS"   class="java.lang.String"/>
+    <parameter name="CONTENT_OFFSET"     class="java.lang.String"/>
+    <queryString language="SQL"><![CDATA[
+SELECT
+  sum(litem.qty) as qty,
+  item_man_res.resource_name,
+  ivt_item.item_size,
+  ivt_item.short_hand
+FROM st_ivt_equipment_list_line_item AS eq_litem
+LEFT JOIN st_prj_project_element_line_item as litem on litem.id = eq_litem.id
+LEFT JOIN st_biz_managed_resource as litem_man_res on litem_man_res.id = litem.managed_resource_id
+LEFT JOIN st_ivt_serial_number as ivt_serial on ivt_serial.id = litem_man_res.id
+LEFT JOIN st_ivt_inventory_item as ivt_item on ivt_item.id = ivt_serial.item_id or ivt_item.id = litem_man_res.id
+LEFT JOIN st_biz_managed_resource as item_man_res on item_man_res.id = ivt_item.id
+WHERE eq_litem.parent_item_id = $P{LINE_ITEM_ID}
+  AND IFNULL((SELECT biz_cf_value.storage_string
+              FROM st_biz_resource_custom_field_value as cf_value
+              LEFT JOIN st_biz_custom_field_value as biz_cf_value ON (cf_value.id = biz_cf_value.id)
+              LEFT JOIN st_biz_custom_field_def as cf_def on (cf_def.id = biz_cf_value.custom_field_def_id)
+              WHERE cf_value.resource_id = ivt_item.id
+              AND cf_def.field_id='exclude_from_case_labels'),'false') = 'false'
+GROUP BY ivt_item.id
+ORDER BY resource_name, CAST(item_size AS DECIMAL)
+LIMIT $P!{CONTENT_OFFSET}, $P!{MAX_CONTENT_ROWS}
+    ]]></queryString>
+    <field name="qty"           class="java.lang.Integer"/>
+    <field name="resource_name" class="java.lang.String"/>
+    <field name="item_size"     class="java.lang.String"/>
+    <field name="short_hand"    class="java.lang.String"/>
+  </subDataset>
+
+  <!-- Manifest label dataset (unchanged from original — keeps all fields) -->
+  <subDataset name="ManifestLabels" uuid="b1d83af7-90fe-4896-8fba-540858527f98">
+    <parameter name="PROJECT_ELEMENT_ID"       class="java.lang.String"/>
+    <parameter name="DATE_FORMAT"              class="java.lang.String"/>
+    <parameter name="manifest_label_copies"    class="java.lang.String"/>
+    <parameter name="DateFormatter"            class="java.text.DateFormat" isForPrompting="false"/>
+    <parameter name="case_name_override"        class="java.lang.String"/>
+    <queryString language="SQL"><![CDATA[
+SELECT
+  prj_el_def.name_singular,
+  prj.element_name,
+  prj.document_number,
+  prj.planned_start_date,
+  prj.planned_end_date,
+  prj_el_def.client_caption AS clientCaption,
+  CONCAT(IFNULL(crm_client.company,""),"\n",IFNULL(crm_client.first_name,"")," ",IFNULL(crm_client.last_name,""),"\n",
+    IFNULL((SELECT dial_number FROM st_crm_phone WHERE phone_name LIKE '%mobile%' AND contact_id = prj.CLIENT_ID LIMIT 1),"")) as client_company,
+  prj_el_def.venue_caption AS venueCaption,
+  prj_el_def.planned_start_date_caption,
+  prj_el_def.planned_end_date_caption,
+  CONCAT(
+    IF(TRIM(IFNULL(venue.COMPANY, '')) > '',CONCAT(venue.COMPANY,'\n'),''),
+    IF(TRIM(IFNULL(venue_addr.line1, '')) > '',CONCAT(venue_addr.line1,'\n'),''),
+    IF(TRIM(IFNULL(venue_addr.line2, '')) > '',CONCAT(venue_addr.line2,'\n'),''),
+    IF(TRIM(IFNULL(venue_addr.city, '')) > '',CONCAT(venue_addr.city,', '),''),
+    IF(TRIM(IFNULL(venue_addr.state_or_province, '')) > '',CONCAT(venue_addr.state_or_province,' '),''),
+    IF(TRIM(IFNULL(venue_addr.postal_code, '')) > '',venue_addr.postal_code,'')
+  ) as venue_company,
+  prj.notes,
+  (SELECT (CASE WHEN st_crm_contact.def_contact_image IS NOT NULL THEN rh_images.blobhandle
+           ELSE (SELECT rh_images.blobhandle FROM rh_images WHERE rh_images.caption LIKE "BE Logo (Square)")
+           END)
+   FROM st_prj_project_element
+   LEFT JOIN st_crm_contact ON st_crm_contact.id = st_prj_project_element.CLIENT_ID
+   LEFT JOIN st_crm_images on st_crm_contact.def_contact_image = st_crm_images.id
+   LEFT JOIN rh_images on rh_images.imageid = st_crm_images.image_id
+   WHERE st_prj_project_element.id = $P{PROJECT_ELEMENT_ID}) as logos,
+  (SELECT rh_images.blobhandle FROM rh_images WHERE rh_images.caption LIKE "BE Logo (Outline)" LIMIT 1) as be_logo_outline,
+  biz_corp.company_name AS corp_name,
+  biz_loc_phone.dial_number AS corp_phone,
+  biz_loc_email.address_url as corp_email,
+  biz_corp.web_site,
+  CONCAT(biz_loc_ship.line1," - ",biz_loc_ship.city,", ",biz_loc_ship.state_or_province," ",biz_loc_ship.postal_code) as biz_loc_addr,
+  biz_loc.time_zone,
+  IFNULL((SELECT biz_cf_value.storage_string
+          FROM st_prj_element_custom_field_value as cf_value
+          LEFT JOIN st_biz_custom_field_value as biz_cf_value ON (cf_value.id = biz_cf_value.id)
+          LEFT JOIN st_biz_custom_field_def as cf_def on (cf_def.id = biz_cf_value.custom_field_def_id)
+          WHERE cf_value.proj_element_id=prj.id AND cf_def.field_id='client_override'),"") as client_override,
+  IFNULL((SELECT biz_cf_value.storage_string
+          FROM st_prj_element_custom_field_value as cf_value
+          LEFT JOIN st_biz_custom_field_value as biz_cf_value ON (cf_value.id = biz_cf_value.id)
+          LEFT JOIN st_biz_custom_field_def as cf_def on (cf_def.id = biz_cf_value.custom_field_def_id)
+          WHERE cf_value.proj_element_id=prj.id AND cf_def.field_id='venue_override'),"") as venue_override,
+  IFNULL((SELECT biz_cf_value.storage_string
+          FROM st_prj_element_custom_field_value as cf_value
+          LEFT JOIN st_biz_custom_field_value as biz_cf_value ON (cf_value.id = biz_cf_value.id)
+          LEFT JOIN st_biz_custom_field_def as cf_def on (cf_def.id = biz_cf_value.custom_field_def_id)
+          WHERE cf_value.proj_element_id=prj.id AND cf_def.field_id='manifest_label_notes'),"") as manifest_label_notes,
+  (SELECT opt.caption
+   FROM st_prj_element_custom_field_value cfv
+   JOIN st_biz_custom_field_value v ON v.id=cfv.id
+   JOIN st_biz_custom_field_def d ON d.id=v.custom_field_def_id AND d.field_id='color'
+   LEFT JOIN st_biz_custom_field_def_list_options opt ON opt.id=v.storage_string
+   WHERE cfv.proj_element_id=prj.id
+   LIMIT 1) as area_color
+FROM st_prj_project_element AS prj
+LEFT JOIN st_biz_corp_identity AS biz_corp ON biz_corp.id = IFNULL(prj.corp_identity_id,(SELECT id FROM st_biz_corp_identity WHERE is_hq = '1'))
+LEFT JOIN st_crm_contact AS crm_client ON crm_client.id = prj.CLIENT_ID
+LEFT JOIN st_crm_contact AS venue ON venue.id = prj.venue_id
+LEFT JOIN st_crm_address as venue_addr ON (venue.DEF_MAIL_ID = venue_addr.id)
+LEFT JOIN st_prj_element_definition AS prj_el_def ON prj_el_def.id = prj.def_id
+LEFT JOIN st_biz_location AS biz_loc ON biz_loc.id = IFNULL(prj.location_id,(SELECT hq_location_id FROM st_biz_corp_identity WHERE is_hq = '1'))
+LEFT JOIN st_biz_loc_phone AS biz_loc_phone ON biz_loc_phone.id = biz_loc.def_phone_id
+LEFT JOIN st_biz_loc_inet_addr as biz_loc_email on biz_loc_email.id = biz_loc.def_email_id
+LEFT JOIN st_biz_loc_address as biz_loc_ship on biz_loc_ship.id = biz_loc.def_ship_id
+CROSS JOIN (SELECT @row := @row + 1 as num FROM rh_images t, (SELECT @row := 0) r) nums
+WHERE prj.id = $P{PROJECT_ELEMENT_ID}
+AND $P{manifest_label_copies} >= nums.num
+    ]]></queryString>
+    <field name="name_singular"             class="java.lang.String"/>
+    <field name="element_name"              class="java.lang.String"/>
+    <field name="document_number"           class="java.lang.String"/>
+    <field name="planned_start_date"        class="java.sql.Timestamp"/>
+    <field name="planned_end_date"          class="java.sql.Timestamp"/>
+    <field name="clientCaption"             class="java.lang.String"/>
+    <field name="client_company"            class="java.lang.String"/>
+    <field name="venueCaption"              class="java.lang.String"/>
+    <field name="planned_start_date_caption" class="java.lang.String"/>
+    <field name="planned_end_date_caption"  class="java.lang.String"/>
+    <field name="venue_company"             class="java.lang.String"/>
+    <field name="notes"                     class="java.lang.String"/>
+    <field name="logos"                     class="java.io.InputStream"/>
+    <field name="be_logo_outline"              class="java.io.InputStream"/>
+    <field name="corp_name"                 class="java.lang.String"/>
+    <field name="corp_phone"                class="java.lang.String"/>
+    <field name="corp_email"                class="java.lang.String"/>
+    <field name="web_site"                  class="java.lang.String"/>
+    <field name="biz_loc_addr"              class="java.lang.String"/>
+    <field name="time_zone"                 class="java.lang.String"/>
+    <field name="client_override"           class="java.lang.String"/>
+    <field name="venue_override"            class="java.lang.String"/>
+    <field name="manifest_label_notes"      class="java.lang.String"/>
+    <field name="area_color"                  class="java.lang.String"/>
+  </subDataset>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       PARAMETERS
+       ══════════════════════════════════════════════════════════════ -->
+
+  <!-- Date handling -->
+  <parameter name="DATE_FORMAT" class="java.lang.String" isForPrompting="false">
+    <defaultValueExpression><![CDATA["dd/MM/yy"]]></defaultValueExpression>
+  </parameter>
+  <parameter name="DateFormatter" class="java.text.DateFormat" isForPrompting="false">
+    <defaultValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat($P{DATE_FORMAT},$P{REPORT_LOCALE}, $P{REPORT_TIME_ZONE})]]></defaultValueExpression>
+  </parameter>
+
+  <!-- Job identification -->
+  <parameter name="PROJECT_ELEMENT_ID" class="java.lang.String">
+    <defaultValueExpression><![CDATA["30d0c24d-9802-437c-b8a6-e8ccd0037cb7"]]></defaultValueExpression>
+  </parameter>
+
+  <!-- Print copies -->
+  <parameter name="case_label_copies"     class="java.lang.String">
+    <defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+  </parameter>
+  <parameter name="manifest_label_copies" class="java.lang.String">
+    <defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+  </parameter>
+
+  <!-- Filtering -->
+  <parameter name="case_barcode"          class="java.lang.String"/>
+  <parameter name="case_barcode_limit"      class="java.lang.String" isForPrompting="false">
+    <defaultValueExpression><![CDATA[($P{case_barcode} == null || $P{case_barcode}.trim().equals("")) ? "LIMIT 1" : ""]]></defaultValueExpression>
+  </parameter>
+  <parameter name="PRINT_ORPHAN_LABELS"   class="java.lang.String"/>
+
+  <!-- Overrides (from Dev) -->
+  <parameter name="case_name_override"    class="java.lang.String"/>
+  <parameter name="case_notes_override"   class="java.lang.String"/>
+
+  <!-- Font sizes (from Dev — tune these to adjust label density) -->
+  <parameter name="TL_CASE_MAX_FONT"      class="java.lang.Integer" isForPrompting="false">
+    <defaultValueExpression><![CDATA[new Integer(16)]]></defaultValueExpression>
+  </parameter>
+  <parameter name="TL_CONTENT_FONT_MAX"   class="java.lang.Integer" isForPrompting="false">
+    <defaultValueExpression><![CDATA[new Integer(8)]]></defaultValueExpression>
+  </parameter>
+  <parameter name="TL_CONTENT_FONT_SMALL" class="java.lang.Integer" isForPrompting="false">
+    <defaultValueExpression><![CDATA[new Integer(6)]]></defaultValueExpression>
+  </parameter>
+
+  <!-- Max rows per contents column -->
+  <parameter name="MAX_CONTENT_ROWS"      class="java.lang.String" isForPrompting="false">
+    <defaultValueExpression><![CDATA["8"]]></defaultValueExpression>
+  </parameter>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       MAIN QUERY (Dev version — adds department, prep_group_path,
+       improved color, case_name_override, stencil barcode filter)
+       ══════════════════════════════════════════════════════════════ -->
+
+  <queryString><![CDATA[
+SELECT *
+FROM (
+  SELECT
+    eqlitem.prep_quantity,
+    litem.id AS line_item_id,
+    ISNULL(peqlitem.id) AS top_level_item,
+    prj_el_def.name_singular,
+    prj.element_name,
+    prj.document_number,
+    CASE WHEN $P{case_name_override} IS NOT NULL AND LENGTH(TRIM($P{case_name_override})) > 0
+         THEN $P{case_name_override}
+         ELSE man_res.resource_name END AS description,
+    pman_res.resource_name AS parentDescription,
+    man_res.bar_code_id AS case_bar_code,
+    ivt_serial.stencil,
+    prj_el_def.client_caption AS clientCaption,
+    crm_client.company AS client_company,
+    prj_el_def.venue_caption AS venueCaption,
+    crm_venue.company AS venue_company,
+    prj_el_def.planned_start_date_caption,
+    prj.planned_start_date,
+    prj_el_def.planned_end_date_caption,
+    prj.planned_end_date,
+
+    (SELECT count(DISTINCT ivt_item.id)
+     FROM st_prj_project_element_line_item AS litem
+     LEFT JOIN st_ivt_equipment_list_line_item AS child_eqlitem ON litem.id = child_eqlitem.id
+     LEFT JOIN st_ivt_serial_number AS ivt_serial ON ivt_serial.id = litem.managed_resource_id
+     LEFT JOIN st_ivt_inventory_item AS ivt_item ON ivt_item.id = IFNULL(ivt_serial.item_id,litem.managed_resource_id)
+     LEFT JOIN st_biz_managed_resource AS item_man_res ON item_man_res.id = ivt_item.id
+     WHERE child_eqlitem.parent_item_id = eqlitem.id AND litem.project_element_id = prj.id
+       AND IFNULL((SELECT biz_cf_value.storage_string
+                   FROM st_biz_resource_custom_field_value AS cf_value
+                   LEFT JOIN st_biz_custom_field_value AS biz_cf_value ON (cf_value.id = biz_cf_value.id)
+                   LEFT JOIN st_biz_custom_field_def AS cf_def ON (cf_def.id = biz_cf_value.custom_field_def_id)
+                   WHERE cf_value.resource_id = ivt_item.id
+                   AND cf_def.field_id='exclude_from_case_labels'),'false') = 'false') AS list_count,
+
+    (SELECT (CASE WHEN st_crm_contact.def_contact_image IS NOT NULL THEN rh_images.blobhandle
+             ELSE (SELECT rh_images.blobhandle FROM rh_images WHERE rh_images.caption LIKE "BE Logo (Square)")
+             END)
+     FROM st_prj_project_element
+     LEFT JOIN st_crm_contact ON st_crm_contact.id = st_prj_project_element.CLIENT_ID
+     LEFT JOIN st_crm_images on st_crm_contact.def_contact_image = st_crm_images.id
+     LEFT JOIN rh_images on rh_images.imageid = st_crm_images.image_id
+     WHERE st_prj_project_element.id = $P{PROJECT_ELEMENT_ID} LIMIT 1) as logos,
+
+    CASE
+      WHEN man_res.resource_name LIKE "Case Area%" THEN eqlitem.note_text
+      WHEN pman_res.resource_name LIKE "Case Area%" THEN peqlitem.note_text
+      WHEN gpman_res.resource_name LIKE "Case Area%" THEN gpeqlitem.note_text
+    END as area,
+
+    TRIM(CONCAT_WS(' / ',
+      CASE WHEN up5.is_group=1 OR up5.is_heading=1 THEN up5.note_text END,
+      CASE WHEN up4.is_group=1 OR up4.is_heading=1 THEN up4.note_text END,
+      CASE WHEN up3.is_group=1 OR up3.is_heading=1 THEN up3.note_text END,
+      CASE WHEN up2.is_group=1 OR up2.is_heading=1 THEN up2.note_text END,
+      CASE WHEN up1.is_group=1 OR up1.is_heading=1 THEN up1.note_text END,
+      CASE WHEN up0.is_group=1 OR up0.is_heading=1 THEN up0.note_text END
+    )) AS prep_group_path,
+
+    COALESCE(color_manifest.caption, color_prep.caption) as color,
+
+    (CASE
+       WHEN (litem.upstream_line_item_id IS NOT NULL OR mx.us_line_id IS NOT NULL)
+         THEN (SELECT UPPER(COALESCE(cg8.group_name,cg7.group_name,cg6.group_name,cg5.group_name,cg4.group_name,cg3.group_name,cg2.group_name,cg1.group_name,cg0.group_name))
+               FROM st_ivt_inventory_group AS cg0
+               LEFT JOIN st_ivt_inventory_group AS cg1 ON cg1.id=cg0.parent_group_id
+               LEFT JOIN st_ivt_inventory_group AS cg2 ON cg2.id=cg1.parent_group_id
+               LEFT JOIN st_ivt_inventory_group AS cg3 ON cg3.id=cg2.parent_group_id
+               LEFT JOIN st_ivt_inventory_group AS cg4 ON cg4.id=cg3.parent_group_id
+               LEFT JOIN st_ivt_inventory_group AS cg5 ON cg5.id=cg4.parent_group_id
+               LEFT JOIN st_ivt_inventory_group AS cg6 ON cg6.id=cg5.parent_group_id
+               LEFT JOIN st_ivt_inventory_group AS cg7 ON cg7.id=cg6.parent_group_id
+               LEFT JOIN st_ivt_inventory_group AS cg8 ON cg8.id=cg7.parent_group_id
+               WHERE cg0.id=ivt_item.group_id LIMIT 1)
+       ELSE (SELECT UPPER(COALESCE(g8.group_name,g7.group_name,g6.group_name,g5.group_name,g4.group_name,g3.group_name,g2.group_name,g1.group_name,g0.group_name))
+             FROM st_ivt_equipment_list_line_item AS dept_child_eqlitem
+             LEFT JOIN st_prj_project_element_line_item AS dept_litem ON dept_litem.id=dept_child_eqlitem.id
+             LEFT JOIN st_biz_managed_resource AS dept_litem_mr ON dept_litem_mr.id=dept_litem.managed_resource_id
+             LEFT JOIN st_ivt_serial_number AS dept_serial ON dept_serial.id=dept_litem_mr.id
+             LEFT JOIN st_ivt_inventory_item AS dept_item ON dept_item.id=IFNULL(dept_serial.item_id,dept_litem_mr.id)
+             LEFT JOIN st_ivt_inventory_group AS g0 ON g0.id=dept_item.group_id
+             LEFT JOIN st_ivt_inventory_group AS g1 ON g1.id=g0.parent_group_id
+             LEFT JOIN st_ivt_inventory_group AS g2 ON g2.id=g1.parent_group_id
+             LEFT JOIN st_ivt_inventory_group AS g3 ON g3.id=g2.parent_group_id
+             LEFT JOIN st_ivt_inventory_group AS g4 ON g4.id=g3.parent_group_id
+             LEFT JOIN st_ivt_inventory_group AS g5 ON g5.id=g4.parent_group_id
+             LEFT JOIN st_ivt_inventory_group AS g6 ON g6.id=g5.parent_group_id
+             LEFT JOIN st_ivt_inventory_group AS g7 ON g7.id=g6.parent_group_id
+             LEFT JOIN st_ivt_inventory_group AS g8 ON g8.id=g7.parent_group_id
+             WHERE dept_child_eqlitem.parent_item_id=eqlitem.id
+               AND dept_litem.project_element_id=prj.id
+               AND dept_child_eqlitem.is_note=0 AND dept_child_eqlitem.is_group=0 AND dept_child_eqlitem.is_heading=0
+               AND g0.group_name IS NOT NULL
+               AND IFNULL((SELECT biz_cf_value.storage_string
+                           FROM st_biz_resource_custom_field_value AS cf_value
+                           LEFT JOIN st_biz_custom_field_value AS biz_cf_value ON (cf_value.id=biz_cf_value.id)
+                           LEFT JOIN st_biz_custom_field_def AS cf_def ON (cf_def.id=biz_cf_value.custom_field_def_id)
+                           WHERE cf_value.resource_id=dept_item.id
+                           AND cf_def.field_id='exclude_from_case_labels'),'false') = 'false'
+             GROUP BY UPPER(COALESCE(g8.group_name,g7.group_name,g6.group_name,g5.group_name,g4.group_name,g3.group_name,g2.group_name,g1.group_name,g0.group_name))
+             ORDER BY SUM(CASE WHEN dept_litem.qty IS NULL OR dept_litem.qty=0 THEN 1 ELSE dept_litem.qty END) DESC,
+                      UPPER(COALESCE(g8.group_name,g7.group_name,g6.group_name,g5.group_name,g4.group_name,g3.group_name,g2.group_name,g1.group_name,g0.group_name)) ASC
+             LIMIT 1)
+     END) AS department,
+
+    (SELECT count(DISTINCT ivt_item.id)
+     FROM st_prj_project_element_line_item AS litem
+     LEFT JOIN st_ivt_equipment_list_line_item AS child_eqlitem ON litem.id=child_eqlitem.id
+     LEFT JOIN st_biz_managed_resource AS litem_man_res ON litem_man_res.id=litem.managed_resource_id
+     LEFT JOIN st_ivt_serial_number AS ivt_serial ON ivt_serial.id=litem_man_res.id
+     LEFT JOIN st_ivt_inventory_item AS ivt_item ON ivt_item.id=IFNULL(ivt_serial.item_id,litem_man_res.id)
+     LEFT JOIN st_biz_managed_resource AS item_man_res ON item_man_res.id=ivt_item.id
+     WHERE child_eqlitem.parent_item_id=eqlitem.id AND litem.project_element_id=prj.id
+       AND IFNULL((SELECT biz_cf_value.storage_string
+                   FROM st_biz_resource_custom_field_value AS cf_value
+                   LEFT JOIN st_biz_custom_field_value AS biz_cf_value ON (cf_value.id=biz_cf_value.id)
+                   LEFT JOIN st_biz_custom_field_def AS cf_def ON (cf_def.id=biz_cf_value.custom_field_def_id)
+                   WHERE cf_value.resource_id=ivt_item.id
+                   AND cf_def.field_id='exclude_from_case_labels'),'false') = 'false'
+       AND LENGTH(CONCAT(item_man_res.resource_name,(IF(ISNULL(item_size),"",CONCAT(" (",TRIM(item_size),")")))))>35) AS long_list,
+
+    (SELECT sum(ROUND(ivt_item.weight*st_ivt_equipment_list_line_item.prep_quantity,1))
+     FROM st_ivt_equipment_list_line_item
+     LEFT JOIN st_prj_project_element_line_item AS litem2 ON litem2.id=st_ivt_equipment_list_line_item.id
+     LEFT JOIN st_ivt_equipment_list_line_item AS parent_eqlitem ON parent_eqlitem.id=st_ivt_equipment_list_line_item.parent_item_id
+     LEFT JOIN st_ivt_equipment_list_line_item AS gparent_eqlitem ON gparent_eqlitem.id=parent_eqlitem.parent_item_id
+     LEFT JOIN st_ivt_equipment_list_line_item AS ggparent_eqlitem ON ggparent_eqlitem.id=gparent_eqlitem.parent_item_id
+     LEFT JOIN st_ivt_equipment_list_line_item AS gggparent_eqlitem ON gggparent_eqlitem.id=ggparent_eqlitem.parent_item_id
+     LEFT JOIN st_ivt_serial_number AS ivt_serial ON litem2.managed_resource_id=ivt_serial.id
+     LEFT JOIN st_ivt_inventory_item AS ivt_item ON ivt_item.id=IFNULL(ivt_serial.item_id,litem2.managed_resource_id)
+     WHERE litem2.project_element_id=prj.id
+       AND (st_ivt_equipment_list_line_item.id=eqlitem.id
+            OR parent_eqlitem.id=eqlitem.id
+            OR gparent_eqlitem.id=eqlitem.id
+            OR ggparent_eqlitem.id=eqlitem.id
+            OR gggparent_eqlitem.id=eqlitem.id))/eqlitem.prep_quantity AS consolidated_weight,
+    ivt_item_w_unit.abbreviation AS w_unit,
+
+    corplogo.blobhandle,
+    (SELECT rh_images.blobhandle FROM rh_images WHERE rh_images.caption LIKE "BE Logo (Outline)" LIMIT 1) as be_logo_outline,
+    biz_corp.web_site,
+    biz_corp.company_name AS corp_name,
+    biz_loc_phone.dial_number AS corp_phone,
+    biz_loc_email.address_url AS corp_email,
+    CONCAT(biz_loc_ship.line1," - ",biz_loc_ship.city,", ",biz_loc_ship.state_or_province," ",biz_loc_ship.postal_code) as biz_loc_addr,
+    biz_loc.time_zone,
+    IFNULL((SELECT biz_cf_value.storage_string
+            FROM st_prj_element_custom_field_value as cf_value
+            LEFT JOIN st_biz_custom_field_value as biz_cf_value ON (cf_value.id=biz_cf_value.id)
+            LEFT JOIN st_biz_custom_field_def as cf_def on (cf_def.id=biz_cf_value.custom_field_def_id)
+            WHERE cf_value.proj_element_id=prj.id AND cf_def.field_id='client_override'),"") as client_override,
+    IFNULL((SELECT biz_cf_value.storage_string
+            FROM st_prj_element_custom_field_value as cf_value
+            LEFT JOIN st_biz_custom_field_value as biz_cf_value ON (cf_value.id=biz_cf_value.id)
+            LEFT JOIN st_biz_custom_field_def as cf_def on (cf_def.id=biz_cf_value.custom_field_def_id)
+            WHERE cf_value.proj_element_id=prj.id AND cf_def.field_id='venue_override'),"") as venue_override,
+    eqlitem.note_text,
+    (CASE WHEN peqlitem.id IS NULL
+           THEN lpad(eqlitem.ordinal,3,0)
+          WHEN eqlitem.parent_item_id IS NOT NULL AND gpeqlitem.id IS NULL
+           THEN CONCAT(lpad(peqlitem.ordinal,3,0),lpad(eqlitem.ordinal,3,0))
+          WHEN eqlitem.parent_item_id IS NOT NULL AND peqlitem.parent_item_id IS NOT NULL AND gpeqlitem.parent_item_id IS NULL
+           THEN CONCAT(lpad(gpeqlitem.ordinal,3,0),lpad(peqlitem.ordinal,3,0),lpad(eqlitem.ordinal,3,0))
+     END) AS ordinal
+
+  FROM st_ivt_equipment_list_line_item AS eqlitem
+  LEFT JOIN st_prj_project_element_line_item AS litem ON litem.id=eqlitem.id
+
+  LEFT JOIN (SELECT ds_line_id, MIN(us_line_id) AS us_line_id FROM st_prj_ds_line_adj_matrix GROUP BY ds_line_id) mx ON mx.ds_line_id=litem.id
+
+  LEFT JOIN st_ivt_equipment_list_line_item AS c0_eqlitem ON c0_eqlitem.id=(
+    SELECT c.id FROM st_ivt_equipment_list_line_item c
+    WHERE c.parent_item_id=eqlitem.id AND IFNULL(c.is_note,0)=0 AND IFNULL(c.is_heading,0)=0 AND IFNULL(c.is_group,0)=0
+    ORDER BY c.ordinal, c.id LIMIT 1)
+  LEFT JOIN st_prj_project_element_line_item AS c0_litem ON c0_litem.id=c0_eqlitem.id
+  LEFT JOIN (SELECT ds_line_id, MIN(us_line_id) AS us_line_id FROM st_prj_ds_line_adj_matrix GROUP BY ds_line_id) c0_mx ON c0_mx.ds_line_id=c0_litem.id
+  LEFT JOIN st_prj_project_element_line_item AS up_li ON up_li.id=IFNULL(litem.upstream_line_item_id,IFNULL(mx.us_line_id,IFNULL(c0_litem.upstream_line_item_id,c0_mx.us_line_id)))
+  LEFT JOIN st_ivt_equipment_list_line_item AS up0 ON up0.id=up_li.id
+  LEFT JOIN st_ivt_equipment_list_line_item AS up1 ON up1.id=up0.parent_item_id
+  LEFT JOIN st_ivt_equipment_list_line_item AS up2 ON up2.id=up1.parent_item_id
+  LEFT JOIN st_ivt_equipment_list_line_item AS up3 ON up3.id=up2.parent_item_id
+  LEFT JOIN st_ivt_equipment_list_line_item AS up4 ON up4.id=up3.parent_item_id
+  LEFT JOIN st_ivt_equipment_list_line_item AS up5 ON up5.id=up4.parent_item_id
+
+  LEFT JOIN st_ivt_equipment_list_line_item AS peqlitem ON eqlitem.parent_item_id=peqlitem.id
+  LEFT JOIN st_prj_project_element_line_item AS plitem ON plitem.id=peqlitem.id
+  LEFT JOIN st_ivt_equipment_list_line_item AS gpeqlitem ON peqlitem.parent_item_id=gpeqlitem.id
+  LEFT JOIN st_prj_project_element_line_item AS gplitem ON gplitem.id=gpeqlitem.id
+
+  LEFT JOIN st_biz_managed_resource AS man_res ON man_res.id=litem.managed_resource_id
+  LEFT JOIN st_biz_managed_resource AS pman_res ON pman_res.id=plitem.managed_resource_id
+  LEFT JOIN st_biz_managed_resource AS gpman_res ON gpman_res.id=gplitem.managed_resource_id
+
+  LEFT JOIN st_ivt_serial_number AS ivt_serial ON man_res.id=ivt_serial.id
+  LEFT JOIN st_ivt_inventory_item AS ivt_item ON ivt_item.id=IFNULL(ivt_serial.item_id,litem.managed_resource_id)
+  LEFT JOIN st_biz_managed_resource AS item_man_res ON item_man_res.id=ivt_item.id
+  LEFT JOIN st_prj_project_element AS prj ON litem.project_element_id=prj.id
+
+  LEFT JOIN (SELECT cfv.proj_element_id, MIN(opt.caption) AS caption
+             FROM st_prj_element_custom_field_value cfv
+             JOIN st_biz_custom_field_value v ON v.id=cfv.id
+             JOIN st_biz_custom_field_def d ON d.id=v.custom_field_def_id AND d.field_id='color'
+             LEFT JOIN st_biz_custom_field_def_list_options opt ON opt.id=v.storage_string
+             GROUP BY cfv.proj_element_id) color_manifest ON color_manifest.proj_element_id=prj.id
+  LEFT JOIN (SELECT cfv.proj_element_id, MIN(opt.caption) AS caption
+             FROM st_prj_element_custom_field_value cfv
+             JOIN st_biz_custom_field_value v ON v.id=cfv.id
+             JOIN st_biz_custom_field_def d ON d.id=v.custom_field_def_id AND d.field_id='color'
+             LEFT JOIN st_biz_custom_field_def_list_options opt ON opt.id=v.storage_string
+             GROUP BY cfv.proj_element_id) color_prep ON color_prep.proj_element_id=up_li.project_element_id
+
+  LEFT JOIN st_prj_element_definition AS prj_el_def ON prj_el_def.id=prj.def_id
+  LEFT JOIN st_ivt_equipment_list AS eq_list ON eq_list.id=prj.id
+  LEFT JOIN st_crm_contact AS crm_client ON crm_client.id=prj.CLIENT_ID
+  LEFT JOIN st_crm_contact AS crm_venue ON crm_venue.id=prj.venue_id
+  LEFT JOIN st_biz_unit_of_measure AS ivt_item_w_unit ON ivt_item_w_unit.id=ivt_item.weight_unit_id
+  LEFT JOIN st_biz_corp_identity AS biz_corp ON biz_corp.id=IFNULL(prj.corp_identity_id,(SELECT id FROM st_biz_corp_identity WHERE is_hq='1'))
+  LEFT JOIN rh_images AS corplogo ON corplogo.imageid=biz_corp.logo_id
+  LEFT JOIN st_biz_location AS biz_loc ON biz_loc.id=IFNULL(prj.location_id,(SELECT hq_location_id FROM st_biz_corp_identity WHERE is_hq='1'))
+  LEFT JOIN st_biz_loc_address as biz_loc_ship on biz_loc_ship.id=biz_loc.def_ship_id
+  LEFT JOIN st_biz_loc_phone AS biz_loc_phone ON biz_loc_phone.id=biz_loc.def_phone_id
+  LEFT JOIN st_biz_loc_inet_addr AS biz_loc_email ON biz_loc_email.id=biz_loc.def_email_id
+  CROSS JOIN (SELECT installed_rank num FROM schema_version) nums ON nums.num <= eqlitem.prep_quantity
+
+  WHERE prj.id = $P{PROJECT_ELEMENT_ID}
+    AND eqlitem.prep_quantity >= nums.num
+    AND IFNULL((SELECT biz_cf_value.storage_string
+                FROM st_biz_resource_custom_field_value AS cf_value
+                LEFT JOIN st_biz_custom_field_value AS biz_cf_value ON (cf_value.id=biz_cf_value.id)
+                LEFT JOIN st_biz_custom_field_def AS cf_def ON (cf_def.id=biz_cf_value.custom_field_def_id)
+                WHERE cf_value.resource_id=ivt_item.id
+                AND cf_def.field_id='exclude_from_case_labels'),'false') = 'false'
+) AS label
+CROSS JOIN (SELECT installed_rank num FROM schema_version) nums2 ON nums2.num <= $P{case_label_copies}
+WHERE $P{case_label_copies} >= nums2.num
+  AND LENGTH(TRIM(IFNULL($P{case_barcode},''))) > 0
+  AND (
+    TRIM(case_bar_code) = TRIM($P{case_barcode})
+    OR TRIM(IFNULL(stencil,'')) = TRIM($P{case_barcode})
+  )
+ORDER BY ordinal ASC
+  ]]></queryString>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       FIELDS
+       ══════════════════════════════════════════════════════════════ -->
+
+  <field name="line_item_id"               class="java.lang.String"/>
+  <field name="top_level_item"             class="java.lang.Integer"/>
+  <field name="name_singular"              class="java.lang.String"/>
+  <field name="element_name"              class="java.lang.String"/>
+  <field name="document_number"           class="java.lang.String"/>
+  <field name="description"               class="java.lang.String"/>
+  <field name="parentDescription"         class="java.lang.String"/>
+  <field name="case_bar_code"             class="java.lang.String"/>
+  <field name="stencil"                   class="java.lang.String"/>
+  <field name="clientCaption"             class="java.lang.String"/>
+  <field name="client_company"            class="java.lang.String"/>
+  <field name="venueCaption"              class="java.lang.String"/>
+  <field name="venue_company"             class="java.lang.String"/>
+  <field name="planned_start_date_caption" class="java.lang.String"/>
+  <field name="planned_start_date"        class="java.sql.Timestamp"/>
+  <field name="planned_end_date_caption"  class="java.lang.String"/>
+  <field name="planned_end_date"          class="java.sql.Timestamp"/>
+  <field name="list_count"               class="java.lang.Integer"/>
+  <field name="long_list"                class="java.lang.Integer"/>
+  <field name="consolidated_weight"      class="java.lang.Double"/>
+  <field name="w_unit"                   class="java.lang.String"/>
+  <field name="web_site"                 class="java.lang.String"/>
+  <field name="corp_name"                class="java.lang.String"/>
+  <field name="corp_phone"               class="java.lang.String"/>
+  <field name="corp_email"               class="java.lang.String"/>
+  <field name="biz_loc_addr"             class="java.lang.String"/>
+  <field name="time_zone"                class="java.lang.String"/>
+  <field name="client_override"          class="java.lang.String"/>
+  <field name="venue_override"           class="java.lang.String"/>
+  <field name="note_text"                class="java.lang.String"/>
+  <field name="logos"                    class="java.io.InputStream"/>
+  <field name="be_logo_outline"              class="java.io.InputStream"/>
+  <field name="area"                     class="java.lang.String"/>
+  <field name="prep_group_path"          class="java.lang.String"/>
+  <field name="color"                    class="java.lang.String"/>
+  <field name="department"               class="java.lang.String"/>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       VARIABLES
+       ══════════════════════════════════════════════════════════════ -->
+
+  <variable name="DateTimeFormatter" class="java.text.DateFormat">
+    <variableExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat("dd/MM/yy",$P{REPORT_LOCALE},TimeZone.getTimeZone($F{time_zone}))]]></variableExpression>
+  </variable>
+
+  <!-- Running count of top-level cases (for CASE X OF Y) -->
+  <variable name="Case_count" class="java.lang.Integer" calculation="DistinctCount">
+    <variableExpression><![CDATA[$F{top_level_item} == 1 ? $V{REPORT_COUNT} : null]]></variableExpression>
+  </variable>
+
+  <!-- Resolve raw colour string to a validated #RRGGBB hex value (Dev approach) -->
+  <variable name="color_raw" class="java.lang.String">
+    <variableExpression><![CDATA[
+$F{area} == null
+  ? ($F{color} == null ? null : $F{color}.replaceAll(".*\\*(#?[0-9A-Fa-f]{6})\\*.*","$1"))
+  : $F{area}.replaceAll(".*\\*(#?[0-9A-Fa-f]{6})\\*.*","$1")
+    ]]></variableExpression>
+  </variable>
+
+  <variable name="color_hex" class="java.lang.String">
+    <variableExpression><![CDATA[
+$V{color_raw} == null ? null :
+(
+  $V{color_raw}.trim().matches("(?i)^#?[0-9a-f]{6}$")
+    ? ($V{color_raw}.trim().startsWith("#") ? $V{color_raw}.trim() : ("#" + $V{color_raw}.trim()))
+    : (
+        $V{color_raw}.trim().equalsIgnoreCase("black")     ? "#000000" :
+        $V{color_raw}.trim().equalsIgnoreCase("white")     ? "#FFFFFF" :
+        $V{color_raw}.trim().equalsIgnoreCase("red")       ? "#CC0000" :
+        $V{color_raw}.trim().equalsIgnoreCase("blue")      ? "#0055AA" :
+        $V{color_raw}.trim().equalsIgnoreCase("green")     ? "#007700" :
+        $V{color_raw}.trim().equalsIgnoreCase("yellow")    ? "#FFDD00" :
+        $V{color_raw}.trim().equalsIgnoreCase("orange")    ? "#FF8800" :
+        $V{color_raw}.trim().equalsIgnoreCase("purple")    ? "#6600AA" :
+        $V{color_raw}.trim().equalsIgnoreCase("pink")      ? "#FF88BB" :
+        $V{color_raw}.trim().equalsIgnoreCase("cyan")      ? "#00BBCC" :
+        ($V{color_raw}.trim().replaceAll("\\s","").equalsIgnoreCase("gray") ||
+         $V{color_raw}.trim().replaceAll("\\s","").equalsIgnoreCase("grey"))     ? "#888888" :
+        ($V{color_raw}.trim().replaceAll("\\s","").equalsIgnoreCase("lightgray") ||
+         $V{color_raw}.trim().replaceAll("\\s","").equalsIgnoreCase("lightgrey")) ? "#D3D3D3" :
+        ($V{color_raw}.trim().replaceAll("\\s","").equalsIgnoreCase("darkgray") ||
+         $V{color_raw}.trim().replaceAll("\\s","").equalsIgnoreCase("darkgrey"))  ? "#555555" :
+        null
+      )
+)
+    ]]></variableExpression>
+  </variable>
+
+  <!-- Luminance-aware text colour.
+       No colour set → always black (white background).
+       Colour set → white on dark, black on light. -->
+  <variable name="color_text" class="java.lang.String">
+    <variableExpression><![CDATA[
+($V{color_hex} == null || !$V{color_hex}.matches("(?i)^#[0-9a-f]{6}$"))
+  ? "#000000"
+  : ((0.2126 * Integer.parseInt($V{color_hex}.substring(1,3),16)
+    + 0.7152 * Integer.parseInt($V{color_hex}.substring(3,5),16)
+    + 0.0722 * Integer.parseInt($V{color_hex}.substring(5,7),16)) < 140
+      ? "#FFFFFF" : "#000000")
+    ]]></variableExpression>
+  </variable>
+
+  <!-- Background colour for header bands.
+       White when nothing is set — colour only shows if the manifest colour field
+       OR the child prep sheet area field contains a colour value. -->
+  <variable name="color_bg" class="java.lang.String">
+    <variableExpression><![CDATA[$V{color_hex} == null ? "#FFFFFF" : $V{color_hex}]]></variableExpression>
+  </variable>
+
+  <!-- True when a real colour has been resolved (drives border/text colour decisions) -->
+  <variable name="has_color" class="java.lang.Boolean">
+    <variableExpression><![CDATA[$V{color_hex} != null]]></variableExpression>
+  </variable>
+
+  <!-- Group for inner-case counting -->
+  <group name="parentCase">
+    <groupExpression><![CDATA[$F{parentDescription}]]></groupExpression>
+  </group>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       BACKGROUND — empty
+       ══════════════════════════════════════════════════════════════ -->
+  
+<background><band height="0"/></background>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       TITLE BAND — Manifest Label
+       Prints once (or N copies) only when no case_barcode filter set.
+       Layout (283px tall, 425px wide, A6 landscape):
+         y=7:   Outer border rectangle
+         y=10:  Header row — type label + job name + document_number barcode top-right
+         y=36:  Divider
+         y=38:  CLIENT section label + grey band
+         y=50:  Client value
+         y=90:  Divider
+         y=93:  VENUE section label
+         y=105: Venue value
+         y=160: Divider
+         y=163: NOTES section label
+         y=175: Notes value
+         y=228: Divider
+         y=231: DATES row — start left, end right, vertical divider at centre
+         y=248: Divider
+         y=251: Footer — logo | address | (empty)
+       ══════════════════════════════════════════════════════════════ -->
+  <title>
+    <band height="420">
+      <printWhenExpression><![CDATA[$P{case_barcode} == null || $P{case_barcode}.trim().equals("")]]></printWhenExpression>
+      <!-- No-barcode label — renders only when query returns no rows (no barcode entered).
+           Uses ManifestLabels sub-dataset for job/client/venue info.
+           Case name comes from case_name_override parameter (or blank if not set). -->
+      <componentElement>
+        <reportElement x="0" y="0" width="595" height="420" uuid="4f9df08d-c964-4b3a-843d-e144ecab5fbf">
+          <printWhenExpression><![CDATA[$P{case_barcode} == null || $P{case_barcode}.trim().equals("")]]></printWhenExpression>
+        </reportElement>
+        <jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" printOrder="Vertical">
+          <datasetRun subDataset="ManifestLabels" uuid="ac27f656-ebc1-4022-9acd-e810d1674ddb">
+            <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+            <datasetParameter name="manifest_label_copies">
+              <datasetParameterExpression><![CDATA[($P{case_barcode} == null || $P{case_barcode}.trim().equals("")) ? "1" : "0"]]></datasetParameterExpression>
+            </datasetParameter>
+            <connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+          </datasetRun>
+          <jr:listContents height="420" width="595">
+
+            <!-- outer border -->
+            <rectangle radius="3">
+              <reportElement mode="Transparent" x="7" y="7" width="581" height="406" uuid="0d2c1ef8-41fc-4c35-94f8-989342b52028"/>
+              <graphicElement><pen lineWidth="2.0"/></graphicElement>
+            </rectangle>
+
+            <!-- navy header bar -->
+            <rectangle radius="3">
+              <reportElement mode="Opaque" x="10" y="10" width="575" height="20" backcolor="#1A2B5E" uuid="381b234e-df2b-4c0c-a644-a5382f51a608"/>
+              <graphicElement><pen lineWidth="0.0"/></graphicElement>
+            </rectangle>
+
+            <!-- colour strip — manifest area colour -->
+            <rectangle radius="3">
+              <reportElement mode="Opaque" x="10" y="32" width="575" height="16" backcolor="#FFFFFF" uuid="e536d0f3-ce3e-4c9f-bc94-9a27fcdfde76">
+                <property name="com.jaspersoft.studio.unit.width" value="px"/>
+                <propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$F{area_color} == null ? "#FFFFFF" : (
+  $F{area_color}.trim().matches("(?i)^#?[0-9a-f]{6}$")
+    ? ($F{area_color}.trim().startsWith("#") ? $F{area_color}.trim() : ("#" + $F{area_color}.trim()))
+    : $F{area_color}.trim().equalsIgnoreCase("red") ? "#CC0000" :
+      $F{area_color}.trim().equalsIgnoreCase("blue") ? "#0055AA" :
+      $F{area_color}.trim().equalsIgnoreCase("green") ? "#007700" :
+      $F{area_color}.trim().equalsIgnoreCase("yellow") ? "#FFDD00" :
+      $F{area_color}.trim().equalsIgnoreCase("orange") ? "#FF8800" :
+      $F{area_color}.trim().equalsIgnoreCase("purple") ? "#6600AA" :
+      $F{area_color}.trim().equalsIgnoreCase("pink") ? "#FF88BB" :
+      $F{area_color}.trim().equalsIgnoreCase("cyan") ? "#00BBCC" :
+      "#FFFFFF"
+)]]></propertyExpression>
+                <printWhenExpression><![CDATA[$F{area_color} != null && !$F{area_color}.trim().isEmpty()]]></printWhenExpression>
+              </reportElement>
+              <graphicElement><pen lineWidth="0.0"/></graphicElement>
+            </rectangle>
+            <!-- BE outline logo in header -->
+            <image hAlign="Left" vAlign="Middle" scaleImage="RetainShape" isUsingCache="true" onErrorType="Blank">
+              <reportElement x="13" y="11" width="108" height="18" uuid="5ebef85f-6222-469a-b38d-46f3a71eea86"/>
+              <imageExpression><![CDATA[$F{be_logo_outline}]]></imageExpression>
+            </image>
+            <!-- job name centred in header -->
+            <textField>
+              <reportElement x="130" y="10" width="330" height="20" forecolor="#FFFFFF" uuid="d38c2e38-9021-4de9-b52f-90dd8362bdff"/>
+              <textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="9" isBold="true"/></textElement>
+              <textFieldExpression><![CDATA[$F{element_name} == null ? "" : $F{element_name}]]></textFieldExpression>
+            </textField>
+            <!-- barcode placeholder area (no barcode in test mode) -->
+
+            <!-- case name — from override parameter, or blank -->
+            <textField>
+              <reportElement style="CaseHeader" x="14" y="50" width="567" height="74" uuid="3fec28c0-d698-45a3-b7bb-6215c6fbf06e"/>
+              <textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" isBold="true"/></textElement>
+              <textFieldExpression><![CDATA[($P{case_name_override} == null ? "" : ($P{case_name_override}.length() > 80 ? $P{case_name_override}.substring(0, 77) + "..." : $P{case_name_override}))]]></textFieldExpression>
+            </textField>
+
+            <!-- rule below case name -->
+            <line>
+              <reportElement x="14" y="126" width="567" height="1" uuid="ec628d59-c1d4-4f0d-85e5-205ed5257d69"/>
+              <graphicElement><pen lineWidth="0.5"/></graphicElement>
+            </line>
+            <line>
+              <reportElement x="14" y="148" width="567" height="1" uuid="47092ba3-338c-43b7-908b-9f5c37a5b70a"/>
+              <graphicElement><pen lineWidth="0.5"/></graphicElement>
+            </line>
+
+            <!-- footer divider -->
+            <line>
+              <reportElement x="7" y="310" width="581" height="1" uuid="ea1641d7-69ab-4110-b725-3d2d2fa886a8"/>
+              <graphicElement><pen lineWidth="1.5"/></graphicElement>
+            </line>
+            <!-- footer verticals -->
+            <line>
+              <reportElement x="100" y="310" width="1" height="103" uuid="faf69273-7324-472b-9a61-2927def3c0bf"/>
+              <graphicElement><pen lineWidth="0.5"/></graphicElement>
+            </line>
+            <line>
+              <reportElement x="429" y="310" width="1" height="103" uuid="0cee65d8-ae4e-4923-beee-3f330dec9814"/>
+              <graphicElement><pen lineWidth="0.5"/></graphicElement>
+            </line>
+
+            <!-- footer left: logo -->
+            <image hAlign="Center" vAlign="Middle" scaleImage="RetainShape" isUsingCache="true" onErrorType="Blank">
+              <reportElement x="10" y="313" width="87" height="96" uuid="7731c239-4ccf-40a7-a1a4-a3c61bccc0cb"/>
+              <imageExpression><![CDATA[$F{logos}]]></imageExpression>
+            </image>
+
+            <!-- footer centre: client + venue + dates -->
+            <textField>
+              <reportElement x="106" y="318" width="317" height="10" uuid="9546b53c-754b-40d4-9627-b95b66264fe7"/>
+              <textElement verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+              <textFieldExpression><![CDATA[$F{clientCaption}.toUpperCase() + ":"]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true">
+              <reportElement x="106" y="329" width="317" height="22" uuid="00523dff-ceaf-41a9-aab9-13139749f040"/>
+              <textElement verticalAlignment="Top"><font fontName="Arial" size="8"/></textElement>
+              <textFieldExpression><![CDATA[$F{client_override}.equals("") ? $F{client_company} : $F{client_override}]]></textFieldExpression>
+            </textField>
+            <textField>
+              <reportElement x="106" y="353" width="317" height="10" uuid="678ba4ae-f2d9-42b7-b8ca-aba5a551c051"/>
+              <textElement verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+              <textFieldExpression><![CDATA[$F{venueCaption}.toUpperCase() + ":"]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true">
+              <reportElement x="106" y="364" width="317" height="22" uuid="544dd183-be4a-4ae4-9625-56545f26f0fc"/>
+              <textElement verticalAlignment="Top"><font fontName="Arial" size="8"/></textElement>
+              <textFieldExpression><![CDATA[$F{venue_override}.equals("") ? $F{venue_company} : $F{venue_override}]]></textFieldExpression>
+            </textField>
+            <textField>
+              <reportElement x="106" y="390" width="317" height="9" uuid="5b4eab9f-e2ef-4898-89b2-bd0fca5b3951"/>
+              <textElement verticalAlignment="Middle"><font fontName="Arial" size="7"/></textElement>
+              <textFieldExpression><![CDATA[($F{planned_start_date_caption} == null ? "Start" : $F{planned_start_date_caption}) + ": " + ($F{planned_start_date} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yy").format($F{planned_start_date})) + "   " + ($F{planned_end_date_caption} == null ? "End" : $F{planned_end_date_caption}) + ": " + ($F{planned_end_date} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yy").format($F{planned_end_date}))]]></textFieldExpression>
+            </textField>
+
+          </jr:listContents>
+        </jr:list>
+      </componentElement>
+    </band>
+  </title>
+  <detail>
+    <band height="420" splitType="Stretch">
+      <printWhenExpression><![CDATA[
+$P{case_barcode} != null && !$P{case_barcode}.trim().equals("")
+      ]]></printWhenExpression>
+      <rectangle radius="3">
+        <reportElement mode="Transparent" x="7" y="7" width="581" height="406" uuid="bbf6dd95-f800-4c95-b88c-2057ad69af4c"/>
+        <graphicElement><pen lineWidth="1.5"/></graphicElement>
+      </rectangle>
+
+      <!-- dark navy branded header bar -->
+      <rectangle radius="3">
+        <reportElement mode="Opaque" x="10" y="10" width="575" height="20" backcolor="#1A2B5E" uuid="52714eba-62dd-4ba5-b9be-90d54e3f6b3b"/>
+        <graphicElement><pen lineWidth="0.0"/></graphicElement>
+      </rectangle>
+      <!-- logo in navy bar -->
+      <image hAlign="Left" vAlign="Middle" scaleImage="RetainShape" isUsingCache="true" onErrorType="Blank">
+        <reportElement x="13" y="11" width="108" height="18" uuid="68027c03-b9c1-4055-9bc8-faa5bfab2432"/>
+        <imageExpression><![CDATA[$F{be_logo_outline}]]></imageExpression>
+      </image>
+      <!-- colour accent strip below navy bar -->
+      <rectangle radius="3">
+        <reportElement mode="Opaque" x="10" y="32" width="575" height="16" backcolor="#FFFFFF" uuid="acff2fe2-5350-4ae5-a71d-14c990561b34">
+          <property name="com.jaspersoft.studio.unit.width" value="px"/>
+          <propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$V{color_bg}]]></propertyExpression>
+          <printWhenExpression><![CDATA[$V{has_color}]]></printWhenExpression>
+        </reportElement>
+        <graphicElement><pen lineWidth="0.0"/></graphicElement>
+      </rectangle>
+
+      <componentElement>
+        <reportElement style="Barcode" x="465" y="11" width="116" height="11" uuid="f9e9a180-7516-41fc-81c2-0603c8455691"/>
+        <jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="2" barHeight="10">
+          <jr:codeExpression><![CDATA[$F{case_bar_code}]]></jr:codeExpression>
+        </jr:barbecue>
+      </componentElement>
+      <textField>
+        <reportElement x="465" y="22" width="116" height="7" forecolor="#FFFFFF" uuid="87c156d2-d5df-4973-bd78-6e54e92791bd">
+        </reportElement>
+        <textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="5" isBold="true"/></textElement>
+        <textFieldExpression><![CDATA[$F{case_bar_code}]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="130" y="10" width="330" height="20" forecolor="#FFFFFF" uuid="e8d32c4a-14df-4da7-9e05-1dd5df8f0498">
+        </reportElement>
+        <textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="9" isBold="true"/></textElement>
+        <textFieldExpression><![CDATA[$F{element_name} == null ? "" : $F{element_name}]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="14" y="28" width="180" height="10" uuid="91e3243d-ade4-4d57-a7c8-818a292f49f5">
+          <printWhenExpression><![CDATA[false]]></printWhenExpression>
+        </reportElement>
+        <textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="false"/></textElement>
+        <textFieldExpression><![CDATA["CASE " + $V{Case_count} + " OF "]]></textFieldExpression>
+      </textField>
+      <textField evaluationTime="Report">
+        <reportElement x="196" y="28" width="50" height="10" uuid="937796ba-4bb5-4773-add8-a21b6f5a705d">
+          <printWhenExpression><![CDATA[false]]></printWhenExpression>
+        </reportElement>
+        <textElement verticalAlignment="Middle"><font fontName="Arial" size="7"/></textElement>
+        <textFieldExpression><![CDATA[$V{Case_count}]]></textFieldExpression>
+      </textField>
+
+      <!-- huge case name -->
+      <textField>
+        <reportElement style="CaseHeader" x="14" y="58" width="567" height="74" uuid="44ea3db0-eb2d-432a-8fd5-98f9fb254f58"/>
+        <textElement textAlignment="Center" verticalAlignment="Middle"><font size="28" isBold="true"/></textElement>
+        <textFieldExpression><![CDATA[($F{description} == null ? "" : ($F{description}.length() > 80 ? $F{description}.substring(0, 77) + "..." : $F{description}))]]></textFieldExpression>
+      </textField>
+
+      <line>
+        <reportElement x="14" y="134" width="567" height="1" uuid="b4330b5d-be9b-4f8a-b6c6-1a1f2d74bf1d"/>
+        <graphicElement><pen lineWidth="0.5" lineStyle="Solid"/></graphicElement>
+      </line>
+
+      <!-- dept pill + group + weight row -->
+      <rectangle radius="3">
+        <reportElement mode="Opaque" x="14" y="138" width="180" height="16" backcolor="#1A2B5E" uuid="59bfc73d-fd37-4ca8-963b-61d6654747b3">
+          <printWhenExpression><![CDATA[$P{case_barcode} != null && !$P{case_barcode}.trim().equals("")]]></printWhenExpression>
+        </reportElement>
+        <graphicElement><pen lineWidth="0.0"/></graphicElement>
+      </rectangle>
+      <textField>
+        <reportElement x="14" y="138" width="180" height="16" uuid="9e1ad995-2d85-4c99-8617-0957776249da">
+          <printWhenExpression><![CDATA[$P{case_barcode} != null && !$P{case_barcode}.trim().equals("")]]></printWhenExpression>
+        </reportElement>
+        <textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+        <textFieldExpression><![CDATA[($F{prep_group_path} == null || $F{prep_group_path}.trim().equals("")) ? (($F{area} == null || $F{area}.trim().equals("")) ? ($F{color} == null ? "" : $F{color}.replaceAll("\\s*\\*#?[0-9A-Fa-f]{6}\\*\\s*"," ").trim()) : $F{area}.replaceAll("\\*.*\\*(.*)","$1").trim()) : $F{prep_group_path}]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="14" y="138" width="180" height="16" forecolor="#FFFFFF" uuid="982a3cc2-33a6-45b5-8a36-0b99ab696e2f"/>
+        <textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+        <textFieldExpression><![CDATA[($F{prep_group_path} == null || $F{prep_group_path}.trim().equals("")) ? (($F{area} == null || $F{area}.trim().equals("")) ? ($F{color} == null ? "" : $F{color}.replaceAll("\\s*\\*#?[0-9A-Fa-f]{6}\\*\\s*"," ").trim()) : $F{area}.replaceAll("\\*.*\\*(.*)","$1").trim()) : $F{prep_group_path}]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="200" y="138" width="160" height="16" uuid="5a6f3e56-1dff-44da-8d06-6dc2444a1515">
+          <printWhenExpression><![CDATA[false]]></printWhenExpression>
+        </reportElement>
+        <textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="false"/></textElement>
+        <textFieldExpression><![CDATA[($F{prep_group_path} == null || $F{prep_group_path}.trim().equals("")) ? (($F{area} == null || $F{area}.trim().equals("")) ? ($F{color} == null ? "" : $F{color}.replaceAll("\\s*\\*#?[0-9A-Fa-f]{6}\\*\\s*"," ").trim()) : $F{area}.replaceAll("\\*.*\\*(.*)","$1").trim()) : $F{prep_group_path}]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="440" y="138" width="143" height="16" uuid="eaa9c0cf-9b83-4ac3-b3b5-fdd7ff7ced48">
+          <printWhenExpression><![CDATA[false]]></printWhenExpression>
+        </reportElement>
+        <textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="false"/></textElement>
+        <textFieldExpression><![CDATA["WEIGHT: " + ($F{consolidated_weight} == null ? "-" : new java.text.DecimalFormat("##0.0").format($F{consolidated_weight}) + " " + ($F{w_unit} == null ? "" : $F{w_unit}.toUpperCase()))]]></textFieldExpression>
+      </textField>
+
+      <line>
+        <reportElement x="14" y="156" width="567" height="1" uuid="27d29f0f-4d1d-4056-9b5e-e15e53c3fa1d"/>
+        <graphicElement><pen lineWidth="0.5" lineStyle="Solid"/></graphicElement>
+      </line>
+
+      <staticText>
+        <reportElement x="14" y="160" width="80" height="9" uuid="095eb858-49e2-4e5f-b845-4b18faa30aa1">
+          <printWhenExpression><![CDATA[$P{case_barcode} != null && !$P{case_barcode}.trim().equals("")]]></printWhenExpression>
+        </reportElement>
+        <textElement verticalAlignment="Middle"><font fontName="Arial" size="6" isBold="true"/></textElement>
+        <text><![CDATA[CONTENTS:]]></text>
+      </staticText>
+
+      <componentElement>
+        <reportElement x="14" y="170" width="185" height="130" uuid="5b7fa9be-1a5e-4912-b219-4585ed23e53c">
+          <printWhenExpression><![CDATA[$P{case_barcode} != null && !$P{case_barcode}.trim().equals("")]]></printWhenExpression>
+        </reportElement>
+        <jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+          <datasetRun subDataset="Contents" uuid="fc9727f6-aa32-4569-b2df-28f901691721">
+            <datasetParameter name="LINE_ITEM_ID"><datasetParameterExpression><![CDATA[$F{line_item_id}]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="MAX_CONTENT_ROWS"><datasetParameterExpression><![CDATA["" + java.lang.Math.min(($F{list_count} == null ? 0 : $F{list_count}.intValue() + 2) / 3, Integer.parseInt($P{MAX_CONTENT_ROWS}))]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="CONTENT_OFFSET"><datasetParameterExpression><![CDATA["0"]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="list_count"><datasetParameterExpression><![CDATA[$F{list_count}]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="long_list"><datasetParameterExpression><![CDATA[$F{long_list}]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="CONTENT_FONT_MAX"><datasetParameterExpression><![CDATA[$P{TL_CONTENT_FONT_MAX}]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="CONTENT_FONT_SMALL"><datasetParameterExpression><![CDATA[$P{TL_CONTENT_FONT_SMALL}]]></datasetParameterExpression></datasetParameter>
+            <connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+          </datasetRun>
+          <jr:listContents height="10" width="185">
+            <textField>
+              <reportElement style="ContentsQty" x="0" y="0" width="20" height="10" uuid="fdc2ab92-4b49-4708-a778-b1f1595d8031"/>
+              <textElement textAlignment="Right" verticalAlignment="Top"/>
+              <textFieldExpression><![CDATA[$F{qty} == null ? "" : new java.text.DecimalFormat("0").format($F{qty})]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="false">
+              <reportElement style="ContentsItem" x="22" y="0" width="161" height="10" uuid="70d35bed-537b-45a9-8df2-f566ec26d697"/>
+              <textElement textAlignment="Left" verticalAlignment="Top"/>
+              <textFieldExpression><![CDATA[($F{short_hand} != null && !$F{short_hand}.equals("")) ? $F{short_hand} : ($F{resource_name} == null ? "" : $F{resource_name}.trim())]]></textFieldExpression>
+            </textField>
+          </jr:listContents>
+        </jr:list>
+      </componentElement>
+      <line>
+        <reportElement x="202" y="160" width="1" height="140" uuid="2ac81d7e-3db9-4a10-a4c8-f15fa6ad7e13"/>
+        <graphicElement><pen lineWidth="0.5" lineStyle="Dashed"/></graphicElement>
+      </line>
+      <componentElement>
+        <reportElement x="206" y="170" width="185" height="130" uuid="3154e99c-09e4-48bf-b672-ccb26d267a37">
+          <printWhenExpression><![CDATA[$P{case_barcode} != null && !$P{case_barcode}.trim().equals("")]]></printWhenExpression>
+        </reportElement>
+        <jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+          <datasetRun subDataset="Contents" uuid="b9190dda-ea82-4374-8313-54693e71c0a2">
+            <datasetParameter name="LINE_ITEM_ID"><datasetParameterExpression><![CDATA[$F{line_item_id}]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="MAX_CONTENT_ROWS"><datasetParameterExpression><![CDATA["" + java.lang.Math.min(($F{list_count} == null ? 0 : $F{list_count}.intValue() + 2) / 3, Integer.parseInt($P{MAX_CONTENT_ROWS}))]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="CONTENT_OFFSET"><datasetParameterExpression><![CDATA["" + java.lang.Math.min(($F{list_count} == null ? 0 : $F{list_count}.intValue() + 2) / 3, Integer.parseInt($P{MAX_CONTENT_ROWS}))]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="list_count"><datasetParameterExpression><![CDATA[$F{list_count}]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="long_list"><datasetParameterExpression><![CDATA[$F{long_list}]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="CONTENT_FONT_MAX"><datasetParameterExpression><![CDATA[$P{TL_CONTENT_FONT_MAX}]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="CONTENT_FONT_SMALL"><datasetParameterExpression><![CDATA[$P{TL_CONTENT_FONT_SMALL}]]></datasetParameterExpression></datasetParameter>
+            <connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+          </datasetRun>
+          <jr:listContents height="10" width="185">
+            <textField>
+              <reportElement style="ContentsQty" x="0" y="0" width="20" height="10" uuid="754851c0-1228-4fc4-81a3-1ac551b57e9a"/>
+              <textElement textAlignment="Right" verticalAlignment="Top"/>
+              <textFieldExpression><![CDATA[$F{qty} == null ? "" : new java.text.DecimalFormat("0").format($F{qty})]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="false">
+              <reportElement style="ContentsItem" x="22" y="0" width="161" height="10" uuid="87de8105-7941-4be1-8429-28899291ecbf"/>
+              <textElement textAlignment="Left" verticalAlignment="Top"/>
+              <textFieldExpression><![CDATA[($F{short_hand} != null && !$F{short_hand}.equals("")) ? $F{short_hand} : ($F{resource_name} == null ? "" : $F{resource_name}.trim())]]></textFieldExpression>
+            </textField>
+          </jr:listContents>
+        </jr:list>
+      </componentElement>
+      <line>
+        <reportElement x="394" y="160" width="1" height="140" uuid="cf7e852a-e7e2-4945-849c-12ec751680e9"/>
+        <graphicElement><pen lineWidth="0.5" lineStyle="Dashed"/></graphicElement>
+      </line>
+      <componentElement>
+        <reportElement x="398" y="170" width="183" height="130" uuid="f0ebdde9-4e61-4c4c-a409-34a6ba8cefca">
+          <printWhenExpression><![CDATA[$P{case_barcode} != null && !$P{case_barcode}.trim().equals("")]]></printWhenExpression>
+        </reportElement>
+        <jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+          <datasetRun subDataset="Contents" uuid="e927567b-1550-4ad2-a204-1303fafb35df">
+            <datasetParameter name="LINE_ITEM_ID"><datasetParameterExpression><![CDATA[$F{line_item_id}]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="MAX_CONTENT_ROWS"><datasetParameterExpression><![CDATA["" + java.lang.Math.min(($F{list_count} == null ? 0 : $F{list_count}.intValue() + 2) / 3, Integer.parseInt($P{MAX_CONTENT_ROWS}))]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="CONTENT_OFFSET"><datasetParameterExpression><![CDATA["" + (java.lang.Math.min(($F{list_count} == null ? 0 : $F{list_count}.intValue() + 2) / 3, Integer.parseInt($P{MAX_CONTENT_ROWS})) * 2)]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="list_count"><datasetParameterExpression><![CDATA[$F{list_count}]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="long_list"><datasetParameterExpression><![CDATA[$F{long_list}]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="CONTENT_FONT_MAX"><datasetParameterExpression><![CDATA[$P{TL_CONTENT_FONT_MAX}]]></datasetParameterExpression></datasetParameter>
+            <datasetParameter name="CONTENT_FONT_SMALL"><datasetParameterExpression><![CDATA[$P{TL_CONTENT_FONT_SMALL}]]></datasetParameterExpression></datasetParameter>
+            <connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+          </datasetRun>
+          <jr:listContents height="10" width="183">
+            <textField>
+              <reportElement style="ContentsQty" x="0" y="0" width="20" height="10" uuid="172ae898-45e2-4ce9-9302-8de1ec345340"/>
+              <textElement textAlignment="Right" verticalAlignment="Top"/>
+              <textFieldExpression><![CDATA[$F{qty} == null ? "" : new java.text.DecimalFormat("0").format($F{qty})]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="false">
+              <reportElement style="ContentsItem" x="22" y="0" width="159" height="10" uuid="b954d885-bc63-4b6a-b0fe-f7adc0663666"/>
+              <textElement textAlignment="Left" verticalAlignment="Top"/>
+              <textFieldExpression><![CDATA[($F{short_hand} != null && !$F{short_hand}.equals("")) ? $F{short_hand} : ($F{resource_name} == null ? "" : $F{resource_name}.trim())]]></textFieldExpression>
+            </textField>
+          </jr:listContents>
+        </jr:list>
+      </componentElement>
+
+      <!-- ── Notes override overlay ── -->
+      <rectangle radius="3">
+        <reportElement mode="Opaque" x="19" y="242" width="549" height="66" backcolor="#EFEFEF" uuid="a1f3c2d4-e5b6-7890-abcd-ef1234567891">
+          <printWhenExpression><![CDATA[$P{case_notes_override} != null && !$P{case_notes_override}.trim().equals("")]]></printWhenExpression>
+        </reportElement>
+        <graphicElement><pen lineWidth="0.0"/></graphicElement>
+      </rectangle>
+      <textField isStretchWithOverflow="false">
+        <reportElement x="19" y="242" width="549" height="66" uuid="b2e4d5f6-a7c8-9012-bcde-f12345678901">
+          <printWhenExpression><![CDATA[$P{case_notes_override} != null && !$P{case_notes_override}.trim().equals("")]]></printWhenExpression>
+        </reportElement>
+        <textElement textAlignment="Center" verticalAlignment="Middle">
+          <font fontName="Arial" size="10" isBold="false"/>
+        </textElement>
+        <textFieldExpression><![CDATA[$P{case_notes_override}]]></textFieldExpression>
+      </textField>
+
+      <line>
+        <reportElement x="7" y="310" width="581" height="1" uuid="e10971d0-2586-4c0c-ada4-9e4fe6c367ba"/>
+        <graphicElement><pen lineWidth="1.5" lineStyle="Solid"/></graphicElement>
+      </line>
+      <line>
+        <reportElement x="100" y="310" width="1" height="102" uuid="9e81324f-072c-40cc-8ca6-678cb1597b58"/>
+        <graphicElement><pen lineWidth="0.5" lineStyle="Solid"/></graphicElement>
+      </line>
+      <line>
+        <reportElement x="425" y="310" width="1" height="102" uuid="4fb1c5cf-d27f-4118-85e4-44e6e0321a87"/>
+        <graphicElement><pen lineWidth="0.5" lineStyle="Solid"/></graphicElement>
+      </line>
+
+      <image hAlign="Center" vAlign="Middle" scaleImage="RetainShape" isUsingCache="true" onErrorType="Blank">
+        <reportElement x="10" y="313" width="87" height="96" uuid="206c5902-774c-4cf7-b0ac-fb14ea72a9ca"/>
+        <imageExpression><![CDATA[$F{logos}]]></imageExpression>
+      </image>
+      <textField>
+        <reportElement x="14" y="367" width="80" height="9" uuid="d3f548e8-d7d1-4336-b59c-efc6d2b7f296">
+          <printWhenExpression><![CDATA[false]]></printWhenExpression>
+        </reportElement>
+        <textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="5" isBold="false"/></textElement>
+        <textFieldExpression><![CDATA[($F{biz_loc_addr} != null ? $F{biz_loc_addr} : "") + "  " + ($F{corp_phone} != null ? $F{corp_phone} : "") + ($F{web_site} != null ? "  |  " + $F{web_site} : "")]]></textFieldExpression>
+      </textField>
+
+      <textField>
+        <reportElement x="106" y="315" width="313" height="10" uuid="58c92f23-cdc2-406b-b127-73382b126f25">
+        </reportElement>
+        <textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+        <textFieldExpression><![CDATA[$F{clientCaption}.toUpperCase() + ":"]]></textFieldExpression>
+      </textField>
+      <textField isStretchWithOverflow="true">
+        <reportElement x="106" y="326" width="313" height="22" uuid="5e809fa3-6775-46a1-b28e-11df5d892eb9">
+        </reportElement>
+        <textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="Arial" size="8" isBold="false"/></textElement>
+        <textFieldExpression><![CDATA[$F{client_override}.equals("") ? $F{client_company} : $F{client_override}]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="106" y="349" width="313" height="10" uuid="55cae7eb-4207-4447-b36e-111180c26bc1">
+        </reportElement>
+        <textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+        <textFieldExpression><![CDATA[$F{venueCaption}.toUpperCase() + ":"]]></textFieldExpression>
+      </textField>
+      <textField isStretchWithOverflow="true">
+        <reportElement x="106" y="360" width="313" height="22" uuid="dd596568-0e25-4db9-921f-cf3952899aaa">
+        </reportElement>
+        <textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="Arial" size="8" isBold="false"/></textElement>
+        <textFieldExpression><![CDATA[$F{venue_override}.equals("") ? $F{venue_company} : $F{venue_override}]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="106" y="383" width="313" height="9" uuid="3889470d-39a4-42cd-9ff6-d0f1269c0ed2">
+        </reportElement>
+        <textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="false"/></textElement>
+        <textFieldExpression><![CDATA[($F{planned_start_date_caption} == null ? "Start" : $F{planned_start_date_caption}) + ": " + ($F{planned_start_date} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yy").format($F{planned_start_date})) + "   " + ($F{planned_end_date_caption} == null ? "End" : $F{planned_end_date_caption}) + ": " + ($F{planned_end_date} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yy").format($F{planned_end_date}))]]></textFieldExpression>
+      </textField>
+
+      <rectangle radius="3">
+        <reportElement mode="Opaque" x="430" y="313" width="153" height="97" backcolor="#1A2B5E" uuid="dc780e06-8d49-4b04-8bc6-d8533f668b8a">
+          <printWhenExpression><![CDATA[$P{case_barcode} != null && !$P{case_barcode}.trim().equals("")]]></printWhenExpression>
+        </reportElement>
+        <graphicElement><pen lineWidth="0.0"/></graphicElement>
+      </rectangle>
+      <textField>
+        <reportElement x="430" y="313" width="153" height="57" forecolor="#FFFFFF" uuid="aec6c176-46e9-4bfc-b786-feb599c32343">
+          <printWhenExpression><![CDATA[$P{case_barcode} != null && !$P{case_barcode}.trim().equals("")]]></printWhenExpression>
+        </reportElement>
+        <textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="14" isBold="true"/></textElement>
+        <textFieldExpression><![CDATA[$F{department} == null ? "" : $F{department}.toUpperCase()]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="430" y="370" width="153" height="38" forecolor="#AACCFF" uuid="14bedc1c-07ae-4f59-bfc3-224565838494">
+          <printWhenExpression><![CDATA[$P{case_barcode} != null && !$P{case_barcode}.trim().equals("")]]></printWhenExpression>
+        </reportElement>
+        <textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="11" isBold="true"/></textElement>
+        <textFieldExpression><![CDATA["WEIGHT: " + ($F{consolidated_weight} == null ? "-" : new java.text.DecimalFormat("##0.0").format($F{consolidated_weight}) + " " + ($F{w_unit} == null ? "" : $F{w_unit}.toUpperCase()))]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="429" y="376" width="158" height="9" uuid="603904af-3932-43ca-8712-ce8a1991781e">
+          <printWhenExpression><![CDATA[false]]></printWhenExpression>
+        </reportElement>
+        <textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="false"/></textElement>
+        <textFieldExpression><![CDATA[$F{department} == null ? "" : $F{department}.toUpperCase()]]></textFieldExpression>
+      </textField>
+
+    </band>
+  </detail>
+</jasperReport>
