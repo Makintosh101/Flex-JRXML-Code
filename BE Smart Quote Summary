@@ -1,0 +1,2738 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.1.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Smart Quote Summary" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ffb086a1-dbd8-4c0f-8188-a3a7c5c563d8">
+	<property name="ireport.zoom" value="1.771561000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="blueelephantuk_dev"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="834"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="160"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="TextStyle" isDefault="true" forecolor="#000000" backcolor="#B5B5B5" vTextAlign="Middle" fontName="Arial" fontSize="9">
+		<pen lineColor="#0066CD"/>
+		<box>
+			<pen lineColor="#0066CD"/>
+		</box>
+		<paragraph leftIndent="2" rightIndent="2"/>
+	</style>
+	<style name="Title Captions Left" style="TextStyle" hTextAlign="Left" isBold="true"/>
+	<style name="Title Captions Right" style="TextStyle" hTextAlign="Right" isBold="true"/>
+	<style name="Title Fields Left" style="TextStyle" hTextAlign="Left" isBold="false"/>
+	<style name="Title Fields Right" style="TextStyle" hTextAlign="Right" isBold="false"/>
+	<style name="Column Header Captions" style="TextStyle" hTextAlign="Right" fontSize="8" isBold="true"/>
+	<style name="Detail Fields" style="TextStyle" hTextAlign="Right" isBold="false"/>
+	<style name="Summary Fields" style="TextStyle" hTextAlign="Right" isBold="false"/>
+	<style name="Line" style="TextStyle" mode="Opaque" forecolor="#0066CD">
+		<pen lineWidth="1.0" lineStyle="Solid"/>
+	</style>
+	<style name="Normal text" style="TextStyle" vTextAlign="Middle" vImageAlign="Middle" isBlankWhenNull="true" fontSize="9"/>
+	<style name="Element Name" style="TextStyle" isBlankWhenNull="true" isBold="true">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{elementName}.length() < 45]]></conditionExpression>
+			<style fontSize="15"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{elementName}.length() > 44 && $F{elementName}.length() < 50]]></conditionExpression>
+			<style fontSize="14"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{elementName}.length() > 49 && $F{elementName}.length() < 55]]></conditionExpression>
+			<style fontSize="12"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{elementName}.length() > 54]]></conditionExpression>
+			<style fontSize="11"/>
+		</conditionalStyle>
+	</style>
+	<style name="Page Footer" style="TextStyle" forecolor="#6B6B6B" fontSize="7"/>
+	<subDataset name="TotalsBlock" uuid="0d34ac66-c9df-4e3f-b2a2-31248f0ba35d">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="techrun_dev"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="210"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="785"/>
+		<parameter name="PROJECT_ELEMENT_ID" class="java.lang.String">
+			<defaultValueExpression><![CDATA["23a969c4-fb92-4428-b4c5-9491bd90974e"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="SUB_DEFS" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["Quote"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="json_col" class="java.lang.String" isForPrompting="false"/>
+		<parameter name="PRINT_DISCOUNT" class="java.lang.Boolean"/>
+		<parameter name="PRINT_EXTENDED_TOTALS" class="java.lang.Boolean"/>
+		<parameter name="PRINT_ALL_FINANCIAL" class="java.lang.Boolean"/>
+		<parameter name="DateTimeFormatter" class="java.text.DateFormat" isForPrompting="false"/>
+		<parameter name="DateFormatter" class="java.text.DateFormat" isForPrompting="false"/>
+		<parameter name="TimeFormatter" class="java.text.DateFormat" isForPrompting="false"/>
+		<parameter name="CurrencyPattern" class="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT
+ CAST(MAX(st_fin_total_block_row_def.ordinal)  as SIGNED) as ordinal,
+       ANY_VALUE(st_fin_total_block_row_def.caption) as caption,  
+       ANY_VALUE(st_fin_total_block_row_def.field_type) as field_type,
+       IFNULL(SUM( CASE
+
+    WHEN st_fin_total_block_row_def.field_type = 'totalPrice' THEN fsub.total_price
+    WHEN st_fin_total_block_row_def.field_type = 'totalAppliedPayments' THEN fsub.total_applied_payments
+    WHEN st_fin_total_block_row_def.field_type = 'salesTax' THEN fsub.sales_tax
+    WHEN st_fin_total_block_row_def.field_type = 'balanceDue' THEN fsub.balance_due
+    WHEN st_fin_total_block_row_def.field_type = 'costSubtotal' THEN fsub.cost_subtotal
+    WHEN st_fin_total_block_row_def.field_type = 'discountablePrice' THEN fsub.discountable_price
+    WHEN st_fin_total_block_row_def.field_type = 'margin' THEN fsub.margin
+    WHEN st_fin_total_block_row_def.field_type = 'priceDiscount' THEN fsub.price_discount
+    WHEN st_fin_total_block_row_def.field_type = 'priceSubtotal' THEN fsub.price_subtotal
+    WHEN st_fin_total_block_row_def.field_type = 'profit' THEN fsub.profit
+    WHEN st_fin_total_block_row_def.field_type = 'totalCost' THEN fsub.total_cost
+    WHEN st_fin_total_block_row_def.field_type = 'totalPayment' THEN fsub.total_payment
+    WHEN st_fin_total_block_row_def.field_type = 'discountableCost' THEN fsub.discountable_cost
+    WHEN st_fin_total_block_row_def.field_type = 'totalDeprepTime' THEN fsub.total_deprep_time
+    WHEN st_fin_total_block_row_def.field_type = 'discountableCost' THEN fsub.discountable_cost
+    WHEN st_fin_total_block_row_def.field_type = 'totalPriceWithoutTax' THEN fsub.total_price_without_sales_tax
+    WHEN st_fin_total_block_row_def.field_type = 'costDiscount' THEN fsub.cost_discount
+    WHEN st_fin_total_block_row_def.field_type = 'replacementCost' THEN fsub.total_replacement_cost
+    WHEN st_fin_total_block_row_def.field_type = 'totalPrepTime' THEN fsub.total_prep_time
+    WHEN st_fin_total_block_row_def.field_type = 'spacerRow' THEN null
+    ELSE crow_value.row_value              
+       END) ,0)  AS row_value,
+       SUM(CASE
+    WHEN st_fin_total_block_row_def.field_type = 'custom' AND st_fin_total_block_row_def.custom_row_id IN (select
+        st_fin_custom_document_row.id from st_biz_resource_type
+          left join st_fin_fee_matrix_resource_type on st_fin_fee_matrix_resource_type.resource_type = st_biz_resource_type.id
+          left join st_fin_fee_matrix on st_fin_fee_matrix.id = st_fin_fee_matrix_resource_type.fee_matrix
+          left join st_fin_custom_document_row on st_fin_custom_document_row.fee_matrix_id = st_fin_fee_matrix.id
+        where discount_enabled and !st_biz_resource_type.is_deleted and !st_fin_fee_matrix.is_deleted and calculation_mode = 'pre-discount') 
+      THEN (fsub.price_discount*(fsub.discountable_price/crow_value.row_value)) END) as discountPortion,     
+  IFNULL(MAX(custom_row.transient_calculation),0) AS transient_calculation,
+  MAX(is_hidden_if_zero) as is_hidden_if_zero,
+  MAX(st_fin_total_block_row_def.is_bold) as is_bold 
+
+FROM st_prj_project_element AS prj
+LEFT JOIN (
+	SELECT 
+	sub_prj.*
+
+       FROM st_prj_project_element AS sub_prj
+       CROSS JOIN (SELECT -- cross join custom field to save looking it up over and over again.
+           (IFNULL((SELECT IF( ((cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'true') 
+           OR (!(cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'false'),true,false)
+         FROM st_biz_custom_field_def AS cf_def 
+           LEFT JOIN st_prj_element_custom_field_element_defs ON st_prj_element_custom_field_element_defs.custom_field_def_id = cf_def.id
+           LEFT JOIN st_prj_project_element ON st_prj_project_element.def_id = st_prj_element_custom_field_element_defs.element_def_id
+           LEFT JOIN st_biz_custom_field_value AS biz_cf_value ON (cf_def.id = biz_cf_value.custom_field_def_id AND (SELECT id FROM st_prj_element_custom_field_value WHERE proj_element_id=st_prj_project_element.id AND id = biz_cf_value.id) = biz_cf_value.id)
+         WHERE st_prj_project_element.id=$P{PROJECT_ELEMENT_ID}
+         AND cf_def.field_id='toggle_subfolders' ORDER BY biz_cf_value.last_edit_date DESC LIMIT 1),TRUE)) as includeSubfolders) as includeSubfolders
+       LEFT JOIN st_prj_element_definition AS sub_prj_def ON sub_prj.def_id = sub_prj_def.id
+       LEFT JOIN st_prj_project_element AS parent_sub_prj ON (parent_sub_prj.ID = sub_prj.PARENT_ID) AND (!FIND_IN_SET("shoptick.projects.simple",CONCAT_WS(",",sub_prj_def.extension_id)) OR includeSubfolders.includeSubfolders) and sub_prj.id != $P{PROJECT_ELEMENT_ID} -- Don't join ancestry running on single element
+       LEFT JOIN st_prj_element_definition AS parent_sub_prj_def ON parent_sub_prj.DEF_ID = parent_sub_prj_def.ID 
+       LEFT JOIN st_prj_project_element AS parent_sub_prj_2 ON (parent_sub_prj_2.ID = parent_sub_prj.PARENT_ID) AND (!FIND_IN_SET("shoptick.projects.simple",CONCAT_WS(",",parent_sub_prj_def.extension_id,sub_prj_def.extension_id)) OR includeSubfolders.includeSubfolders) -- Stop joining ancestry if !includeSubfolders and we've already passed one subfolder
+       LEFT JOIN st_prj_element_definition AS parent_sub_prj_def_2 ON parent_sub_prj_2.DEF_ID = parent_sub_prj_def_2.ID
+       LEFT JOIN st_prj_project_element AS parent_sub_prj_3 ON (parent_sub_prj_3.ID = parent_sub_prj_2.PARENT_ID) AND (!FIND_IN_SET("shoptick.projects.simple",CONCAT_WS(",",parent_sub_prj_def_2.extension_id,parent_sub_prj_def.extension_id,sub_prj_def.extension_id)) OR includeSubfolders.includeSubfolders)
+       LEFT JOIN st_prj_element_definition AS parent_sub_prj_def_3 ON parent_sub_prj_3.DEF_ID = parent_sub_prj_def_3.ID
+       LEFT JOIN st_prj_project_element AS parent_sub_prj_4 ON (parent_sub_prj_4.ID = parent_sub_prj_3.PARENT_ID) AND (!FIND_IN_SET("shoptick.projects.simple",CONCAT_WS(",",parent_sub_prj_def_3.extension_id,parent_sub_prj_def_2.extension_id,parent_sub_prj_def.extension_id,sub_prj_def.extension_id)) OR includeSubfolders.includeSubfolders)
+       LEFT JOIN st_prj_element_definition AS parent_sub_prj_def_4 ON parent_sub_prj_4.DEF_ID = parent_sub_prj_def_4.ID
+       LEFT JOIN st_prj_project_element AS parent_sub_prj_5 ON (parent_sub_prj_5.ID = parent_sub_prj_4.PARENT_ID) AND (!FIND_IN_SET("shoptick.projects.simple",CONCAT_WS(",",parent_sub_prj_def_4.extension_id,parent_sub_prj_def_3.extension_id,parent_sub_prj_def_2.extension_id,parent_sub_prj_def.extension_id,sub_prj_def.extension_id)) OR includeSubfolders.includeSubfolders)
+       LEFT JOIN st_prj_element_definition AS parent_sub_prj_def_5 ON parent_sub_prj_5.DEF_ID = parent_sub_prj_def_5.ID
+       LEFT JOIN st_prj_project_element AS parent_sub_prj_6 ON (parent_sub_prj_6.ID = parent_sub_prj_5.PARENT_ID) AND (!FIND_IN_SET("shoptick.projects.simple",CONCAT_WS(",",parent_sub_prj_def_5.extension_id,parent_sub_prj_def_4.extension_id,parent_sub_prj_def_3.extension_id,parent_sub_prj_def_2.extension_id,parent_sub_prj_def.extension_id,sub_prj_def.extension_id)) OR includeSubfolders.includeSubfolders)
+       LEFT JOIN st_prj_element_definition AS parent_sub_prj_def_6 ON parent_sub_prj_6.DEF_ID = parent_sub_prj_def_6.ID       
+
+       WHERE 
+       ($P{PROJECT_ELEMENT_ID} IN (sub_prj.id,parent_sub_prj.id,parent_sub_prj_2.id,parent_sub_prj_3.id,parent_sub_prj_4.id,parent_sub_prj_5.id,parent_sub_prj_6.id))
+       AND (FIND_IN_SET(sub_prj_def.name_singular,$P{SUB_DEFS}))
+       AND !sub_prj.is_deleted
+) as sub_prj on 1
+
+LEFT JOIN st_fin_document as fsub ON (fsub.id = sub_prj.id)
+LEFT JOIN st_prj_project_element as sub_folder ON sub_folder.id = sub_prj.parent_id
+LEFT JOIN st_prj_element_definition as sub_def ON (sub_def.id = sub_prj.def_id)
+LEFT JOIN st_biz_status_option as sub_status ON (sub_prj.status_id = sub_status.id)
+left join st_fin_document_view_def as sub_view_def on sub_view_def.document_def_id = sub_prj.def_id and sub_view_def.view_name = "Financial View"
+
+LEFT JOIN -- Union st_fin_total_block_row_def with data from json 
+       ((SELECT 
+              UNHEX(HEX(JSON_UNQUOTE(JSON_EXTRACT($P{json_col}, CONCAT('$[', num, '].field_type'))))) field_type, 
+              UNHEX(HEX(JSON_UNQUOTE(JSON_EXTRACT($P{json_col}, CONCAT('$[', num, '].caption'))))) caption, 
+              UNHEX(HEX(JSON_UNQUOTE(JSON_EXTRACT($P{json_col}, CONCAT('$[', num, '].is_hidden_if_zero'))))) is_hidden_if_zero,
+              UNHEX(HEX(JSON_UNQUOTE(JSON_EXTRACT($P{json_col}, CONCAT('$[', num, '].custom_row_id'))))) custom_row_id,  
+              UNHEX(HEX(JSON_UNQUOTE(JSON_EXTRACT($P{json_col}, CONCAT('$[', num, '].ordinal'))))) ordinal,
+              'xxx' as view_def_id,
+              numbers.num as id,
+              UNHEX(HEX(JSON_UNQUOTE(JSON_EXTRACT($P{json_col}, CONCAT('$[', num, '].is_bold'))))) is_bold
+              FROM ( SELECT 
+              installed_rank-1 as num from schema_version LIMIT 10 ) numbers
+              HAVING caption IS NOT NULL) 
+              UNION ALL
+              (SELECT field_type, caption, is_hidden_if_zero, custom_row_id, ordinal, view_def_id, id, is_bold from st_fin_total_block_row_def)) 
+       as st_fin_total_block_row_def on 
+              CASE WHEN !ISNULL($P{json_col}) THEN 
+                     st_fin_total_block_row_def.view_def_id = 'xxx' ELSE sub_view_def.id = st_fin_total_block_row_def.view_def_id END
+
+LEFT JOIN st_fin_custom_document_row AS custom_row ON custom_row.id = st_fin_total_block_row_def.custom_row_id
+                     
+LEFT JOIN st_fin_custom_row_value AS crow_value ON crow_value.custom_row_id = st_fin_total_block_row_def.custom_row_id
+       AND crow_value.fin_document_id = sub_prj.id
+WHERE
+prj.id = $P{PROJECT_ELEMENT_ID}
+
+AND sub_status.status_name NOT LIKE '%Cancel%'
+
+GROUP BY st_fin_total_block_row_def.id
+
+ORDER BY ordinal ASC]]>
+		</queryString>
+		<field name="ordinal" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="ordinal"/>
+			<property name="com.jaspersoft.studio.field.label" value="ordinal"/>
+		</field>
+		<field name="caption" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="caption"/>
+			<property name="com.jaspersoft.studio.field.label" value="caption"/>
+		</field>
+		<field name="field_type" class="java.lang.String"/>
+		<field name="row_value" class="java.lang.Double">
+			<property name="com.jaspersoft.studio.field.name" value="row_value"/>
+			<property name="com.jaspersoft.studio.field.label" value="row_value"/>
+		</field>
+		<field name="discountPortion" class="java.lang.Double">
+			<property name="com.jaspersoft.studio.field.name" value="discountPortion"/>
+			<property name="com.jaspersoft.studio.field.label" value="discountPortion"/>
+		</field>
+		<field name="transient_calculation" class="java.lang.Boolean">
+			<property name="com.jaspersoft.studio.field.name" value="transient_calculation"/>
+			<property name="com.jaspersoft.studio.field.label" value="transient_calculation"/>
+		</field>
+		<field name="is_hidden_if_zero" class="java.lang.Boolean">
+			<property name="com.jaspersoft.studio.field.name" value="is_hidden_if_zero"/>
+			<property name="com.jaspersoft.studio.field.label" value="is_hidden_if_zero"/>
+		</field>
+		<field name="is_bold" class="java.lang.Boolean">
+			<property name="com.jaspersoft.studio.field.name" value="is_bold"/>
+			<property name="com.jaspersoft.studio.field.label" value="is_bold"/>
+		</field>
+	</subDataset>
+	<parameter name="reportId" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}.get("reportId")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PROJECT_ELEMENT_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["23a969c4-fb92-4428-b4c5-9491bd90974e"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CHILD_DEFS" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[OPTIONAL]]></parameterDescription>
+	</parameter>
+	<parameter name="DatePattern" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["dd/MM/yyyy"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TimePattern" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["hh:mm a"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CurrencyPattern" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\u00A3"+"#,##0.00;"+"\u00A3" +"-#,##0.00"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRINT_LINEPRICES_OVERRIDE" class="java.lang.String"/>
+	<parameter name="PRINT_SUBTOTALS_OVERRIDE" class="java.lang.String"/>
+	<parameter name="PRINT_SUBFOLDERS_OVERRIDE" class="java.lang.String"/>
+	<parameter name="PRINT_SHADING_OVERRIDE" class="java.lang.String"/>
+	<parameter name="PRINT_DISCOUNT_OVERRIDE" class="java.lang.String"/>
+	<parameter name="PRINT_ALL_FINANCIAL_OVERRIDE" class="java.lang.String"/>
+	<parameter name="CurrencyFormatter" class="java.text.NumberFormat" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.text.DecimalFormat($P{CurrencyPattern})]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRINT_LEGALESE_OVERRIDE" class="java.lang.String"/>
+	<parameter name="DateTimeFormatter" class="java.text.DateFormat" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat(($P{DatePattern} + " " + $P{TimePattern}),$P{REPORT_LOCALE}, $P{REPORT_TIME_ZONE})]]></defaultValueExpression>
+	</parameter>
+	<parameter name="json_col" class="java.lang.String"/>
+	<parameter name="DateFormatter" class="java.lang.String"/>
+	<parameter name="TimeFormatter" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[###############################################################################################################################
+######### SQUARE WAVE ELEMENT MASTER QUERY ####################################################################################
+############ DO NOT MODIFY THIS SECTION #######################################################################################
+###############################################################################################################################
+SELECT
+######### ELEMENT INFO #########
+(SELECT last_edit_date from st_biz_custom_report where id =  $P{reportId}) as reportLastEditDate,
+(SELECT report_name from st_biz_custom_report where id =  $P{reportId}) as reportName,
+IF((SELECT report_name from st_biz_custom_report where id =  $P{reportId}) LIKE '%TESTING',true,false) as reportTesting,
+prj.document_number as elementNumber,
+prj_def.has_document_number as elementHasDocumentNumber,
+prj_def.document_number_caption as elementNumberCaption,
+prj.element_name as elementName,
+prj_def.name_singular as elementDefinitionName,
+
+parent_prj.document_number as parentElementNumber,
+parent_prj_def.has_document_number as parentHasDocumentNumber,
+parent_prj_def.document_number_caption as parentElementNumberCaption,
+parent_prj.element_name as parentElementName,
+parent_prj_def.name_singular as parentElementDefinitionName,
+
+CASE
+WHEN ISNULL(prj.parent_id) THEN prj.element_name
+WHEN ISNULL(parent_prj.parent_id) THEN parent_prj.element_name
+WHEN ISNULL(parent_prj_2.parent_id) THEN parent_prj_2.element_name
+WHEN ISNULL(parent_prj_3.parent_id) THEN parent_prj_3.element_name
+WHEN ISNULL(parent_prj_4.parent_id) THEN parent_prj_4.element_name
+WHEN ISNULL(parent_prj_5.parent_id) THEN parent_prj_5.element_name
+WHEN ISNULL(parent_prj_6.parent_id) THEN parent_prj_6.element_name
+END as topLevelElementName,
+
+CASE
+WHEN ISNULL(prj.parent_id) THEN prj.document_number
+WHEN ISNULL(parent_prj.parent_id) THEN parent_prj.document_number
+WHEN ISNULL(parent_prj_2.parent_id) THEN parent_prj_2.document_number
+WHEN ISNULL(parent_prj_3.parent_id) THEN parent_prj_3.document_number
+WHEN ISNULL(parent_prj_4.parent_id) THEN parent_prj_4.element_name
+WHEN ISNULL(parent_prj_5.parent_id) THEN parent_prj_5.element_name
+WHEN ISNULL(parent_prj_6.parent_id) THEN parent_prj_6.element_name
+END as topLevelElementNumber,
+
+CASE
+WHEN ISNULL(prj.parent_id) THEN prj_def.name_singular
+WHEN ISNULL(parent_prj.parent_id) THEN parent_prj_def.name_singular
+WHEN ISNULL(parent_prj_2.parent_id) THEN parent_prj_def_2.name_singular
+WHEN ISNULL(parent_prj_3.parent_id) THEN parent_prj_def_3.name_singular
+WHEN ISNULL(parent_prj_4.parent_id) THEN parent_prj_def_4.name_singular
+WHEN ISNULL(parent_prj_5.parent_id) THEN parent_prj_def_5.name_singular
+WHEN ISNULL(parent_prj_6.parent_id) THEN parent_prj_def_6.name_singular
+END as topLevelElementDefinitionName,
+
+CASE
+WHEN ISNULL(prj.parent_id) THEN prj_def.has_document_number
+WHEN ISNULL(parent_prj.parent_id) THEN parent_prj_def.has_document_number
+WHEN ISNULL(parent_prj_2.parent_id) THEN parent_prj_def_2.has_document_number
+WHEN ISNULL(parent_prj_3.parent_id) THEN parent_prj_def_3.has_document_number
+WHEN ISNULL(parent_prj_4.parent_id) THEN parent_prj_def_4.has_document_number
+WHEN ISNULL(parent_prj_5.parent_id) THEN parent_prj_def_5.has_document_number
+WHEN ISNULL(parent_prj_6.parent_id) THEN parent_prj_def_6.has_document_number
+END as topLevelElementHasDocumentNumber,
+
+CASE
+WHEN ISNULL(prj.parent_id) THEN prj_def.document_number_caption
+WHEN ISNULL(parent_prj.parent_id) THEN parent_prj_def.document_number_caption
+WHEN ISNULL(parent_prj_2.parent_id) THEN parent_prj_def_2.document_number_caption
+WHEN ISNULL(parent_prj_3.parent_id) THEN parent_prj_def_3.document_number_caption
+WHEN ISNULL(parent_prj_4.parent_id) THEN parent_prj_def_4.document_number_caption
+WHEN ISNULL(parent_prj_5.parent_id) THEN parent_prj_def_5.document_number_caption
+WHEN ISNULL(parent_prj_6.parent_id) THEN parent_prj_def_6.document_number_caption
+END as topLevelElementNumberCaption,
+######### ELEMENT INFO #########
+
+######### CONTACT ASSOCIATIONS #########
+(SELECT name from rh_userprofile where userprofileid = prj.assigned_to_user) as assignedTo,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.venue_id) as venue,
+(SELECT company from st_crm_contact where id = prj.venue_id) as venueCompany,
+prj_def.venue_caption as venueCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.person_responsible_id) as personResponsible,
+(SELECT company from st_crm_contact where id = prj.person_responsible_id) as personResponsibleCompany,
+prj_def.person_responsible_title as personResponsibleCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.sales_person_id) as salesPerson,
+(SELECT company from st_crm_contact where id = prj.sales_person_id) as salesPersonCompany,
+prj_def.sales_person_caption as salesPersonCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.project_manager_id) as projectManager,
+(SELECT company from st_crm_contact where id = prj.project_manager_id) as projectManagerCompany,
+prj_def.project_manager_caption as projectManagerCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.event_planner_id) as eventPlanner,
+(SELECT company from st_crm_contact where id = prj.event_planner_id) as eventPlannerCompany,
+prj_def.event_planner_caption as eventPlannerCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.account_executive_id) as accountExecutive,
+(SELECT company from st_crm_contact where id = prj.account_executive_id) as accountExecutiveCompany,
+prj_def.account_executive_caption as accountExecutiveCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.technical_director_id) as technicalDirector,
+(SELECT company from st_crm_contact where id = prj.technical_director_id) as technicalDirectorCompany,
+prj_def.technical_director_caption as technicalDirectorCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.administrative_assistant_id) as administrativeAssistant,
+(SELECT company from st_crm_contact where id = prj.administrative_assistant_id) as administrativeAssistantCompany,
+prj_def.administrative_assistant_caption as administrativeAssistantCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.stage_director_id) as stageDirector,
+(SELECT company from st_crm_contact where id = prj.stage_director_id) as stageDirectorCompany,
+prj_def.stage_director_caption as stageDirectorCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.backstage_manager_id) as backstageManager,
+(SELECT company from st_crm_contact where id = prj.backstage_manager_id) as backstageManagerCompany,
+prj_def.backstage_manager_caption as backstageManagerCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.secondary_venue_id) as secondaryVenue,
+(SELECT company from st_crm_contact where id = prj.secondary_venue_id) as secondaryVenueCompany,
+prj_def.secondary_venue_caption as secondaryVenueCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.artist_id) as artist,
+(SELECT company from st_crm_contact where id = prj.artist_id) as artistCompany,
+prj_def.artist_caption as artistCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.secondary_client_id) as secondaryClient,
+(SELECT company from st_crm_contact where id = prj.secondary_client_id) as secondaryClientCompany,
+prj_def.secondary_client_caption as secondaryClientCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.vendor_id) as vendor,
+(SELECT company from st_crm_contact where id = prj.vendor_id) as vendorCompany,
+prj_def.vendor_caption as vendorCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.secondary_bill_to_id) as secondaryBillTo,
+(SELECT company from st_crm_contact where id = prj.secondary_bill_to_id) as secondaryBillToCompany,
+prj_def.secondary_bill_to_caption as secondaryBillToCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.bill_to_id) as billTo,
+(SELECT company from st_crm_contact where id = prj.bill_to_id) as billToCompany,
+prj_def.bill_to_caption as billToCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.client_id) as `client`,
+(SELECT company from st_crm_contact where id = prj.client_id) as clientCompany,
+prj_def.client_caption as clientCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.return_location_id) as returnLocation,
+(SELECT company from st_crm_contact where id = prj.return_location_id) as returnLocationCompany,
+prj_def.return_location_caption as returnLocationCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.pickup_location_id) as pickupLocation,
+(SELECT company from st_crm_contact where id = prj.pickup_location_id) as pickupLocationCompany,
+prj_def.pickup_location_caption as pickupLocationCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.sec_location_id) as secondaryLocation,
+(SELECT company from st_crm_contact where id = prj.sec_location_id) as secondaryLocationCompany,
+prj_def.sec_location_caption as secondaryLocationCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.custom_one_contact_id) as customContactOne,
+(SELECT company from st_crm_contact where id = prj.custom_one_contact_id) as customContactOneCompany,
+prj_def.custom_one_contact_caption as customContactOneCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.custom_two_contact_id) as customContactTwo,
+(SELECT company from st_crm_contact where id = prj.custom_two_contact_id) as customContactTwoCompany,
+prj_def.custom_two_contact_caption as customContactTwoCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.custom_three_contact_id) as customContactThree,
+(SELECT company from st_crm_contact where id = prj.custom_three_contact_id) as customContactThreeCompany,
+prj_def.custom_three_contact_caption as customContactThreeCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id=bizLoc.id) as businessLocationName,
+prj_def.location_caption as businessLocationCaption,
+######### CONTACT ASSOCIATIONS #########
+
+######### PROJECT ELEMENT USER FIELDS #########
+custom_fields.storage_string_1 as userFieldOne,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 1) as userFieldOneType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 1) as userFieldOneCaption,
+custom_fields.storage_string_2 as userFieldTwo,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 2) as userFieldTwoType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 2) as userFieldTwoCaption,
+custom_fields.storage_string_3 as userFieldThree,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 3) as userFieldThreeType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 3) as userFieldThreeCaption,
+custom_fields.storage_string_4 as userFieldFour,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 4) as userFieldFourType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 4) as userFieldFourCaption,
+custom_fields.storage_string_5 as userFieldFive,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 5) as userFieldFiveType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 5) as userFieldFiveCaption,
+custom_fields.storage_string_6 as userFieldSix,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 6) as userFieldSixType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 6) as userFieldSixCaption,
+custom_fields.storage_string_7 as userFieldSeven,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 7) as userFieldSevenType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 7) as userFieldSevenCaption,
+custom_fields.storage_string_8 as userFieldEight,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 8) as userFieldEightType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 8) as userFieldEightCaption,
+custom_fields.storage_string_9 as userFieldNine,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 9) as userFieldNineType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 9) as userFieldNineCaption,
+custom_fields.storage_string_10 as userFieldTen,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 10) as userFieldTenType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 10) as userFieldTenCaption,
+######### PROJECT ELEMENT USER FIELDS #########
+
+#### ELEMENT DATES #####
+prj.due_date as dueDate,
+prj.prepared_date as preparedDate,
+prj.planned_start_date as plannedStartDate,
+prj.planned_end_date as plannedEndDate,
+prj.show_start as showStart,
+prj.show_end as showEnd,
+prj.load_in_date as loadInDate,
+prj.load_out_date as loadOutDate,
+prj.rehearsal_date as rehearsalDate,
+prj_def.planned_start_date_caption as plannedStartDateCaption,
+prj_def.planned_end_date_caption as plannedEndDateCaption,
+prj.event_date as eventDate,
+prj.doors_time as doorsDate,
+prj.deposit_due_date as depositDueDate,
+now() as generatedDate,
+prj.last_edit_date as lastEditDate,
+prj.created_by_date as createdByDate,
+#### ELEMENT DATES #####
+
+#### HEADER INFO #####
+(SELECT status.status_name from st_biz_status_option status where prj.status_id = status.id) as statusName,
+(SELECT status.probability_percent from st_biz_status_option status where prj.status_id = status.id) as statusProbability,
+(SELECT dept.dept_name from st_biz_department dept where prj.department_id = dept.id) as department,
+shipping_method.method_name as shippingMethodName,
+return_method.method_name as returnMethodName,
+prj.deposit as depositAmount,
+prj.deposit_percentage as depositPercentage,
+(SELECT curr.currency_name from st_biz_currency as curr where curr.id=prj.currency_id) as currencyName,
+prj.customer_po as customerPO,
+CASE WHEN prj.is_print_notes THEN prj.notes ELSE NULL END as elementNotes,
+(SELECT name from rh_userprofile where userprofileid = prj.last_edit_user) as lastEditUser,
+(SELECT name from rh_userprofile where userprofileid = prj.created_by_user) as createdByUser,
+bizLoc.time_zone as timeZone,
+#### HEADER INFO #####
+
+######## CORP INFO ########
+(SELECT rh_images.blobhandle
+	FROM rh_images
+	WHERE rh_images.caption LIKE "BE Logo") AS logoImageBlob,
+corp.duns_number as dunsNumber,
+
+corp.company_name as corpIdentCompany,
+corp.web_site as corpIdentWebsite,
+corpHqLocDefEmail.address_url as corpIdentEmail,
+corpHqLocPh.dial_number as corpIdentPhoneNumber,
+CONCAT(
+	IF(TRIM(IFNULL(corpHqLocAddr.line1, '')) > '',concat(corpHqLocAddr.line1,'\n'),''),
+	IF(TRIM(IFNULL(corpHqLocAddr.line2, '')) > '',concat(corpHqLocAddr.line2,'\n'),''),
+	IF(TRIM(IFNULL(corpHqLocAddr.line3, '')) > '',concat(corpHqLocAddr.line3,'\n'),''),
+	IF(TRIM(IFNULL(corpHqLocAddr.city, '')) > '',concat(corpHqLocAddr.city,', '),''),
+	IF(TRIM(IFNULL(corpHqLocAddr.state_or_province, '')) > '',concat(corpHqLocAddr.state_or_province,' '),''),
+	IF(TRIM(IFNULL(corpHqLocAddr.postal_code, '')) > '',corpHqLocAddr.postal_code,'')
+) as corpHqLocAddressString,
+
+-- businessLocationName in CONTACT ASSOCIATIONS
+(SELECT address_url from st_biz_loc_inet_addr WHERE address_name = 'Website' and prj.location_id = st_biz_loc_inet_addr.location_id limit 1) as businessLocationWebsite,
+(SELECT address_url from st_biz_loc_inet_addr WHERE address_name = 'Email' and prj.location_id = st_biz_loc_inet_addr.location_id limit 1) as businessLocationEmail,
+bizLocPh.dial_number as businessLocationPhoneNumber,
+CONCAT(
+	IF(TRIM(IFNULL(bizLocAddr.line1, '')) > '',concat(bizLocAddr.line1,'\n'),''),
+	IF(TRIM(IFNULL(bizLocAddr.line2, '')) > '',concat(bizLocAddr.line2,'\n'),''),
+	IF(TRIM(IFNULL(bizLocAddr.line3, '')) > '',concat(bizLocAddr.line3,'\n'),''),
+	IF(TRIM(IFNULL(bizLocAddr.city, '')) > '',concat(bizLocAddr.city,', '),''),
+	IF(TRIM(IFNULL(bizLocAddr.state_or_province, '')) > '',concat(bizLocAddr.state_or_province,' '),''),
+	IF(TRIM(IFNULL(bizLocAddr.postal_code, '')) > '',bizLocAddr.postal_code,'')
+) as businessLocationAddressString,
+
+parentCorp.company_name as parenEntityCompany,
+parentCorp.web_site as parentEntityWebsite,
+parentCorpHqLocDefEmail.address_url as parentEntityEmail,
+parentCorpHqLocDefPhone.dial_number as parentEntityPhoneNumber,
+CONCAT(
+	IF(TRIM(IFNULL(parentCorpHqLocAddr.line1, '')) > '',concat(parentCorpHqLocAddr.line1,'\n'),''),
+	IF(TRIM(IFNULL(parentCorpHqLocAddr.line2, '')) > '',concat(parentCorpHqLocAddr.line2,'\n'),''),
+	IF(TRIM(IFNULL(parentCorpHqLocAddr.line3, '')) > '',concat(parentCorpHqLocAddr.line3,'\n'),''),
+	IF(TRIM(IFNULL(parentCorpHqLocAddr.city, '')) > '',concat(parentCorpHqLocAddr.city,', '),''),
+	IF(TRIM(IFNULL(parentCorpHqLocAddr.state_or_province, '')) > '',concat(parentCorpHqLocAddr.state_or_province,' '),''),
+	IF(TRIM(IFNULL(parentCorpHqLocAddr.postal_code, '')) > '',parentCorpHqLocAddr.postal_code,'')
+) as parentEntityAddressString,
+######## CORP INFO ########
+###############################################################################################################################
+######### END SQUARE WAVE ELEMENT MASTER QUERY ################################################################################
+###############################################################################################################################
+
+
+
+
+######### EVENT FOLDER ADDRESS BLOCKS #########
+CONCAT(
+	IF(TRIM(IFNULL(leftContact.COMPANY, '')) > '',concat(leftContact.COMPANY,'\n'),''),
+	IF(TRIM(IFNULL(leftContact.FIRST_NAME, '')) > '' or TRIM(IFNULL(leftContact.LAST_NAME, '')) > '',concat(leftContact.FIRST_NAME,' ',leftContact.LAST_NAME,'\n'),''),
+	IF(TRIM(IFNULL(leftContact_addr.line1, '')) > '',concat(leftContact_addr.line1,'\n'),''),
+	IF(TRIM(IFNULL(leftContact_addr.line2, '')) > '',concat(leftContact_addr.line2,'\n'),''),
+	IF(TRIM(IFNULL(leftContact_addr.line3, '')) > '',concat(leftContact_addr.line3,'\n'),''),
+	IF(TRIM(IFNULL(leftContact_addr.city, '')) > '',concat(leftContact_addr.city,', '),''),
+	IF(TRIM(IFNULL(leftContact_addr.state_or_province, '')) > '',concat(leftContact_addr.state_or_province,' '),''),
+	IF(TRIM(IFNULL(leftContact_addr.postal_code, '')) > '',leftContact_addr.postal_code,''),
+	IF(TRIM(IFNULL(leftContact_mob.dial_number, '')) > '',CONCAT('\nMobile: ',leftContact_mob.dial_number),''),
+	IF(TRIM(IFNULL(leftContact_ph.dial_number, '')) > '',CONCAT('\nPhone: ',leftContact_ph.dial_number),''),
+	IF(TRIM(IFNULL(leftContact_email.address_url, '')) > '',CONCAT('\n',leftContact_email.address_url),'')
+) as leftAddressBlock,
+(SELECT
+	address_source
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.left_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1) as leftAddressBlockSource,
+(SELECT
+	account_number
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.left_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1) as leftAddressBlockCaption,
+
+CONCAT(
+	IF(TRIM(IFNULL(centerContact.COMPANY, '')) > '',concat(centerContact.COMPANY,'\n'),''),
+	IF(TRIM(IFNULL(centerContact.FIRST_NAME, '')) > '' or TRIM(IFNULL(centerContact.LAST_NAME, '')) > '',concat(centerContact.FIRST_NAME,' ',centerContact.LAST_NAME,'\n'),''),
+	IF(TRIM(IFNULL(centerContact_addr.line1, '')) > '',concat(centerContact_addr.line1,'\n'),''),
+	IF(TRIM(IFNULL(centerContact_addr.line2, '')) > '',concat(centerContact_addr.line2,'\n'),''),
+	IF(TRIM(IFNULL(centerContact_addr.line3, '')) > '',concat(centerContact_addr.line3,'\n'),''),
+	IF(TRIM(IFNULL(centerContact_addr.city, '')) > '',concat(centerContact_addr.city,', '),''),
+	IF(TRIM(IFNULL(centerContact_addr.state_or_province, '')) > '',concat(centerContact_addr.state_or_province,' '),''),
+	IF(TRIM(IFNULL(centerContact_addr.postal_code, '')) > '',centerContact_addr.postal_code,''),
+	IF(TRIM(IFNULL(centerContact_mob.dial_number, '')) > '',CONCAT('\nMobile: ',centerContact_mob.dial_number),''),
+	IF(TRIM(IFNULL(centerContact_ph.dial_number, '')) > '',CONCAT('\nPhone: ',centerContact_ph.dial_number),''),
+	IF(TRIM(IFNULL(centerContact_email.address_url, '')) > '',CONCAT('\n',centerContact_email.address_url),'')
+) as centerAddressBlock,
+(SELECT
+	address_source
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.center_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1) as centerAddressBlockSource,
+(SELECT
+	account_number
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.center_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1) as centerAddressBlockCaption,
+
+CONCAT(
+	IF(TRIM(IFNULL(rightContact.COMPANY, '')) > '',concat(rightContact.COMPANY,'\n'),''),
+	IF(TRIM(IFNULL(rightContact.FIRST_NAME, '')) > '' or TRIM(IFNULL(rightContact.LAST_NAME, '')) > '',concat(rightContact.FIRST_NAME,' ',rightContact.LAST_NAME,'\n'),''),
+	IF(TRIM(IFNULL(rightContact_addr.line1, '')) > '',concat(rightContact_addr.line1,'\n'),''),
+	IF(TRIM(IFNULL(rightContact_addr.line2, '')) > '',concat(rightContact_addr.line2,'\n'),''),
+	IF(TRIM(IFNULL(rightContact_addr.line3, '')) > '',concat(rightContact_addr.line3,'\n'),''),
+	IF(TRIM(IFNULL(rightContact_addr.city, '')) > '',concat(rightContact_addr.city,', '),''),
+	IF(TRIM(IFNULL(rightContact_addr.state_or_province, '')) > '',concat(rightContact_addr.state_or_province,' '),''),
+	IF(TRIM(IFNULL(rightContact_addr.postal_code, '')) > '',rightContact_addr.postal_code,''),
+	IF(TRIM(IFNULL(rightContact_mob.dial_number, '')) > '',CONCAT('\nMobile: ',rightContact_mob.dial_number),''),
+	IF(TRIM(IFNULL(rightContact_ph.dial_number, '')) > '',CONCAT('\nPhone: ',rightContact_ph.dial_number),''),
+	IF(TRIM(IFNULL(rightContact_email.address_url, '')) > '',CONCAT('\n',rightContact_email.address_url),'')
+) as rightAddressBlock,
+(SELECT
+	address_source
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.right_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1) as rightAddressBlockSource,
+(SELECT
+	account_number
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.right_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1) as rightAddressBlockCaption,
+######### EVENT FOLDER ADDRESS BLOCKS #########
+
+######### CHILD ELEMENT INFO #########
+child_view_def.legalese,
+child.document_number as childElementNumber,
+child.element_name as childElementName,
+child_folder.id as childFolderId,
+child_folder.document_number as childFolderNumber,
+child_folder.element_name as childFolderName,
+fchild.total_price_without_sales_tax as totalExTax,
+fchild.sales_tax as salesTax,
+fchild.total_price as totalIncTax,
+child.deposit as childDeposit,
+child.deposit_due_date as childDepositDue,
+fchild.discountable_price AS beforeDiscount,
+fchild.price_subtotal AS afterDiscount,
+fchild.price_discount AS discount,
+(SELECT job_title from st_crm_contact where id = prj.client_id) as signatureTitle,
+child_def.has_document_number AS child_has_document_number,
+terms.term_name as termName,
+######### CHILD ELEMENT INFO #########
+
+# PRINT OPTIONS
+
+IFNULL((SELECT IF( ((cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'true') 
+OR (!(cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'false'),true,false)
+FROM st_biz_custom_field_def as cf_def 
+left join st_prj_element_custom_field_element_defs on st_prj_element_custom_field_element_defs.custom_field_def_id = cf_def.id
+left join st_prj_project_element on st_prj_project_element.def_id = st_prj_element_custom_field_element_defs.element_def_id
+left JOIN st_biz_custom_field_value as biz_cf_value ON (cf_def.id = biz_cf_value.custom_field_def_id AND (SELECT id from st_prj_element_custom_field_value where proj_element_id=st_prj_project_element.id and id = biz_cf_value.id) = biz_cf_value.id)
+WHERE st_prj_project_element.id=prj.id
+AND cf_def.field_id='toggle_lineprices'),TRUE) as PRINT_LINEPRICES,
+
+IFNULL((SELECT IF( ((cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'true') 
+OR (!(cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'false'),true,false)
+FROM st_biz_custom_field_def as cf_def 
+left join st_prj_element_custom_field_element_defs on st_prj_element_custom_field_element_defs.custom_field_def_id = cf_def.id
+left join st_prj_project_element on st_prj_project_element.def_id = st_prj_element_custom_field_element_defs.element_def_id
+left JOIN st_biz_custom_field_value as biz_cf_value ON (cf_def.id = biz_cf_value.custom_field_def_id AND (SELECT id from st_prj_element_custom_field_value where proj_element_id=st_prj_project_element.id and id = biz_cf_value.id) = biz_cf_value.id)
+WHERE st_prj_project_element.id=prj.id
+AND cf_def.field_id='toggle_subtotals'),TRUE) as PRINT_SUBTOTALS,
+
+IFNULL((SELECT IF( ((cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'true') 
+OR (!(cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'false'),true,false)
+FROM st_biz_custom_field_def as cf_def 
+left join st_prj_element_custom_field_element_defs on st_prj_element_custom_field_element_defs.custom_field_def_id = cf_def.id
+left join st_prj_project_element on st_prj_project_element.def_id = st_prj_element_custom_field_element_defs.element_def_id
+left JOIN st_biz_custom_field_value as biz_cf_value ON (cf_def.id = biz_cf_value.custom_field_def_id AND (SELECT id from st_prj_element_custom_field_value where proj_element_id=st_prj_project_element.id and id = biz_cf_value.id) = biz_cf_value.id)
+WHERE st_prj_project_element.id=prj.id
+AND cf_def.field_id='toggle_subfolders'),TRUE) as PRINT_SUBFOLDERS,
+
+IFNULL((SELECT IF( ((cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'true') 
+OR (!(cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'false'),true,false)
+FROM st_biz_custom_field_def as cf_def 
+left join st_prj_element_custom_field_element_defs on st_prj_element_custom_field_element_defs.custom_field_def_id = cf_def.id
+left join st_prj_project_element on st_prj_project_element.def_id = st_prj_element_custom_field_element_defs.element_def_id
+left JOIN st_biz_custom_field_value as biz_cf_value ON (cf_def.id = biz_cf_value.custom_field_def_id AND (SELECT id from st_prj_element_custom_field_value where proj_element_id=st_prj_project_element.id and id = biz_cf_value.id) = biz_cf_value.id)
+WHERE st_prj_project_element.id=prj.id
+AND cf_def.field_id='toggle_shading'),TRUE) as PRINT_SHADING,
+
+IFNULL((SELECT IF( ((cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'true') 
+OR (!(cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'false'),true,false)
+FROM st_biz_custom_field_def as cf_def 
+left join st_prj_element_custom_field_element_defs on st_prj_element_custom_field_element_defs.custom_field_def_id = cf_def.id
+left join st_prj_project_element on st_prj_project_element.def_id = st_prj_element_custom_field_element_defs.element_def_id
+left JOIN st_biz_custom_field_value as biz_cf_value ON (cf_def.id = biz_cf_value.custom_field_def_id AND (SELECT id from st_prj_element_custom_field_value where proj_element_id=st_prj_project_element.id and id = biz_cf_value.id) = biz_cf_value.id)
+WHERE st_prj_project_element.id=prj.id
+AND cf_def.field_id='toggle_discount'),TRUE) as PRINT_DISCOUNT,
+
+IFNULL((SELECT IF( ((cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'true') 
+OR (!(cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'false'),true,false)
+FROM st_biz_custom_field_def as cf_def 
+left join st_prj_element_custom_field_element_defs on st_prj_element_custom_field_element_defs.custom_field_def_id = cf_def.id
+left join st_prj_project_element on st_prj_project_element.def_id = st_prj_element_custom_field_element_defs.element_def_id
+left JOIN st_biz_custom_field_value as biz_cf_value ON (cf_def.id = biz_cf_value.custom_field_def_id AND (SELECT id from st_prj_element_custom_field_value where proj_element_id=st_prj_project_element.id and id = biz_cf_value.id) = biz_cf_value.id)
+WHERE st_prj_project_element.id=prj.id
+AND cf_def.field_id='toggle_legalese'),TRUE) as PRINT_LEGALESE,
+
+IFNULL((SELECT IF( ((cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'true') 
+OR (!(cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'false'),true,false)
+FROM st_biz_custom_field_def as cf_def 
+left join st_prj_element_custom_field_element_defs on st_prj_element_custom_field_element_defs.custom_field_def_id = cf_def.id
+left join st_prj_project_element on st_prj_project_element.def_id = st_prj_element_custom_field_element_defs.element_def_id
+left JOIN st_biz_custom_field_value as biz_cf_value ON (cf_def.id = biz_cf_value.custom_field_def_id AND (SELECT id from st_prj_element_custom_field_value where proj_element_id=st_prj_project_element.id and id = biz_cf_value.id) = biz_cf_value.id)
+WHERE st_prj_project_element.id=prj.id
+AND cf_def.field_id='toggle_all_financial'),TRUE) as PRINT_ALL_FINANCIAL
+
+
+###############################################################################################################################
+######### SQUARE WAVE ELEMENT MASTER QUERY ####################################################################################
+############ DO NOT MODIFY THIS SECTION #######################################################################################
+###############################################################################################################################
+FROM st_prj_project_element as prj
+LEFT JOIN st_prj_element_definition AS prj_def ON (prj.DEF_ID = prj_def.ID)
+LEFT JOIN st_prj_project_element AS parent_prj ON (parent_prj.ID = prj.PARENT_ID)
+LEFT JOIN st_prj_element_definition AS parent_prj_def ON parent_prj.DEF_ID = parent_prj_def.ID
+LEFT JOIN st_prj_project_element AS parent_prj_2 ON (parent_prj_2.ID = parent_prj.PARENT_ID)
+LEFT JOIN st_prj_element_definition AS parent_prj_def_2 ON parent_prj_2.DEF_ID = parent_prj_def_2.ID
+LEFT JOIN st_prj_project_element AS parent_prj_3 ON (parent_prj_3.ID = parent_prj_2.PARENT_ID)
+LEFT JOIN st_prj_element_definition AS parent_prj_def_3 ON parent_prj_3.DEF_ID = parent_prj_def_3.ID
+LEFT JOIN st_prj_project_element AS parent_prj_4 ON (parent_prj_4.ID = parent_prj_3.PARENT_ID)
+LEFT JOIN st_prj_element_definition AS parent_prj_def_4 ON parent_prj_4.DEF_ID = parent_prj_def_4.ID
+LEFT JOIN st_prj_project_element AS parent_prj_5 ON (parent_prj_5.ID = parent_prj_4.PARENT_ID)
+LEFT JOIN st_prj_element_definition AS parent_prj_def_5 ON parent_prj_5.DEF_ID = parent_prj_def_5.ID
+LEFT JOIN st_prj_project_element AS parent_prj_6 ON (parent_prj_6.ID = parent_prj_5.PARENT_ID)
+LEFT JOIN st_prj_element_definition AS parent_prj_def_6 ON parent_prj_6.DEF_ID = parent_prj_def_6.ID
+LEFT JOIN st_biz_shipping_method as shipping_method on shipping_method.id = prj.shipping_method_id
+LEFT JOIN st_biz_shipping_method as return_method  on return_method.id = prj.return_method_id
+######### Corp Header Info #########
+LEFT JOIN st_biz_corp_identity as corp on corp.id = IFNULL(prj.corp_identity_id,(SELECT id from st_biz_corp_identity where is_hq)) -- Corp Identity of current project element
+LEFT JOIN st_biz_location as corpHqLoc on corp.hq_location_id = corpHqLoc.id -- HQ of corporate identity of current element
+LEFT JOIN st_biz_loc_address as corpHqLocAddr ON (corpHqLoc.def_ship_id = corpHqLocAddr.id) -- address for HQ for given corporate identity
+LEFT JOIN st_biz_loc_phone as corpHqLocPh ON (corpHqLoc.DEF_PHONE_ID = corpHqLocPh.ID) -- phone number for HQ of corporate identity of current element
+LEFT JOIN st_biz_loc_inet_addr as corpHqLocDefEmail ON (corpHqLoc.def_email_id = corpHqLocDefEmail.id) --  email for HQ of corporate identity of current element
+LEFT JOIN rh_images AS corplogo ON corplogo.imageid = IFNULL(corp.logo_id,corpHqLoc.document_image_id)
+LEFT JOIN st_biz_location as bizLoc ON (prj.location_id = bizLoc.id) -- Business Location (Warehouse of current project element )
+LEFT JOIN st_biz_loc_phone as bizLocPh ON (bizLoc.DEF_PHONE_ID = bizLocPh.ID) -- Business location phone number for current project element
+LEFT JOIN st_biz_loc_address as bizLocAddr ON (bizLoc.DEF_MAIL_ID = bizLocAddr.id) -- Business location address for current project element
+LEFT JOIN st_biz_corp_identity as parentCorp ON (parentCorp.is_hq) -- corporate identity that is marked as "Parent Entity"
+LEFT JOIN st_biz_location as parentCorpHqLoc on parentCorp.hq_location_id = parentCorpHqLoc.id -- Hq location of the corporate identity marked as "Parent Entity"
+LEFT JOIN st_biz_loc_address as parentCorpHqLocAddr ON (parentCorpHqLoc.def_ship_id = parentCorpHqLocAddr.id) -- address for HQ for given corporate identity
+LEFT JOIN st_biz_loc_inet_addr as parentCorpHqLocDefEmail ON (parentCorpHqLoc.def_email_id = parentCorpHqLocDefEmail.id) -- default email for the Hq location of the corporate identity marked as "Parent Entity"
+LEFT JOIN st_biz_loc_phone as parentCorpHqLocDefPhone ON (parentCorpHqLoc.def_phone_id = parentCorpHqLocDefPhone.id) -- default phone number for the Hq location of the corporate identity marked as "Parent Entity"
+######### Corp Header Info #########
+######### Project Element Custom Fields #########
+left join (SELECT 
+GROUP_CONCAT(CASE WHEN ordinal = 1 THEN storage_string ELSE NULL END) as storage_string_1,
+GROUP_CONCAT(CASE WHEN ordinal = 2 THEN storage_string ELSE NULL END) as storage_string_2,
+GROUP_CONCAT(CASE WHEN ordinal = 3 THEN storage_string ELSE NULL END) as storage_string_3,
+GROUP_CONCAT(CASE WHEN ordinal = 4 THEN storage_string ELSE NULL END) as storage_string_4,
+GROUP_CONCAT(CASE WHEN ordinal = 5 THEN storage_string ELSE NULL END) as storage_string_5,
+GROUP_CONCAT(CASE WHEN ordinal = 6 THEN storage_string ELSE NULL END) as storage_string_6,
+GROUP_CONCAT(CASE WHEN ordinal = 7 THEN storage_string ELSE NULL END) as storage_string_7,
+GROUP_CONCAT(CASE WHEN ordinal = 8 THEN storage_string ELSE NULL END) as storage_string_8,
+GROUP_CONCAT(CASE WHEN ordinal = 9 THEN storage_string ELSE NULL END) as storage_string_9,
+GROUP_CONCAT(CASE WHEN ordinal = 10 THEN storage_string ELSE NULL END) as storage_string_10,
+element_id
+FROM(SELECT CASE
+WHEN prj_def_cf.field_type IN ('timestamp','date') THEN CAST(from_unixtime(storage_string/1000) as DATETIME)
+WHEN prj_def_cf.field_type IN ('location','contact','employee','inventory') THEN (SELECT resource_name from st_biz_managed_resource where id = storage_string)
+WHEN prj_def_cf.field_type = 'calendarTemplate' THEN (SELECT group_name from st_prj_calendar_template where id = storage_string)
+WHEN prj_def_cf.field_type = 'currency' THEN (SELECT currency_name from st_biz_currency where id = storage_string)
+WHEN prj_def_cf.field_type IN ('customReport','instance-report') THEN (SELECT report_name from st_biz_custom_report where id = storage_string)
+WHEN prj_def_cf.field_type IN ('element-definition','document-definition') THEN (SELECT name_singular from st_prj_element_definition where id = storage_string)
+WHEN prj_def_cf.field_type IN ('statusOption','definitionStatusOption') THEN (SELECT status_name from st_biz_status_option where id = storage_string)
+WHEN prj_def_cf.field_type = 'inventory-group' THEN (SELECT group_name from st_ivt_inventory_group where id = storage_string)
+WHEN prj_def_cf.field_type = 'scheduledInventoryCount' THEN (SELECT count_name from st_ivt_inventory_count where id = storage_string)
+WHEN prj_def_cf.field_type IN ('stockTypes','serviceResourceType') THEN (SELECT resource_name from st_biz_resource_type where id = storage_string)
+WHEN prj_def_cf.field_type = 'terms-conditions' THEN (SELECT content from st_biz_terms_conditions where id = storage_string)
+WHEN prj_def_cf.field_type = 'pricingModel' THEN (SELECT name from st_biz_pricing_model where id = storage_string)
+WHEN prj_def_cf.field_type = 'user-id' THEN (SELECT name from rh_userprofile where userprofileid = storage_string)
+WHEN prj_def_cf.field_type = 'option-list' THEN (SELECT caption from st_prj_project_element_def_custom_field_list_options where id = storage_string)
+ELSE storage_string END as storage_string, element_id, ordinal, prj_def_cf.field_type, prj_def_cf.caption FROM st_prj_project_element_def_custom_field_value as prj_def_cf_value
+left join st_prj_project_element_def_custom_field as prj_def_cf on prj_def_cf.id = prj_def_cf_value.custom_field_id) custom_fields GROUP BY element_id) as custom_fields on custom_fields.element_id = prj.id
+######### Project Element Custom Fields #########
+###############################################################################################################################
+######### END SQUARE WAVE ELEMENT MASTER QUERY ################################################################################
+###############################################################################################################################
+
+######### Event Folder Address Lookup #########
+left join st_crm_contact as leftContact on leftContact.id = (SELECT
+	CASE 
+	WHEN (address_source) LIKE 'client%' THEN prj.client_id
+	WHEN (address_source) LIKE 'billTo%' THEN prj.bill_to_id
+	WHEN (address_source) LIKE 'personResponsible%' THEN prj.person_responsible_id
+	WHEN (address_source) LIKE 'location%' THEN prj.location_id
+	WHEN (address_source) LIKE 'pickupLocation%' THEN prj.pickup_location_id
+	WHEN (address_source) LIKE 'returnLocation%' THEN prj.return_location_id
+	WHEN (address_source) LIKE 'secondaryLocation%' THEN prj.sec_location_id
+	WHEN (address_source) LIKE 'venue%' THEN prj.venue_id
+	WHEN (address_source) LIKE 'secondaryVenue%' THEN prj.secondary_venue_id
+	WHEN (address_source) LIKE 'secondaryclient%' THEN prj.secondary_client_id
+	WHEN (address_source) LIKE 'secondaryBillTo%' THEN prj.secondary_bill_to_id
+	WHEN (address_source) LIKE 'customOneContact%' THEN prj.custom_one_contact_id
+	WHEN (address_source) LIKE 'customTwoContact%' THEN prj.custom_two_contact_id
+	WHEN (address_source) LIKE 'customThreeContact%' THEN prj.custom_three_contact_id
+	WHEN (address_source) LIKE 'vendor%' THEN prj.vendor_id
+	END as leftBlockSource
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.left_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
+left join st_crm_address as leftContact_addr on leftContact_addr.id = (SELECT
+	CASE 
+	WHEN (address_source) LIKE '%Ship' THEN leftContact.def_ship_id
+	ELSE leftContact.def_mail_id
+	END
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.left_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
+
+left join st_crm_phone as leftContact_ph on leftContact_ph.id = leftContact.def_phone_id
+left join st_crm_phone as leftContact_mob on leftContact_mob.id = (SELECT st_crm_phone.id from st_crm_phone where phone_name LIKE 'Mobile%' and contact_id = leftContact.id LIMIT 1)
+left join st_crm_inet_addr as leftContact_email on leftContact_email.id = leftContact.def_email_id
+
+left join st_crm_contact as centerContact on centerContact.id = (SELECT
+	CASE 
+	WHEN (address_source) LIKE 'client%' THEN prj.client_id
+	WHEN (address_source) LIKE 'billTo%' THEN prj.bill_to_id
+	WHEN (address_source) LIKE 'personResponsible%' THEN prj.person_responsible_id
+	WHEN (address_source) LIKE 'location%' THEN prj.location_id
+	WHEN (address_source) LIKE 'pickupLocation%' THEN prj.pickup_location_id
+	WHEN (address_source) LIKE 'returnLocation%' THEN prj.return_location_id
+	WHEN (address_source) LIKE 'secondaryLocation%' THEN prj.sec_location_id
+	WHEN (address_source) LIKE 'venue%' THEN prj.venue_id
+	WHEN (address_source) LIKE 'secondaryVenue%' THEN prj.secondary_venue_id
+	WHEN (address_source) LIKE 'secondaryclient%' THEN prj.secondary_client_id
+	WHEN (address_source) LIKE 'secondaryBillTo%' THEN prj.secondary_bill_to_id
+	WHEN (address_source) LIKE 'customOneContact%' THEN prj.custom_one_contact_id
+	WHEN (address_source) LIKE 'customTwoContact%' THEN prj.custom_two_contact_id
+	WHEN (address_source) LIKE 'customThreeContact%' THEN prj.custom_three_contact_id
+	WHEN (address_source) LIKE 'vendor%' THEN prj.vendor_id
+	END as centerBlockSource
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.center_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
+left join st_crm_address as centerContact_addr on centerContact_addr.id = (SELECT
+	CASE 
+	WHEN (address_source) LIKE '%Ship' THEN centerContact.def_ship_id
+	ELSE centerContact.def_mail_id
+	END
+	FROM st_fin_address_block_def
+	left join st_fin_document_def on st_fin_document_def.center_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
+left join st_crm_phone as centerContact_ph on centerContact_ph.id = centerContact.def_phone_id
+left join st_crm_phone as centerContact_mob on centerContact_mob.id = (SELECT st_crm_phone.id from st_crm_phone where phone_name LIKE 'Mobile%' and contact_id = centerContact.id LIMIT 1)
+left join st_crm_inet_addr as centerContact_email on centerContact_email.id = centerContact.def_email_id
+
+left join st_crm_contact as rightContact on rightContact.id = (SELECT
+	CASE 
+	WHEN (address_source) LIKE 'client%' THEN prj.client_id
+	WHEN (address_source) LIKE 'billTo%' THEN prj.bill_to_id
+	WHEN (address_source) LIKE 'personResponsible%' THEN prj.person_responsible_id
+	WHEN (address_source) LIKE 'location%' THEN prj.location_id
+	WHEN (address_source) LIKE 'pickupLocation%' THEN prj.pickup_location_id
+	WHEN (address_source) LIKE 'returnLocation%' THEN prj.return_location_id
+	WHEN (address_source) LIKE 'secondaryLocation%' THEN prj.sec_location_id
+	WHEN (address_source) LIKE 'venue%' THEN prj.venue_id
+	WHEN (address_source) LIKE 'secondaryVenue%' THEN prj.secondary_venue_id
+	WHEN (address_source) LIKE 'secondaryclient%' THEN prj.secondary_client_id
+	WHEN (address_source) LIKE 'secondaryBillTo%' THEN prj.secondary_bill_to_id
+	WHEN (address_source) LIKE 'customOneContact%' THEN prj.custom_one_contact_id
+	WHEN (address_source) LIKE 'customTwoContact%' THEN prj.custom_two_contact_id
+	WHEN (address_source) LIKE 'customThreeContact%' THEN prj.custom_three_contact_id
+	WHEN (address_source) LIKE 'vendor%' THEN prj.vendor_id
+	END as rightBlockSource
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.right_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
+left join st_crm_address as rightContact_addr on rightContact_addr.id = (SELECT
+	CASE 
+	WHEN (address_source) LIKE '%Ship' THEN rightContact.def_ship_id
+	ELSE rightContact.def_mail_id
+	END
+	FROM st_fin_address_block_def
+	left join st_fin_document_def on st_fin_document_def.center_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
+left join st_crm_phone as rightContact_ph on rightContact_ph.id = rightContact.def_phone_id
+left join st_crm_phone as rightContact_mob on rightContact_mob.id = (SELECT st_crm_phone.id from st_crm_phone where phone_name LIKE 'Mobile%' and contact_id = rightContact.id LIMIT 1)
+left join st_crm_inet_addr as rightContact_email on rightContact_email.id = rightContact.def_email_id
+######### Event Folder Address Lookup #########
+
+######### Child Elements Lookup #########
+LEFT JOIN (
+	SELECT 
+	child_prj.id,
+	CASE WHEN child_prj.PARENT_ID IS NULL
+			THEN lpad(child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = child_prj.PARENT_ID and ordinal = child_prj.ordinal and !is_deleted and created_by_date < child_prj.created_by_date),3,0)
+		WHEN child_prj.PARENT_ID IS NOT NULL AND parent_child_prj.PARENT_ID IS NULL
+			THEN CONCAT(lpad(parent_child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj.PARENT_ID and ordinal = parent_child_prj.ordinal and !is_deleted and created_by_date < parent_child_prj.created_by_date),3,0),lpad(child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = child_prj.PARENT_ID and ordinal = child_prj.ordinal and !is_deleted and created_by_date < child_prj.created_by_date),3,0))
+		WHEN child_prj.PARENT_ID IS NOT NULL AND parent_child_prj.PARENT_ID IS NOT NULL AND parent_child_prj_2.PARENT_ID IS NULL
+			THEN CONCAT(lpad(parent_child_prj_2.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_2.PARENT_ID and ordinal = parent_child_prj_2.ordinal and !is_deleted and created_by_date < parent_child_prj_2.created_by_date),3,0),lpad(parent_child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj.PARENT_ID and ordinal = parent_child_prj.ordinal and !is_deleted and created_by_date < parent_child_prj.created_by_date),3,0),lpad(child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = child_prj.PARENT_ID and ordinal = child_prj.ordinal and !is_deleted and created_by_date < child_prj.created_by_date),3,0))
+		WHEN child_prj.PARENT_ID IS NOT NULL AND parent_child_prj.PARENT_ID IS NOT NULL AND parent_child_prj_2.PARENT_ID IS NOT NULL AND parent_child_prj_3.PARENT_ID IS NULL
+			THEN CONCAT(lpad(parent_child_prj_3.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_3.PARENT_ID and ordinal = parent_child_prj_3.ordinal and !is_deleted and created_by_date < parent_child_prj_3.created_by_date),3,0),lpad(parent_child_prj_2.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_2.PARENT_ID and ordinal = parent_child_prj_2.ordinal and !is_deleted and created_by_date < parent_child_prj_2.created_by_date),3,0),lpad(parent_child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj.PARENT_ID and ordinal = parent_child_prj.ordinal and !is_deleted and created_by_date < parent_child_prj.created_by_date),3,0),lpad(child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = child_prj.PARENT_ID and ordinal = child_prj.ordinal and !is_deleted and created_by_date < child_prj.created_by_date),3,0))
+		WHEN child_prj.PARENT_ID IS NOT NULL AND parent_child_prj.PARENT_ID IS NOT NULL AND parent_child_prj_2.PARENT_ID IS NOT NULL AND parent_child_prj_3.PARENT_ID IS NOT NULL AND parent_child_prj_4.PARENT_ID IS NULL
+			THEN CONCAT(lpad(parent_child_prj_4.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_4.PARENT_ID and ordinal = parent_child_prj_4.ordinal and !is_deleted and created_by_date < parent_child_prj_4.created_by_date),3,0),lpad(parent_child_prj_3.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_3.PARENT_ID and ordinal = parent_child_prj_3.ordinal and !is_deleted and created_by_date < parent_child_prj_3.created_by_date),3,0),lpad(parent_child_prj_2.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_2.PARENT_ID and ordinal = parent_child_prj_2.ordinal and !is_deleted and created_by_date < parent_child_prj_2.created_by_date),3,0),lpad(parent_child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj.PARENT_ID and ordinal = parent_child_prj.ordinal and !is_deleted and created_by_date < parent_child_prj.created_by_date),3,0),lpad(child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = child_prj.PARENT_ID and ordinal = child_prj.ordinal and !is_deleted and created_by_date < child_prj.created_by_date),3,0))
+		WHEN child_prj.PARENT_ID IS NOT NULL AND parent_child_prj.PARENT_ID IS NOT NULL AND parent_child_prj_2.PARENT_ID IS NOT NULL AND parent_child_prj_3.PARENT_ID IS NOT NULL AND parent_child_prj_4.PARENT_ID IS NOT NULL AND parent_child_prj_5.PARENT_ID IS NULL
+			THEN CONCAT(lpad(parent_child_prj_5.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_5.PARENT_ID and ordinal = parent_child_prj_5.ordinal and !is_deleted and created_by_date < parent_child_prj_5.created_by_date),3,0),lpad(parent_child_prj_4.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_4.PARENT_ID and ordinal = parent_child_prj_4.ordinal and !is_deleted and created_by_date < parent_child_prj_4.created_by_date),3,0),lpad(parent_child_prj_3.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_3.PARENT_ID and ordinal = parent_child_prj_3.ordinal and !is_deleted and created_by_date < parent_child_prj_3.created_by_date),3,0),lpad(parent_child_prj_2.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_2.PARENT_ID and ordinal = parent_child_prj_2.ordinal and !is_deleted and created_by_date < parent_child_prj_2.created_by_date),3,0),lpad(parent_child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj.PARENT_ID and ordinal = parent_child_prj.ordinal and !is_deleted and created_by_date < parent_child_prj.created_by_date),3,0),lpad(child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = child_prj.PARENT_ID and ordinal = child_prj.ordinal and !is_deleted and created_by_date < child_prj.created_by_date),3,0))
+	END as ordinal	
+
+	FROM st_prj_project_element AS child_prj
+	LEFT JOIN st_prj_element_definition AS child_prj_def ON child_prj.def_id = child_prj_def.id
+	LEFT JOIN st_prj_project_element AS parent_child_prj ON (parent_child_prj.ID = child_prj.PARENT_ID)
+	LEFT JOIN st_prj_element_definition AS parent_child_prj_def ON parent_child_prj.DEF_ID = parent_child_prj_def.ID
+	LEFT JOIN st_prj_project_element AS parent_child_prj_2 ON (parent_child_prj_2.ID = parent_child_prj.PARENT_ID)
+	LEFT JOIN st_prj_element_definition AS parent_child_prj_def_2 ON parent_child_prj_2.DEF_ID = parent_child_prj_def_2.ID
+	LEFT JOIN st_prj_project_element AS parent_child_prj_3 ON (parent_child_prj_3.ID = parent_child_prj_2.PARENT_ID)
+	LEFT JOIN st_prj_element_definition AS parent_child_prj_def_3 ON parent_child_prj_3.DEF_ID = parent_child_prj_def_3.ID
+	LEFT JOIN st_prj_project_element AS parent_child_prj_4 ON (parent_child_prj_4.ID = parent_child_prj_3.PARENT_ID)
+	LEFT JOIN st_prj_element_definition AS parent_child_prj_def_4 ON parent_child_prj_4.DEF_ID = parent_child_prj_def_4.ID
+	LEFT JOIN st_prj_project_element AS parent_child_prj_5 ON (parent_child_prj_5.ID = parent_child_prj_4.PARENT_ID)
+	LEFT JOIN st_prj_element_definition AS parent_child_prj_def_5 ON parent_child_prj_5.DEF_ID = parent_child_prj_def_5.ID
+	LEFT JOIN st_prj_project_element AS parent_child_prj_6 ON (parent_child_prj_6.ID = parent_child_prj_5.PARENT_ID)
+	LEFT JOIN st_prj_element_definition AS parent_child_prj_def_6 ON parent_child_prj_6.DEF_ID = parent_child_prj_def_6.ID	
+	left join st_fin_document_def as findoc_def on findoc_def.id = child_prj.def_id
+
+	WHERE 
+	($P{PROJECT_ELEMENT_ID} IN (child_prj.id,parent_child_prj.id,parent_child_prj_2.id,parent_child_prj_3.id,parent_child_prj_4.id,parent_child_prj_5.id,parent_child_prj_6.id))
+ 	AND ( CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (findoc_def.acct_type = 'B' and child_prj_def.enabled and !child_prj_def.is_deleted) ELSE FIND_IN_SET(child_prj_def.name_singular,$P{CHILD_DEFS}) END)
+	AND (!(FIND_IN_SET(parent_child_prj_def.extension_id,'shoptick.projects.simple') and !parent_child_prj.id = $P{PROJECT_ELEMENT_ID}
+	) OR (IFNULL((SELECT IF( ((cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'true') 
+OR (!(cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'false'),true,false)
+FROM st_biz_custom_field_def as cf_def 
+left join st_prj_element_custom_field_element_defs on st_prj_element_custom_field_element_defs.custom_field_def_id = cf_def.id
+left join st_prj_project_element on st_prj_project_element.def_id = st_prj_element_custom_field_element_defs.element_def_id
+left JOIN st_biz_custom_field_value as biz_cf_value ON (cf_def.id = biz_cf_value.custom_field_def_id AND (SELECT id from st_prj_element_custom_field_value where proj_element_id=st_prj_project_element.id and id = biz_cf_value.id) = biz_cf_value.id)
+WHERE st_prj_project_element.id=$P{PROJECT_ELEMENT_ID}
+AND cf_def.field_id='toggle_subfolders'),TRUE)))
+	AND !child_prj.is_deleted
+) as children on 1
+
+LEFT JOIN st_prj_project_element as termsPrj on children.id = termsPrj.id
+LEFT JOIN st_fin_document as termdoc on termsPrj.id = termdoc.id
+LEFT JOIN st_biz_terms as terms on terms.id = termdoc.payment_term_id
+
+LEFT JOIN st_prj_project_element as child ON children.id = child.id
+LEFT JOIN st_fin_document as fchild ON (fchild.id = child.id)
+LEFT JOIN st_prj_project_element as child_folder ON child_folder.id = child.parent_id
+LEFT JOIN st_prj_element_definition as child_def ON (child_def.id = child.def_id)
+LEFT JOIN st_biz_status_option as child_status ON (child.status_id = child_status.id)
+left join st_fin_document_view_def as child_view_def on child_view_def.document_def_id = child.def_id and child_view_def.ordinal = 0
+######### Child Elements Lookup #########
+
+WHERE
+prj.id = $P{PROJECT_ELEMENT_ID}
+
+AND child_status.status_name NOT LIKE '%Cancel%'
+
+ORDER BY children.ordinal]]>
+	</queryString>
+	<field name="reportLastEditDate" class="java.sql.Timestamp"/>
+	<field name="reportName" class="java.lang.String"/>
+	<field name="reportTesting" class="java.lang.Boolean"/>
+	<field name="elementNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="document_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="elementNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="elementHasDocumentNumber" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="has_document_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="elementHasDocumentNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="elementNumberCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="document_number_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="elementNumberCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="elementName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="element_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="elementName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="elementDefinitionName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name_singular"/>
+		<property name="com.jaspersoft.studio.field.label" value="elementDefinitionName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="parentElementNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="document_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentElementNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="parentHasDocumentNumber" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="has_document_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentHasDocumentNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="parentElementNumberCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="document_number_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentElementNumberCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="parentElementName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="element_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentElementName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="parentElementDefinitionName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name_singular"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentElementDefinitionName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="topLevelElementName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="topLevelElementName"/>
+		<property name="com.jaspersoft.studio.field.label" value="topLevelElementName"/>
+	</field>
+	<field name="topLevelElementNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="topLevelElementNumber"/>
+		<property name="com.jaspersoft.studio.field.label" value="topLevelElementNumber"/>
+	</field>
+	<field name="topLevelElementDefinitionName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="topLevelElementDefinitionName"/>
+		<property name="com.jaspersoft.studio.field.label" value="topLevelElementDefinitionName"/>
+	</field>
+	<field name="topLevelElementHasDocumentNumber" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="topLevelElementHasDocumentNumber"/>
+		<property name="com.jaspersoft.studio.field.label" value="topLevelElementHasDocumentNumber"/>
+	</field>
+	<field name="topLevelElementNumberCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="topLevelElementNumberCaption"/>
+		<property name="com.jaspersoft.studio.field.label" value="topLevelElementNumberCaption"/>
+	</field>
+	<field name="assignedTo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assignedTo"/>
+		<property name="com.jaspersoft.studio.field.label" value="assignedTo"/>
+	</field>
+	<field name="venue" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="venue"/>
+		<property name="com.jaspersoft.studio.field.label" value="venue"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_crm_contact"/>
+	</field>
+	<field name="venueCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="venueCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="venueCompany"/>
+	</field>
+	<field name="venueCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="venue_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="venueCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="personResponsible" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personResponsible"/>
+		<property name="com.jaspersoft.studio.field.label" value="personResponsible"/>
+	</field>
+	<field name="personResponsibleCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personResponsibleCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="personResponsibleCompany"/>
+	</field>
+	<field name="personResponsibleCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="person_responsible_title"/>
+		<property name="com.jaspersoft.studio.field.label" value="personResponsibleCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="salesPerson" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="salesPerson"/>
+		<property name="com.jaspersoft.studio.field.label" value="salesPerson"/>
+	</field>
+	<field name="salesPersonCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="salesPersonCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="salesPersonCompany"/>
+	</field>
+	<field name="salesPersonCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sales_person_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="salesPersonCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="projectManager" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="projectManager"/>
+		<property name="com.jaspersoft.studio.field.label" value="projectManager"/>
+	</field>
+	<field name="projectManagerCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="projectManagerCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="projectManagerCompany"/>
+	</field>
+	<field name="projectManagerCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="project_manager_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="projectManagerCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="eventPlanner" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="eventPlanner"/>
+		<property name="com.jaspersoft.studio.field.label" value="eventPlanner"/>
+	</field>
+	<field name="eventPlannerCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="eventPlannerCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="eventPlannerCompany"/>
+	</field>
+	<field name="eventPlannerCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="event_planner_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="eventPlannerCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="accountExecutive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="accountExecutive"/>
+		<property name="com.jaspersoft.studio.field.label" value="accountExecutive"/>
+	</field>
+	<field name="accountExecutiveCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="accountExecutiveCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="accountExecutiveCompany"/>
+	</field>
+	<field name="accountExecutiveCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="account_executive_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="accountExecutiveCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="technicalDirector" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="technicalDirector"/>
+		<property name="com.jaspersoft.studio.field.label" value="technicalDirector"/>
+	</field>
+	<field name="technicalDirectorCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="technicalDirectorCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="technicalDirectorCompany"/>
+	</field>
+	<field name="technicalDirectorCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="technical_director_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="technicalDirectorCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="administrativeAssistant" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="administrativeAssistant"/>
+		<property name="com.jaspersoft.studio.field.label" value="administrativeAssistant"/>
+	</field>
+	<field name="administrativeAssistantCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="administrativeAssistantCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="administrativeAssistantCompany"/>
+	</field>
+	<field name="administrativeAssistantCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="administrative_assistant_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="administrativeAssistantCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="stageDirector" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stageDirector"/>
+		<property name="com.jaspersoft.studio.field.label" value="stageDirector"/>
+	</field>
+	<field name="stageDirectorCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stageDirectorCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="stageDirectorCompany"/>
+	</field>
+	<field name="stageDirectorCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stage_director_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="stageDirectorCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="backstageManager" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="backstageManager"/>
+		<property name="com.jaspersoft.studio.field.label" value="backstageManager"/>
+	</field>
+	<field name="backstageManagerCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="backstageManagerCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="backstageManagerCompany"/>
+	</field>
+	<field name="backstageManagerCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="backstage_manager_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="backstageManagerCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="secondaryVenue" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryVenue"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryVenue"/>
+	</field>
+	<field name="secondaryVenueCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryVenueCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryVenueCompany"/>
+	</field>
+	<field name="secondaryVenueCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondary_venue_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryVenueCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="artist" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="artist"/>
+		<property name="com.jaspersoft.studio.field.label" value="artist"/>
+	</field>
+	<field name="artistCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="artistCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="artistCompany"/>
+	</field>
+	<field name="artistCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="artist_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="artistCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="secondaryClient" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryClient"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryClient"/>
+	</field>
+	<field name="secondaryClientCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryClientCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryClientCompany"/>
+	</field>
+	<field name="secondaryClientCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondary_client_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryClientCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="vendor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="vendor"/>
+		<property name="com.jaspersoft.studio.field.label" value="vendor"/>
+	</field>
+	<field name="vendorCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="vendorCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="vendorCompany"/>
+	</field>
+	<field name="vendorCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="vendor_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="vendorCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="secondaryBillTo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryBillTo"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryBillTo"/>
+	</field>
+	<field name="secondaryBillToCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryBillToCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryBillToCompany"/>
+	</field>
+	<field name="secondaryBillToCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondary_bill_to_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryBillToCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="billTo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="billTo"/>
+		<property name="com.jaspersoft.studio.field.label" value="billTo"/>
+	</field>
+	<field name="billToCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="billToCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="billToCompany"/>
+	</field>
+	<field name="billToCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="bill_to_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="billToCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="client" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="client"/>
+		<property name="com.jaspersoft.studio.field.label" value="client"/>
+	</field>
+	<field name="clientCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="clientCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="clientCompany"/>
+	</field>
+	<field name="clientCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="client_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="clientCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="returnLocation" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="returnLocation"/>
+		<property name="com.jaspersoft.studio.field.label" value="returnLocation"/>
+	</field>
+	<field name="returnLocationCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="returnLocationCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="returnLocationCompany"/>
+	</field>
+	<field name="returnLocationCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="return_location_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="returnLocationCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="pickupLocation" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pickupLocation"/>
+		<property name="com.jaspersoft.studio.field.label" value="pickupLocation"/>
+	</field>
+	<field name="pickupLocationCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pickupLocationCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="pickupLocationCompany"/>
+	</field>
+	<field name="pickupLocationCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pickup_location_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="pickupLocationCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="secondaryLocation" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryLocation"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryLocation"/>
+	</field>
+	<field name="secondaryLocationCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryLocationCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryLocationCompany"/>
+	</field>
+	<field name="secondaryLocationCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sec_location_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryLocationCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="customContactOne" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customContactOne"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactOne"/>
+	</field>
+	<field name="customContactOneCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customContactOneCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactOneCompany"/>
+	</field>
+	<field name="customContactOneCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="custom_one_contact_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactOneCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="customContactTwo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customContactTwo"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactTwo"/>
+	</field>
+	<field name="customContactTwoCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customContactTwoCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactTwoCompany"/>
+	</field>
+	<field name="customContactTwoCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="custom_two_contact_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactTwoCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="customContactThree" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customContactThree"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactThree"/>
+	</field>
+	<field name="customContactThreeCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customContactThreeCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactThreeCompany"/>
+	</field>
+	<field name="customContactThreeCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="custom_three_contact_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactThreeCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="businessLocationName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="businessLocationName"/>
+		<property name="com.jaspersoft.studio.field.label" value="businessLocationName"/>
+	</field>
+	<field name="businessLocationCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="location_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="businessLocationCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldTenType" class="java.lang.String"/>
+	<field name="userFieldTenCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_ten_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldTenCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldTen" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldTen"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldTen"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldNineType" class="java.lang.String"/>
+	<field name="userFieldNineCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_nine_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldNineCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldNine" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldNine"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldNine"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldEightType" class="java.lang.String"/>
+	<field name="userFieldEightCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_eight_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldEightCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldEight" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldEight"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldEight"/>
+	</field>
+	<field name="userFieldSevenType" class="java.lang.String"/>
+	<field name="userFieldSevenCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_seven_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldSevenCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldSeven" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldSeven"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldSeven"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldSixType" class="java.lang.String"/>
+	<field name="userFieldSixCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_six_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldSixCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldSix" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldSix"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldSix"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldFiveType" class="java.lang.String"/>
+	<field name="userFieldFiveCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_five_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldFiveCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldFive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldFive"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldFive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldFourType" class="java.lang.String"/>
+	<field name="userFieldFourCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_four_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldFourCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldFour" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldFour"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldFour"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldThreeType" class="java.lang.String"/>
+	<field name="userFieldThreeCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_three_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldThreeCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldThree" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldThree"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldThree"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldTwoType" class="java.lang.String"/>
+	<field name="userFieldTwoCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_two_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldTwoCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldTwo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldTwo"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldTwo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldOneType" class="java.lang.String"/>
+	<field name="userFieldOneCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_one_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldOneCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldOne" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldOne"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldOne"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="dueDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="due_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="dueDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="preparedDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="prepared_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="preparedDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="plannedStartDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="planned_start_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="plannedStartDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="plannedEndDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="planned_end_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="plannedEndDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="showStart" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="show_start"/>
+		<property name="com.jaspersoft.studio.field.label" value="showStart"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="showEnd" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="show_end"/>
+		<property name="com.jaspersoft.studio.field.label" value="showEnd"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="loadInDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="load_in_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="loadInDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="loadOutDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="load_out_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="loadOutDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="rehearsalDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="rehearsal_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="rehearsalDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="plannedStartDateCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="planned_start_date_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="plannedStartDateCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="plannedEndDateCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="planned_end_date_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="plannedEndDateCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="eventDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="event_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="eventDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="doorsDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="doors_time"/>
+		<property name="com.jaspersoft.studio.field.label" value="doorsDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="depositDueDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="deposit_due_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="depositDueDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="generatedDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="generatedDate"/>
+		<property name="com.jaspersoft.studio.field.label" value="generatedDate"/>
+	</field>
+	<field name="lastEditDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="last_edit_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="lastEditDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="createdByDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created_by_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdByDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="statusName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="statusName"/>
+		<property name="com.jaspersoft.studio.field.label" value="statusName"/>
+	</field>
+	<field name="statusProbability" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="statusProbability"/>
+		<property name="com.jaspersoft.studio.field.label" value="statusProbability"/>
+	</field>
+	<field name="department" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="department"/>
+		<property name="com.jaspersoft.studio.field.label" value="department"/>
+	</field>
+	<field name="shippingMethodName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="method_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="shippingMethodName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_shipping_method"/>
+	</field>
+	<field name="returnMethodName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="method_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="returnMethodName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_shipping_method"/>
+	</field>
+	<field name="depositAmount" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="deposit"/>
+		<property name="com.jaspersoft.studio.field.label" value="depositAmount"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="depositPercentage" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="deposit_percentage"/>
+		<property name="com.jaspersoft.studio.field.label" value="depositPercentage"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="currencyName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="currencyName"/>
+		<property name="com.jaspersoft.studio.field.label" value="currencyName"/>
+	</field>
+	<field name="customerPO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customer_po"/>
+		<property name="com.jaspersoft.studio.field.label" value="customerPO"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="elementNotes" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="elementNotes"/>
+		<property name="com.jaspersoft.studio.field.label" value="elementNotes"/>
+	</field>
+	<field name="lastEditUser" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lastEditUser"/>
+		<property name="com.jaspersoft.studio.field.label" value="lastEditUser"/>
+	</field>
+	<field name="createdByUser" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="createdByUser"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdByUser"/>
+	</field>
+	<field name="timeZone" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="time_zone"/>
+		<property name="com.jaspersoft.studio.field.label" value="timeZone"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_location"/>
+	</field>
+	<field name="logoImageBlob" class="java.io.InputStream">
+		<property name="com.jaspersoft.studio.field.name" value="blobhandle"/>
+		<property name="com.jaspersoft.studio.field.label" value="logoImageBlob"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rh_images"/>
+	</field>
+	<field name="dunsNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="duns_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="dunsNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_corp_identity"/>
+	</field>
+	<field name="corpIdentCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="company_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="corpIdentCompany"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_corp_identity"/>
+	</field>
+	<field name="corpIdentWebsite" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="web_site"/>
+		<property name="com.jaspersoft.studio.field.label" value="corpIdentWebsite"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_corp_identity"/>
+	</field>
+	<field name="corpIdentEmail" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="address_url"/>
+		<property name="com.jaspersoft.studio.field.label" value="corpIdentEmail"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_loc_inet_addr"/>
+	</field>
+	<field name="corpIdentPhoneNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="dial_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="corpIdentPhoneNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_loc_phone"/>
+	</field>
+	<field name="corpHqLocAddressString" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="corpHqLocAddressString"/>
+		<property name="com.jaspersoft.studio.field.label" value="corpHqLocAddressString"/>
+	</field>
+	<field name="businessLocationWebsite" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="businessLocationWebsite"/>
+		<property name="com.jaspersoft.studio.field.label" value="businessLocationWebsite"/>
+	</field>
+	<field name="businessLocationEmail" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="businessLocationEmail"/>
+		<property name="com.jaspersoft.studio.field.label" value="businessLocationEmail"/>
+	</field>
+	<field name="businessLocationPhoneNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="dial_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="businessLocationPhoneNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_loc_phone"/>
+	</field>
+	<field name="businessLocationAddressString" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="businessLocationAddressString"/>
+		<property name="com.jaspersoft.studio.field.label" value="businessLocationAddressString"/>
+	</field>
+	<field name="parenEntityCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="company_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="parenEntityCompany"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_corp_identity"/>
+	</field>
+	<field name="parentEntityWebsite" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="web_site"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentEntityWebsite"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_corp_identity"/>
+	</field>
+	<field name="parentEntityEmail" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="address_url"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentEntityEmail"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_loc_inet_addr"/>
+	</field>
+	<field name="parentEntityPhoneNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="dial_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentEntityPhoneNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_loc_phone"/>
+	</field>
+	<field name="parentEntityAddressString" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="parentEntityAddressString"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentEntityAddressString"/>
+	</field>
+	<field name="leftAddressBlock" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="leftAddressBlock"/>
+		<property name="com.jaspersoft.studio.field.label" value="leftAddressBlock"/>
+	</field>
+	<field name="leftAddressBlockSource" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="leftAddressBlockSource"/>
+		<property name="com.jaspersoft.studio.field.label" value="leftAddressBlockSource"/>
+	</field>
+	<field name="leftAddressBlockCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="leftAddressBlockCaption"/>
+		<property name="com.jaspersoft.studio.field.label" value="leftAddressBlockCaption"/>
+	</field>
+	<field name="centerAddressBlock" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="centerAddressBlock"/>
+		<property name="com.jaspersoft.studio.field.label" value="centerAddressBlock"/>
+	</field>
+	<field name="centerAddressBlockSource" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="centerAddressBlockSource"/>
+		<property name="com.jaspersoft.studio.field.label" value="centerAddressBlockSource"/>
+	</field>
+	<field name="centerAddressBlockCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="centerAddressBlockCaption"/>
+		<property name="com.jaspersoft.studio.field.label" value="centerAddressBlockCaption"/>
+	</field>
+	<field name="rightAddressBlock" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rightAddressBlock"/>
+		<property name="com.jaspersoft.studio.field.label" value="rightAddressBlock"/>
+	</field>
+	<field name="rightAddressBlockSource" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rightAddressBlockSource"/>
+		<property name="com.jaspersoft.studio.field.label" value="rightAddressBlockSource"/>
+	</field>
+	<field name="rightAddressBlockCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rightAddressBlockCaption"/>
+		<property name="com.jaspersoft.studio.field.label" value="rightAddressBlockCaption"/>
+	</field>
+	<field name="legalese" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="legalese"/>
+		<property name="com.jaspersoft.studio.field.label" value="legalese"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_fin_document_view_def"/>
+	</field>
+	<field name="childElementNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="document_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="childElementNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="childElementName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="element_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="childElementName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="childFolderId" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="childFolderId"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="childFolderNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="document_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="childFolderNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="childFolderName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="element_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="childFolderName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="totalExTax" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="total_price_without_sales_tax"/>
+		<property name="com.jaspersoft.studio.field.label" value="totalExTax"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_fin_document"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="salesTax" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="sales_tax"/>
+		<property name="com.jaspersoft.studio.field.label" value="salesTax"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_fin_document"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="totalIncTax" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="total_price"/>
+		<property name="com.jaspersoft.studio.field.label" value="totalIncTax"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_fin_document"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="childDeposit" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="deposit"/>
+		<property name="com.jaspersoft.studio.field.label" value="childDeposit"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="childDepositDue" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="deposit_due_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="childDepositDue"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="beforeDiscount" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="discountable_price"/>
+		<property name="com.jaspersoft.studio.field.label" value="beforeDiscount"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_fin_document"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="afterDiscount" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="price_subtotal"/>
+		<property name="com.jaspersoft.studio.field.label" value="afterDiscount"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_fin_document"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="discount" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="price_discount"/>
+		<property name="com.jaspersoft.studio.field.label" value="discount"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_fin_document"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="signatureTitle" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="signatureTitle"/>
+		<property name="com.jaspersoft.studio.field.label" value="signatureTitle"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_crm_contact"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="child_has_document_number" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="has_document_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="child_has_document_number"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="PRINT_LINEPRICES" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="PRINT_LINEPRICES"/>
+		<property name="com.jaspersoft.studio.field.label" value="PRINT_LINEPRICES"/>
+	</field>
+	<field name="PRINT_SUBTOTALS" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="PRINT_SUBTOTALS"/>
+		<property name="com.jaspersoft.studio.field.label" value="PRINT_SUBTOTALS"/>
+	</field>
+	<field name="PRINT_SUBFOLDERS" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="PRINT_SUBFOLDERS"/>
+		<property name="com.jaspersoft.studio.field.label" value="PRINT_SUBFOLDERS"/>
+	</field>
+	<field name="PRINT_SHADING" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="PRINT_SHADING"/>
+		<property name="com.jaspersoft.studio.field.label" value="PRINT_SHADING"/>
+	</field>
+	<field name="PRINT_DISCOUNT" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="PRINT_DISCOUNT"/>
+		<property name="com.jaspersoft.studio.field.label" value="PRINT_DISCOUNT"/>
+	</field>
+	<field name="PRINT_ALL_FINANCIAL" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="PRINT_ALL_FINANCIAL"/>
+		<property name="com.jaspersoft.studio.field.label" value="PRINT_ALL_FINANCIAL"/>
+	</field>
+	<field name="PRINT_LEGALESE" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="PRINT_LEGALESE"/>
+		<property name="com.jaspersoft.studio.field.label" value="PRINT_LEGALESE"/>
+	</field>
+	<variable name="DiscountTotal" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{PRINT_SUBFOLDERS} || $F{childFolderId}.equals($P{PROJECT_ELEMENT_ID}) ? $F{discount} : 0.0]]></variableExpression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="SalesTaxTotal" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{PRINT_SUBFOLDERS} || $F{childFolderId}.equals($P{PROJECT_ELEMENT_ID}) ? $F{salesTax} : 0.0]]></variableExpression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="TotalTotal" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{PRINT_SUBFOLDERS} || $F{childFolderId}.equals($P{PROJECT_ELEMENT_ID}) ? $F{totalIncTax} : 0.0]]></variableExpression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="DepositTotal" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{PRINT_SUBFOLDERS} || $F{childFolderId}.equals($P{PROJECT_ELEMENT_ID}) ? $F{childDeposit} : 0.0]]></variableExpression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="legalese" class="java.lang.String">
+		<variableExpression><![CDATA[$F{legalese}.replaceAll("##corp_addr##",$F{corpHqLocAddressString} == null ? "" : $F{corpHqLocAddressString})
+.replaceAll("##client_company##",$F{leftAddressBlock} == null ? "" : $F{leftAddressBlock}.split("\n")[0])
+.replaceAll("##client##",$F{leftAddressBlock} == null ? "" : $F{leftAddressBlock})
+.replaceAll("##date##",$V{DateFormatter}.format(new Date()))
+.replaceAll("##valid_until##",$V{DateFormatter}.format($F{userFieldEight} == null ? (new org.joda.time.DateTime($F{generatedDate}).plusDays(14).toDate().after($F{plannedStartDate}) ? $F{plannedStartDate} : new org.joda.time.DateTime($F{generatedDate}).plusDays(14).toDate()) : new java.sql.Timestamp(0).valueOf($F{userFieldEight})))
+.replaceAll("##start_date##",$F{plannedStartDate} == null  ? "" : $V{DateFormatter}.format($F{plannedStartDate}))
+.replaceAll("##end_date##",$F{plannedEndDate} == null  ? "" : $V{DateFormatter}.format($F{plannedEndDate}))
+.replaceAll("##document_number##",$F{elementNumber} == null ? "" : $F{elementNumber})
+.replaceAll("##customer_po##",$F{customerPO} == null ? "" : $F{customerPO})
+.replace("##total_price##",$V{TotalTotal} > 0 ? ($P{CurrencyFormatter}.format($V{TotalTotal})):"")
+.replace("##deposit##",($V{DepositTotal} > 0 ? ($P{CurrencyFormatter}.format($V{DepositTotal})):""))]]></variableExpression>
+	</variable>
+	<variable name="PRINT_ALL_FINANCIAL" class="java.lang.Boolean">
+		<variableExpression><![CDATA[$P{PRINT_ALL_FINANCIAL_OVERRIDE} != null ?$P{PRINT_ALL_FINANCIAL_OVERRIDE}.equals("true") : $F{PRINT_ALL_FINANCIAL}]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{PRINT_ALL_FINANCIAL_OVERRIDE} != null ?$P{PRINT_ALL_FINANCIAL_OVERRIDE}.equals("true") : $F{PRINT_ALL_FINANCIAL}]]></initialValueExpression>
+	</variable>
+	<variable name="childDepositDue" class="java.sql.Timestamp" calculation="Lowest">
+		<variableExpression><![CDATA[$V{PRINT_SUBFOLDERS} || $F{childFolderId}.equals($P{PROJECT_ELEMENT_ID}) ? $F{childDepositDue} : null]]></variableExpression>
+	</variable>
+	<variable name="PRINT_LINEPRICES" class="java.lang.Boolean">
+		<variableExpression><![CDATA[($P{PRINT_LINEPRICES_OVERRIDE} == null ? $F{PRINT_LINEPRICES} : $P{PRINT_LINEPRICES_OVERRIDE}.equals("true"))
+ && $V{PRINT_ALL_FINANCIAL}]]></variableExpression>
+		<initialValueExpression><![CDATA[($P{PRINT_LINEPRICES_OVERRIDE} == null ? $F{PRINT_LINEPRICES} : $P{PRINT_LINEPRICES_OVERRIDE}.equals("true"))]]></initialValueExpression>
+	</variable>
+	<variable name="PRINT_SUBPRICES" class="java.lang.Boolean">
+		<variableExpression><![CDATA[($P{PRINT_SUBTOTALS_OVERRIDE} == null ? $F{PRINT_SUBTOTALS} : $P{PRINT_SUBTOTALS_OVERRIDE}.equals("true"))
+ && $V{PRINT_ALL_FINANCIAL}]]></variableExpression>
+		<initialValueExpression><![CDATA[($P{PRINT_SUBTOTALS_OVERRIDE} == null ? $F{PRINT_SUBTOTALS} : $P{PRINT_SUBTOTALS_OVERRIDE}.equals("true"))]]></initialValueExpression>
+	</variable>
+	<variable name="PRINT_SUBFOLDERS" class="java.lang.Boolean">
+		<variableExpression><![CDATA[($P{PRINT_SUBFOLDERS_OVERRIDE} == null ? $F{PRINT_SUBFOLDERS} : $P{PRINT_SUBFOLDERS_OVERRIDE}.equals("true"))]]></variableExpression>
+		<initialValueExpression><![CDATA[($P{PRINT_SUBTOTALS_OVERRIDE} == null ? $F{PRINT_SUBTOTALS} : $P{PRINT_SUBTOTALS_OVERRIDE}.equals("true"))]]></initialValueExpression>
+	</variable>
+	<variable name="PRINT_ALT_ROWS" class="java.lang.Boolean">
+		<variableExpression><![CDATA[($P{PRINT_SHADING_OVERRIDE} == null ? $F{PRINT_SHADING} : $P{PRINT_SHADING_OVERRIDE}.equals("true"))]]></variableExpression>
+		<initialValueExpression><![CDATA[($P{PRINT_SHADING_OVERRIDE} == null ? $F{PRINT_SHADING} : $P{PRINT_SHADING_OVERRIDE}.equals("true"))]]></initialValueExpression>
+	</variable>
+	<variable name="PRINT_DISCOUNT" class="java.lang.Boolean">
+		<variableExpression><![CDATA[($P{PRINT_DISCOUNT_OVERRIDE} == null ? $F{PRINT_DISCOUNT} : $P{PRINT_DISCOUNT_OVERRIDE}.equals("true"))]]></variableExpression>
+		<initialValueExpression><![CDATA[($P{PRINT_DISCOUNT_OVERRIDE} == null ? $F{PRINT_DISCOUNT} : $P{PRINT_DISCOUNT_OVERRIDE}.equals("true"))]]></initialValueExpression>
+	</variable>
+	<variable name="PRINT_LEGALESE" class="java.lang.Boolean">
+		<variableExpression><![CDATA[($P{PRINT_LEGALESE_OVERRIDE} == null ? $F{PRINT_LEGALESE} : $P{PRINT_LEGALESE_OVERRIDE}.equals("true"))]]></variableExpression>
+		<initialValueExpression><![CDATA[($P{PRINT_LEGALESE_OVERRIDE} == null ? $F{PRINT_LEGALESE} : $P{PRINT_LEGALESE_OVERRIDE}.equals("true"))]]></initialValueExpression>
+	</variable>
+	<variable name="SubTotalTotal" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{PRINT_SUBFOLDERS} || $F{childFolderId}.equals($P{PROJECT_ELEMENT_ID}) ? ($F{beforeDiscount}>0 && $V{PRINT_DISCOUNT} ?$F{beforeDiscount}:$F{totalExTax}) : 0.0]]></variableExpression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="DateTimeFormatter" class="java.text.DateFormat">
+		<variableExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat($P{DatePattern}+ " " +$P{TimePattern},$P{REPORT_LOCALE}, TimeZone.getTimeZone($F{timeZone}))]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat($P{DatePattern}+ " " +$P{TimePattern},$P{REPORT_LOCALE}, TimeZone.getTimeZone($F{timeZone}))]]></initialValueExpression>
+	</variable>
+	<variable name="DateFormatter" class="java.text.DateFormat">
+		<variableExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat($P{DatePattern},$P{REPORT_LOCALE}, TimeZone.getTimeZone($F{timeZone}))]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat($P{DatePattern},$P{REPORT_LOCALE}, TimeZone.getTimeZone($F{timeZone}))]]></initialValueExpression>
+	</variable>
+	<variable name="GoupSubTotalTotal" class="java.lang.Double" resetType="Group" resetGroup="ChildEventFolder" calculation="Sum">
+		<variableExpression><![CDATA[$F{beforeDiscount}>0 && $V{PRINT_DISCOUNT} ?$F{beforeDiscount}:$F{totalExTax}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="GroupDiscountTotal" class="java.lang.Double" resetType="Group" resetGroup="ChildEventFolder" calculation="Sum">
+		<variableExpression><![CDATA[$F{discount}]]></variableExpression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="GroupSalesTaxTotal" class="java.lang.Double" resetType="Group" resetGroup="ChildEventFolder" calculation="Sum">
+		<variableExpression><![CDATA[$F{salesTax}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="GroupTotalTotal" class="java.lang.Double" resetType="Group" resetGroup="ChildEventFolder" calculation="Sum">
+		<variableExpression><![CDATA[$F{totalExTax}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<group name="ChildEventFolder" minHeightToStartNewPage="35">
+		<groupExpression><![CDATA[$F{childFolderId} != $P{PROJECT_ELEMENT_ID} ? $F{childFolderId} : null]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[($V{REPORT_COUNT} != 0 || !$F{childFolderId}.equals($P{PROJECT_ELEMENT_ID})) && $V{PRINT_SUBFOLDERS}]]></printWhenExpression>
+				<textField>
+					<reportElement x="0" y="1" width="555" height="12" uuid="c4743d26-71f5-478f-9d7b-2bbd96a80d52">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[!$F{childFolderId}.equals($P{PROJECT_ELEMENT_ID})]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{childFolderName} + " (" + $F{childFolderNumber} + ")"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$V{PRINT_SUBPRICES} && $V{PRINT_SUBFOLDERS}]]></printWhenExpression>
+				<textField isBlankWhenNull="true">
+					<reportElement style="TextStyle" x="366" y="1" width="60" height="14" isRemoveLineWhenBlank="true" uuid="678d0a0e-f5a2-4a63-a9c2-2522096736c3">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PRINT_DISCOUNT} ?$V{GoupSubTotalTotal} : "Subtotal:"]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{CurrencyPattern}]]></patternExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="TextStyle" x="485" y="1" width="70" height="14" isRemoveLineWhenBlank="true" uuid="aecb8a69-e1b6-433f-88de-dd23831410a5">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{GroupTotalTotal}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{CurrencyPattern}]]></patternExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="TextStyle" x="426" y="1" width="59" height="14" isRemoveLineWhenBlank="true" uuid="4a3f7159-5175-4fea-9a47-6d70d431fb42">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PRINT_DISCOUNT} ? $V{GroupDiscountTotal} : $V{GoupSubTotalTotal}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{CurrencyPattern}]]></patternExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="TextStyle" x="0" y="1" width="315" height="14" isRemoveLineWhenBlank="true" uuid="c59d9d50-6cb8-4eb6-a79d-0d7930cc02ee">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<printWhenExpression><![CDATA[$V{PRINT_DISCOUNT}]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Subtotal" + ($F{childFolderNumber}!= null && !$F{childFolderNumber}.equals($F{elementNumber})   ? (" (" + $F{childFolderNumber} + ")") : "") + ":"]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{CurrencyPattern}]]></patternExpression>
+				</textField>
+			</band>
+			<band height="8">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$V{PRINT_SUBFOLDERS}]]></printWhenExpression>
+				<line>
+					<reportElement x="0" y="0" width="555" height="1" backcolor="#FFFFFF" uuid="fc8fd152-8085-4d42-bb01-be2bae1d5588"/>
+					<graphicElement>
+						<pen lineWidth="1.0"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="702">
+			<printWhenExpression><![CDATA[$F{reportTesting}]]></printWhenExpression>
+			<image isUsingCache="true" isLazy="true">
+				<reportElement key="" positionType="Float" x="0" y="0" width="455" height="700" uuid="0bde6168-44ff-4ba6-96f6-2dcc9a76eafa">
+					<property name="com.jaspersoft.studio.element.name" value="TESTING Watermark"/>
+				</reportElement>
+				<imageExpression><![CDATA[net.sf.jasperreports.engine.util.JRImageLoader.getInstance(new SimpleJasperReportsContext()).loadAwtImageFromBytes(javax.xml.bind.DatatypeConverter.parseBase64Binary("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"))]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band height="143" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="190" y="0" width="365" height="32" uuid="3b1b6216-bfc7-43b7-a592-e77fdb303c5b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="20" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Quote Summary" + ($F{elementNumber} != null && !$F{elementNumber}.trim().equals("") ? (" " + $F{elementNumber}) : "")]]></textFieldExpression>
+			</textField>
+			<image hAlign="Left" vAlign="Middle" onErrorType="Icon">
+				<reportElement x="0" y="0" width="221" height="57" uuid="ba7b0fd2-a09c-4096-8e8d-9901f51501ae">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$F{logoImageBlob}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement style="Normal text" x="0" y="70" width="267" height="17" uuid="ad6bce0f-08ee-4037-9100-0b91ee2a1f02">
+					<printWhenExpression><![CDATA[$F{centerAddressBlock}==null || $F{centerAddressBlock}.trim().equals("")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clientCaption}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Normal text" x="0" y="70" width="181" height="17" uuid="e76cfd91-06b0-43c8-b605-4022fabd1339">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$F{centerAddressBlock}!=null && !$F{centerAddressBlock}.trim().equals("")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clientCaption}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Normal text" x="187" y="70" width="181" height="17" uuid="7ea15c15-8393-4bf0-a9a4-5318bf68ea78">
+					<printWhenExpression><![CDATA[$F{centerAddressBlock}!=null && !$F{centerAddressBlock}.trim().equals("")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{billToCaption}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Normal text" x="287" y="70" width="268" height="17" uuid="1fd677fc-f1a2-4f34-9a88-40327a54b0a0">
+					<printWhenExpression><![CDATA[$F{centerAddressBlock}==null || $F{centerAddressBlock}.trim().equals("")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{venueCaption}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Normal text" x="374" y="70" width="181" height="17" uuid="94d431f8-ee77-48cd-b872-caed49034617">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{centerAddressBlock}!=null && !$F{centerAddressBlock}.trim().equals("")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{venueCaption}]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement key="" style="Normal text" x="0" y="88" width="555" height="15" isPrintWhenDetailOverflows="true" uuid="8fef506d-a3e8-42a4-8923-c92fa0c8d99d">
+					<property name="com.jaspersoft.studio.element.name" value="Triple Address Block"/>
+					<printWhenExpression><![CDATA[$F{centerAddressBlock}!=null && !$F{centerAddressBlock}.trim().equals("")]]></printWhenExpression>
+				</reportElement>
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="1" width="181" height="14" uuid="4be623ca-888f-4a80-a789-c7a2e620dbcd"/>
+					<textElement verticalAlignment="Top" markup="none">
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{leftAddressBlock}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="187" y="1" width="181" height="14" uuid="680194a9-1157-4964-bf4c-094320953457">
+						<printWhenExpression><![CDATA[!$F{centerAddressBlock}.trim().equals("")]]></printWhenExpression>
+					</reportElement>
+					<textElement verticalAlignment="Top" markup="none">
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{centerAddressBlock}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="374" y="1" width="181" height="14" uuid="31514697-9e95-4ba6-b22d-a9d9a69ddade">
+						<printWhenExpression><![CDATA[!$F{rightAddressBlock}.trim().equals("")]]></printWhenExpression>
+					</reportElement>
+					<textElement verticalAlignment="Top" markup="none">
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{rightAddressBlock}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement key="" style="Normal text" x="0" y="88" width="555" height="15" isPrintWhenDetailOverflows="true" uuid="7d71ab80-2ec7-48ab-9118-5f1dc355ec58">
+					<property name="com.jaspersoft.studio.element.name" value="Double Address Block"/>
+					<printWhenExpression><![CDATA[$F{centerAddressBlock}==null || $F{centerAddressBlock}.trim().equals("")]]></printWhenExpression>
+				</reportElement>
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="1" width="267" height="14" uuid="dc5eca36-0496-430d-8a3a-61ad07fcb475"/>
+					<textElement verticalAlignment="Top" markup="none">
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{leftAddressBlock}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Normal text" stretchType="RelativeToTallestObject" x="287" y="1" width="268" height="14" uuid="3bff8296-5399-435f-913f-fdcdee3ef569">
+						<printWhenExpression><![CDATA[!$F{rightAddressBlock}.trim().equals("")]]></printWhenExpression>
+					</reportElement>
+					<textElement verticalAlignment="Top" markup="none">
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{rightAddressBlock}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="112" width="555" height="25" isRemoveLineWhenBlank="true" uuid="7a90539e-6108-4108-a410-bf9813ac593f">
+					<property name="ShowOutOfBoundContent" value="true"/>
+				</reportElement>
+				<box padding="0"/>
+				<textField>
+					<reportElement style="Normal text" positionType="Float" x="287" y="0" width="268" height="17" uuid="e472544e-0bf1-462f-8390-534ee170e09b"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Event Times:"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Normal text" positionType="Float" x="0" y="0" width="267" height="17" uuid="5e88e510-96f1-4c69-8b9b-27c23cb61e53"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Event Details:"]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement key="" positionType="Float" x="0" y="18" width="267" height="7" isRemoveLineWhenBlank="true" uuid="9b27ab4c-ee4d-4c77-8331-5a73fe1b02ff">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.element.name" value="Event Details"/>
+						<property name="ShowOutOfBoundContent" value="true"/>
+					</reportElement>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement style="Normal text" positionType="Float" x="0" y="0" width="93" height="1" isRemoveLineWhenBlank="true" uuid="4744632d-13ac-4de6-be30-4c18fca737ed">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<printWhenExpression><![CDATA[!$F{personResponsible}.equals(null)]]></printWhenExpression>
+						</reportElement>
+						<box topPadding="2" bottomPadding="2"/>
+						<textElement verticalAlignment="Middle" markup="none">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{personResponsibleCaption} + ":"]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement style="Normal text" positionType="Float" x="93" y="0" width="174" height="1" isRemoveLineWhenBlank="true" uuid="970cce84-27e2-4122-a962-a720fa5c1274"/>
+						<box topPadding="2" bottomPadding="2"/>
+						<textElement verticalAlignment="Middle">
+							<font isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{personResponsible}]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="Normal text" positionType="Float" x="0" y="1" width="93" height="1" uuid="a13589e0-829f-41c8-a93a-361142b64985">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[!$F{customerPO}.equals(null) && !$F{customerPO}.trim().equals("")]]></printWhenExpression>
+						</reportElement>
+						<box topPadding="2" bottomPadding="2"/>
+						<textElement verticalAlignment="Middle" markup="none">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Customer PO:"]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement style="Normal text" positionType="Float" x="93" y="1" width="174" height="1" isRemoveLineWhenBlank="true" uuid="2dcc27ee-0f36-41d0-8882-dd9e78e2df26">
+							<printWhenExpression><![CDATA[!$F{customerPO}.trim().equals("")]]></printWhenExpression>
+						</reportElement>
+						<box topPadding="2" bottomPadding="2"/>
+						<textElement verticalAlignment="Middle">
+							<font isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{customerPO}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement key="" positionType="Float" x="287" y="18" width="268" height="7" isRemoveLineWhenBlank="true" uuid="7d1f2f47-76dc-472c-bc1b-1f0a8eaf9659">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.element.name" value="Production Times"/>
+						<property name="ShowOutOfBoundContent" value="true"/>
+						<printWhenExpression><![CDATA[($F{department} == null) || !$F{department}.equals("Dry Hire")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0"/>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="Normal text" positionType="Float" x="0" y="1" width="70" height="1" isRemoveLineWhenBlank="true" uuid="805e142e-7e4d-4723-a538-9495653c3dae">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[$F{loadInDate}!=null]]></printWhenExpression>
+						</reportElement>
+						<box topPadding="2" leftPadding="0" bottomPadding="2"/>
+						<textElement verticalAlignment="Middle" markup="none">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Load In:"]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement style="Normal text" positionType="Float" x="70" y="1" width="198" height="1" isRemoveLineWhenBlank="true" uuid="bff23b53-85a7-448c-9b77-a6f7b23f66a7">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[$F{loadInDate}!=null]]></printWhenExpression>
+						</reportElement>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{loadInDate}]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{DatePattern} + " " + $P{TimePattern}]]></patternExpression>
+					</textField>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="Normal text" positionType="Float" x="0" y="2" width="70" height="1" isRemoveLineWhenBlank="true" uuid="4388a726-6a11-4ea2-89b5-21c68f65dbce">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[$F{rehearsalDate}!=null]]></printWhenExpression>
+						</reportElement>
+						<box topPadding="2" leftPadding="0" bottomPadding="2"/>
+						<textElement verticalAlignment="Middle" markup="none">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Rehearsal:"]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement style="Normal text" positionType="Float" x="70" y="2" width="198" height="1" isRemoveLineWhenBlank="true" uuid="0d490e5e-0504-49fb-8708-7a39921df50a">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[$F{rehearsalDate}!=null]]></printWhenExpression>
+						</reportElement>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{rehearsalDate}]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{DatePattern} + " " + $P{TimePattern}]]></patternExpression>
+					</textField>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="Normal text" positionType="Float" x="0" y="3" width="70" height="1" isRemoveLineWhenBlank="true" uuid="d4cf5e69-bdd4-47da-a757-dec24e325b86">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[$F{showStart}!=null]]></printWhenExpression>
+						</reportElement>
+						<box topPadding="2" leftPadding="0" bottomPadding="2"/>
+						<textElement verticalAlignment="Middle" markup="none">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Show Start:"]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement style="Normal text" positionType="Float" x="70" y="3" width="198" height="1" isRemoveLineWhenBlank="true" uuid="9a719a02-6c42-4443-9397-91d540867f69">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[$F{showStart}!=null]]></printWhenExpression>
+						</reportElement>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{showStart}]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{DatePattern} + " " + $P{TimePattern}]]></patternExpression>
+					</textField>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="Normal text" positionType="Float" x="0" y="4" width="70" height="1" isRemoveLineWhenBlank="true" uuid="75a3bd87-d5bb-4d18-b304-929ba1e411b9">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[$F{showEnd}!=null]]></printWhenExpression>
+						</reportElement>
+						<box topPadding="2" leftPadding="0" bottomPadding="2"/>
+						<textElement verticalAlignment="Middle" markup="none">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Show End:"]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement style="Normal text" positionType="Float" x="70" y="4" width="198" height="1" isRemoveLineWhenBlank="true" uuid="e354b938-6ed5-46c2-89f5-094c066e9f35">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[$F{showEnd}!=null]]></printWhenExpression>
+						</reportElement>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{showEnd}]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{DatePattern} + " " + $P{TimePattern}]]></patternExpression>
+					</textField>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="Normal text" positionType="Float" x="0" y="5" width="70" height="1" isRemoveLineWhenBlank="true" uuid="6f76d2e6-ccce-474c-9fac-a1ff22b33df6">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[$F{loadOutDate}!=null]]></printWhenExpression>
+						</reportElement>
+						<box topPadding="2" leftPadding="0" bottomPadding="2"/>
+						<textElement verticalAlignment="Middle" markup="none">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Load Out:"]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement style="Normal text" positionType="Float" x="70" y="5" width="198" height="1" isRemoveLineWhenBlank="true" uuid="d89d72df-be34-402d-a3fb-8cf355ddefd8">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[$F{loadOutDate}!=null]]></printWhenExpression>
+						</reportElement>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{loadOutDate}]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{DatePattern} + " " + $P{TimePattern}]]></patternExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement key="" positionType="Float" x="287" y="18" width="268" height="2" isRemoveLineWhenBlank="true" printWhenGroupChanges="ChildEventFolder" uuid="c4bb408f-bc62-41f3-a64e-37d79aaf615f">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.element.name" value="Hire Times"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="ShowOutOfBoundContent" value="true"/>
+						<printWhenExpression><![CDATA[$F{department}.equals("Dry Hire")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0"/>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="Normal text" positionType="Float" x="0" y="0" width="70" height="1" isRemoveLineWhenBlank="true" uuid="7d6df87d-6c73-48fe-aec5-41baa6c6bcb2">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box topPadding="2" leftPadding="0" bottomPadding="2"/>
+						<textElement verticalAlignment="Middle" markup="none">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Hire Start Date:"]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="Normal text" positionType="Float" x="70" y="0" width="198" height="1" isRemoveLineWhenBlank="true" uuid="ea0740d7-9653-42ce-b4c2-b34a35d4df64"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{loadInDate}]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{DatePattern} + " " + $P{TimePattern}]]></patternExpression>
+					</textField>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="Normal text" positionType="Float" x="0" y="1" width="70" height="1" isRemoveLineWhenBlank="true" uuid="a260e25e-cc60-4ec0-a8e2-294cffb24fb6">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						</reportElement>
+						<box topPadding="2" leftPadding="0" bottomPadding="2"/>
+						<textElement verticalAlignment="Middle" markup="none">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Hire End Date:"]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="Normal text" positionType="Float" x="70" y="1" width="198" height="1" isRemoveLineWhenBlank="true" uuid="308f59a9-e825-428f-8014-e2d1b3d2c0d6">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						</reportElement>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{loadOutDate}]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{DatePattern} + " " + $P{TimePattern}]]></patternExpression>
+					</textField>
+				</frame>
+			</frame>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="280" y="39" width="275" height="20" uuid="25862e60-cc21-4ca2-9ad4-ec9c4d7ed136">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="styled">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<font size=\"" +
+new Integer(
+  Math.min((
+    (int)(Math.floor
+      (275 /
+        (new Double(
+          (new java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB).createGraphics().getFontMetrics(new java.awt.Font("Aerial",1,16)).stringWidth($F{elementName})-3)
+        )/16)
+      ))
+  ),(int)13)
+).toString() +"\">" +
+$F{elementName}.replaceAll("&","&amp;") + "</font>"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="21">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<frame>
+				<reportElement mode="Transparent" x="0" y="0" width="555" height="17" uuid="4f5d4cdf-8618-4785-9792-891291d93f91">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement style="Normal text" x="0" y="0" width="60" height="17" uuid="8f905d71-b6ff-46ed-89d8-b965f04f454d">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Quote]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Normal text" x="60" y="0" width="128" height="17" uuid="3d5bd3d0-d8b4-46c5-9545-edbc94cb6b2c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement>
+						<font size="9" isBold="true" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[Description]]></text>
+				</staticText>
+				<textField evaluationTime="Report" isBlankWhenNull="true">
+					<reportElement style="Normal text" x="485" y="0" width="70" height="17" uuid="cd54e4e9-af14-4cfb-9dc9-61ad856aa171">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$V{PRINT_ALL_FINANCIAL}]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="1"/>
+					<textElement textAlignment="Right" markup="none">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" isBlankWhenNull="true">
+					<reportElement style="Normal text" x="337" y="0" width="88" height="17" uuid="b19550c3-0519-4d0c-8508-be32ff18d26c">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<printWhenExpression><![CDATA[$V{PRINT_ALL_FINANCIAL}]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="1"/>
+					<textElement textAlignment="Right" markup="none">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PRINT_DISCOUNT} ? "Quote Subtotal" : null]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" isBlankWhenNull="true">
+					<reportElement style="Normal text" x="425" y="0" width="60" height="17" uuid="879df61c-bebb-42eb-bb9a-1cabfc5f4bfa">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<printWhenExpression><![CDATA[$V{PRINT_ALL_FINANCIAL} || $V{PRINT_DISCOUNT}]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="1"/>
+					<textElement textAlignment="Right" markup="none">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PRINT_DISCOUNT} ? "Discount" : "Subtotal"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<printWhenExpression><![CDATA[$V{PRINT_SUBFOLDERS} || $F{childFolderId}.equals($P{PROJECT_ELEMENT_ID})]]></printWhenExpression>
+			<frame>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="1" width="555" height="14" backcolor="#F5F5F5" uuid="84bfaad2-367e-4b14-aed7-9df44a86c6a5">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$V{PRINT_ALT_ROWS} && (($V{ChildEventFolder_COUNT}) % 2) != 0]]></printWhenExpression>
+				</reportElement>
+			</frame>
+			<textField pattern="#,##0.##" isBlankWhenNull="true">
+				<reportElement style="Normal text" stretchType="RelativeToBandHeight" x="0" y="1" width="60" height="14" uuid="23f92cdc-29bb-4a8f-9582-94dcfd5dbf4f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="false"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{childElementNumber}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="Normal text" stretchType="RelativeToBandHeight" x="426" y="0" width="59" height="14" uuid="646f893b-cde5-4a71-9a8a-84455d241547">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$V{PRINT_DISCOUNT} || $V{PRINT_ALL_FINANCIAL}]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{PRINT_LINEPRICES} ?  ($V{PRINT_DISCOUNT} ? $F{discount} : $F{totalExTax}) : null]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{CurrencyPattern}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="60" y="1" width="255" height="14" isPrintWhenDetailOverflows="true" uuid="2aaca8cc-3aa7-4625-a708-cfb274a89bee">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[($V{PRINT_LINEPRICES} && $V{PRINT_DISCOUNT})]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA[$F{childElementName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="60" y="1" width="305" height="14" isPrintWhenDetailOverflows="true" uuid="63ddb716-bd5a-4e68-8801-c5bcbbef3cf6">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[!($V{PRINT_LINEPRICES} && $V{PRINT_DISCOUNT})]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA[$F{childElementName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Normal text" stretchType="RelativeToBandHeight" x="485" y="1" width="70" height="14" uuid="15d72845-52e3-40d7-b906-849eb6f38b00">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$V{PRINT_LINEPRICES}]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{totalExTax}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{CurrencyPattern}]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="Normal text" stretchType="RelativeToBandHeight" x="366" y="1" width="60" height="14" uuid="9c1d0dc6-8333-48c2-adc5-1001ed1af077">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$V{PRINT_LINEPRICES}]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{PRINT_LINEPRICES} && $V{PRINT_DISCOUNT} ?$F{beforeDiscount} : null]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{CurrencyPattern}]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="19">
+			<textField>
+				<reportElement style="Normal text" x="0" y="0" width="192" height="9" forecolor="#6B6B6B" uuid="12d72a2e-dd8f-4d04-b773-e4401ff5b439"/>
+				<textElement verticalAlignment="Top">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{elementName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Report">
+				<reportElement style="Normal text" x="127" y="9" width="300" height="10" forecolor="#6B6B6B" uuid="d28419c4-ba5a-4808-bc98-f699842a2e8d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="html">
+					<font size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{corpHqLocAddressString}.trim().replace("\n"," <textElement markup='html'>&#8226</textElement> ")+ ($F{corpIdentPhoneNumber} != null ? ("<textElement markup='html'>" + "&#8226" + "</textElement>"+$F{corpIdentPhoneNumber}) : "")]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Master">
+				<reportElement style="Normal text" x="363" y="0" width="192" height="9" forecolor="#6B6B6B" uuid="011f1b65-e6d5-46fb-b58d-810dee7eb1f8"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{MASTER_CURRENT_PAGE} + " of " + $V{MASTER_TOTAL_PAGES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Normal text" x="427" y="9" width="128" height="10" forecolor="#6B6B6B" uuid="7df4cfd8-4442-45aa-be5b-5ff90d9cade0"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Generated: "+$P{DateTimeFormatter}.format($F{generatedDate})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Normal text" x="192" y="0" width="171" height="9" forecolor="#6B6B6B" uuid="66743118-5d95-4ec8-9dd9-99a6eb22c6e9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{businessLocationWebsite} !=null ? $F{businessLocationWebsite} : $F{corpIdentWebsite}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Normal text" x="0" y="9" width="127" height="10" forecolor="#6B6B6B" backcolor="#B5B5B5" uuid="1a4c1373-886e-4694-bcde-505059778e5a">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{elementDefinitionName} + " "+$F{elementNumber}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="260" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<frame>
+				<reportElement x="0" y="21" width="228" height="48" uuid="828900d8-3710-44ca-9a93-5eaf02201b23"/>
+				<staticText>
+					<reportElement style="TextStyle" positionType="Float" x="0" y="16" width="99" height="16" uuid="ecbe3623-59a1-4e82-a015-a851430610d7">
+						<printWhenExpression><![CDATA[$F{elementNotes}!=null]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Notes:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="TextStyle" positionType="Float" x="0" y="32" width="228" height="16" uuid="c83c92ee-f0ca-4e2d-916b-32a7dbfb235b"/>
+					<textElement markup="none">
+						<font isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{elementNotes}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="228" height="16" isRemoveLineWhenBlank="true" uuid="dc698eaa-ea0e-40ae-9451-ca2648b2b34d">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.spacingAfter" value="px"/>
+						<printWhenExpression><![CDATA[$V{PRINT_LEGALESE}]]></printWhenExpression>
+					</reportElement>
+					<box bottomPadding="10"/>
+					<textFieldExpression><![CDATA[$F{legalese}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<componentElement>
+				<reportElement key="" x="379" y="21" width="175" height="16" uuid="7f0823d9-cab0-4c2e-a8db-169ec62430db"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="TotalsBlock" uuid="6a42cab1-5f37-4506-8bb8-da7c2d6418a0">
+						<datasetParameter name="PROJECT_ELEMENT_ID">
+							<datasetParameterExpression><![CDATA[$P{PROJECT_ELEMENT_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="CurrencyPattern">
+							<datasetParameterExpression><![CDATA[$P{CurrencyPattern}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="16" width="175">
+						<textField>
+							<reportElement x="0" y="0" width="105" height="16" isRemoveLineWhenBlank="true" uuid="9073b479-0971-457c-b810-42e1078b4edf">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								<property name="com.jaspersoft.studio.unit.x" value="px"/>
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+								<printWhenExpression><![CDATA[($F{row_value} != null && $F{row_value} != 0.0 ) || !$F{is_hidden_if_zero}]]></printWhenExpression>
+							</reportElement>
+							<textElement textAlignment="Right">
+								<font isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{caption} + ":"]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true">
+							<reportElement x="105" y="0" width="70" height="16" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="82fec168-149f-473f-a71c-b830e895ae21">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+								<printWhenExpression><![CDATA[($F{row_value} != null && $F{row_value} != 0.0 ) || !$F{is_hidden_if_zero}]]></printWhenExpression>
+							</reportElement>
+							<textElement textAlignment="Right"/>
+							<textFieldExpression><![CDATA[$F{row_value}]]></textFieldExpression>
+							<patternExpression><![CDATA[$P{CurrencyPattern}]]></patternExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+		</band>
+	</summary>
+	<noData>
+		<band height="156">
+			<staticText>
+				<reportElement style="TextStyle" x="0" y="60" width="555" height="30" uuid="79618d34-f595-4de8-bd63-19c708a10e03"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[No Data Returned:  Quote(s) could be cancelled or marked as deleted.]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="Float" x="0" y="58" width="555" height="1" forecolor="#666666" backcolor="#FFFFFF" uuid="a82c5578-7141-4049-92b4-5979bcc91dc6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="1.0" lineColor="#666666"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Title Captions Right" x="241" y="0" width="313" height="36" uuid="d8a37eb6-f9de-457f-9352-18620108d0d5"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font size="16" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Budget Summary]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>
