@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.1.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Smart Proposal" pageWidth="595" pageHeight="792" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="acc37899-63b4-4b0d-9bc5-fbc0da8c1fc4">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="techrun_dev"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="206"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="790"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<import value="net.sf.jasperreports.engine.design.*"/>
+	<import value="net.sf.jasperreports.engine.type.*"/>
+	<parameter name="PROJECT_ELEMENT_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["3d1f6940-00a6-11e8-83ed-00259000ba16"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="XML_PRODUCER_BEAN_ID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["data-producer-financial-document"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_PAPER_SIZE" class="java.lang.String"/>
+	<parameter name="PROJECT_ELEMENT_DEFINITION_ID" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="CHILD_DEFS" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Quote,Sales Quote"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SERVER_ROOT_URL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="reportId" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}.get("reportId")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRINT_TITLE_PAGE" class="java.lang.String"/>
+	<parameter name="PRINT_COVER_LETTER" class="java.lang.String"/>
+	<parameter name="PRINT_QUOTE_SUMMARY" class="java.lang.String"/>
+	<parameter name="PRINT_QUOTE_ITEMIZED" class="java.lang.String"/>
+	<parameter name="PRINT_TERMS_CONDITIONS" class="java.lang.String"/>
+	<parameter name="parameterSubmission" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="REPORT_ORIENTATION" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT 
+child_prj.id, 
+count(litem.id),
+(SELECT report_name from st_biz_custom_report where id =  $P{reportId}) as reportName,
+CONCAT('(xsd" name=\\")(',"Smart Title Page",')') as string,
+(SELECT report_source_code from st_biz_custom_report where 
+report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Title Page",')')
+and id != IFNULL($P{reportId},"")
+ORDER BY last_edit_date DESC LIMIT 1) AS titlePageSource,
+(SELECT id from st_biz_custom_report where id =  $P{reportId}) as reportName,
+CONCAT('(xsd" name=\\")(',"Smart Title Page",')') as string,
+(SELECT report_source_code from st_biz_custom_report where 
+report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Title Page",')')
+and id != IFNULL($P{reportId},"")
+ORDER BY last_edit_date DESC LIMIT 1) AS titlePageReportId,
+
+(SELECT report_source_code from st_biz_custom_report where 
+report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Cover Letter",')')
+and id != IFNULL($P{reportId},"")
+ORDER BY last_edit_date DESC LIMIT 1) AS coverLetterSource,
+(SELECT id from st_biz_custom_report where 
+report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Cover Letter",')')
+and id != IFNULL($P{reportId},"")
+ORDER BY last_edit_date DESC LIMIT 1) AS coverLetterReportId,
+
+(SELECT report_source_code from st_biz_custom_report where 
+report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Quote Summary",')')
+and id != IFNULL($P{reportId},"")
+ORDER BY last_edit_date DESC LIMIT 1) AS quoteSummarySource,
+(SELECT id from st_biz_custom_report where 
+report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Quote Summary",')')
+and id != IFNULL($P{reportId},"")
+ORDER BY last_edit_date DESC LIMIT 1) AS quoteSummaryReportId,
+
+(SELECT report_source_code from st_biz_custom_report where 
+report_source_code REGEXP CONCAT('(name=\\"',REPLACE(REPLACE($P{SERVER_ROOT_URL},'https://',''),'.flexrentalsolutions.com',''),' )(',REPLACE('Quote',",","|"),')') 
+AND !(report_source_code REGEXP CONCAT('(name=\\"',REPLACE(REPLACE($P{SERVER_ROOT_URL},'https://',''),'.flexrentalsolutions.com',''),' )(',REPLACE('Quote',",","|"),')( Summary)'))
+OR (report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Quote|",REPLACE('Quote',",","|"),')')
+AND !(report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Quote|",REPLACE('Quote',",","|"),')( Summary)'))
+AND !(report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Quote|",REPLACE('Quote',",","|"),')( Proposal)'))
+AND !(report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Quote|",REPLACE('Quote',",","|"),')( Aggregator)')))
+and id != IFNULL($P{reportId},"")
+ORDER BY last_edit_date DESC LIMIT 1) AS quoteItemizedSource,
+(SELECT id from st_biz_custom_report where 
+report_source_code REGEXP CONCAT('(name=\\"',REPLACE(REPLACE($P{SERVER_ROOT_URL},'https://',''),'.flexrentalsolutions.com',''),' )(',REPLACE('Quote',",","|"),')') 
+AND !(report_source_code REGEXP CONCAT('(name=\\"',REPLACE(REPLACE($P{SERVER_ROOT_URL},'https://',''),'.flexrentalsolutions.com',''),' )(',REPLACE('Quote',",","|"),')( Summary)'))
+OR (report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Quote|",REPLACE('Quote',",","|"),')')
+AND !(report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Quote|",REPLACE('Quote',",","|"),')( Summary)'))
+AND !(report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Quote|",REPLACE('Quote',",","|"),')( Proposal)'))
+AND !(report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Quote|",REPLACE('Quote',",","|"),')( Aggregator)')))
+and id != IFNULL($P{reportId},"")
+ORDER BY last_edit_date DESC LIMIT 1) AS quoteItemizedReportId,
+
+(SELECT report_source_code from st_biz_custom_report where 
+report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Terms &amp; Conditions",')')
+and id != IFNULL($P{reportId},"")
+ORDER BY last_edit_date DESC LIMIT 1) AS tandCSource,
+(SELECT id from st_biz_custom_report where 
+report_source_code REGEXP CONCAT('(xsd" name=\\")(',"Smart Terms &amp; Conditions",')')
+and id != IFNULL($P{reportId},"")
+ORDER BY last_edit_date DESC LIMIT 1) AS tandCReportId,
+
+
+CONCAT_WS("-", 
+      lpad(parent_child_prj_6.ordinal,3,0),
+    parent_child_prj_6.id,
+      lpad(parent_child_prj_5.ordinal,3,0),
+    parent_child_prj_5.id,
+      lpad(parent_child_prj_4.ordinal,3,0),
+    parent_child_prj_4.id,
+      lpad(parent_child_prj_3.ordinal,3,0),
+    parent_child_prj_3.id,
+      lpad(parent_child_prj_2.ordinal,3,0),
+    parent_child_prj_2.id,
+      lpad(parent_child_prj_2.ordinal,3,0),
+    parent_child_prj.id,
+      lpad(child_prj.ordinal,3,0),
+    child_prj.id) as elementOrdinal
+
+  FROM st_prj_project_element AS child_prj
+  LEFT JOIN st_prj_element_definition AS child_prj_def ON child_prj.def_id = child_prj_def.id
+  LEFT JOIN st_prj_project_element AS parent_child_prj ON (parent_child_prj.ID = child_prj.PARENT_ID)
+  LEFT JOIN st_prj_element_definition AS parent_child_prj_def ON parent_child_prj.DEF_ID = parent_child_prj_def.ID
+  LEFT JOIN st_prj_project_element AS parent_child_prj_2 ON (parent_child_prj_2.ID = parent_child_prj.PARENT_ID)
+  LEFT JOIN st_prj_element_definition AS parent_child_prj_def_2 ON parent_child_prj_2.DEF_ID = parent_child_prj_def_2.ID
+  LEFT JOIN st_prj_project_element AS parent_child_prj_3 ON (parent_child_prj_3.ID = parent_child_prj_2.PARENT_ID)
+  LEFT JOIN st_prj_element_definition AS parent_child_prj_def_3 ON parent_child_prj_3.DEF_ID = parent_child_prj_def_3.ID
+  LEFT JOIN st_prj_project_element AS parent_child_prj_4 ON (parent_child_prj_4.ID = parent_child_prj_3.PARENT_ID)
+  LEFT JOIN st_prj_element_definition AS parent_child_prj_def_4 ON parent_child_prj_4.DEF_ID = parent_child_prj_def_4.ID
+  LEFT JOIN st_prj_project_element AS parent_child_prj_5 ON (parent_child_prj_5.ID = parent_child_prj_4.PARENT_ID)
+  LEFT JOIN st_prj_element_definition AS parent_child_prj_def_5 ON parent_child_prj_5.DEF_ID = parent_child_prj_def_5.ID
+  LEFT JOIN st_prj_project_element AS parent_child_prj_6 ON (parent_child_prj_6.ID = parent_child_prj_5.PARENT_ID)
+  LEFT JOIN st_prj_element_definition AS parent_child_prj_def_6 ON parent_child_prj_6.DEF_ID = parent_child_prj_def_6.ID  
+    LEFT JOIN st_prj_project_element_line_item as litem on litem.project_element_id = child_prj.id
+	left join st_fin_document_def as findoc_def on findoc_def.id = child_prj.def_id
+
+  WHERE 
+  ($P{PROJECT_ELEMENT_ID} IN (child_prj.id,parent_child_prj.id,parent_child_prj_2.id,parent_child_prj_3.id,parent_child_prj_4.id,parent_child_prj_5.id,parent_child_prj_6.id))
+ 	AND ( CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (findoc_def.acct_type = 'B' and child_prj_def.enabled and !child_prj_def.is_deleted) ELSE FIND_IN_SET(child_prj_def.name_singular,$P{CHILD_DEFS}) END)
+	AND (!(FIND_IN_SET(parent_child_prj_def.extension_id,'shoptick.projects.simple') and !(parent_child_prj.id = $P{PROJECT_ELEMENT_ID})
+  ) OR (IFNULL((SELECT IF( ((cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'true') 
+OR (!(cf_def.caption LIKE '%show%' OR cf_def.caption LIKE '%print%' OR cf_def.caption LIKE '%include%') AND IFNULL(biz_cf_value.storage_string,'false') = 'false'),true,false)
+FROM st_biz_custom_field_def as cf_def 
+left join st_prj_element_custom_field_element_defs on st_prj_element_custom_field_element_defs.custom_field_def_id = cf_def.id
+left join st_prj_project_element on st_prj_project_element.def_id = st_prj_element_custom_field_element_defs.element_def_id
+left JOIN st_biz_custom_field_value as biz_cf_value ON (cf_def.id = biz_cf_value.custom_field_def_id AND (SELECT id from st_prj_element_custom_field_value where proj_element_id=st_prj_project_element.id and id = biz_cf_value.id) = biz_cf_value.id)
+WHERE st_prj_project_element.id=$P{PROJECT_ELEMENT_ID}
+AND cf_def.field_id='toggle_subfolders'),TRUE)))
+  AND !child_prj.is_deleted
+  GROUP BY child_prj.id
+  HAVING count(litem.id) > 0
+ORDER BY elementOrdinal]]>
+	</queryString>
+	<field name="id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="titlePageSource" class="java.lang.String"/>
+	<field name="titlePageReportId" class="java.lang.String"/>
+	<field name="coverLetterSource" class="java.io.InputStream"/>
+	<field name="coverLetterReportId" class="java.lang.String"/>
+	<field name="quoteSummarySource" class="java.io.InputStream"/>
+	<field name="quoteSummaryReportId" class="java.lang.String"/>
+	<field name="quoteItemizedSource" class="java.io.InputStream"/>
+	<field name="quoteItemizedReportId" class="java.lang.String"/>
+	<field name="tandCSource" class="java.io.InputStream"/>
+	<field name="tandCReportId" class="java.lang.String"/>
+	<variable name="quoteItemizedScaled" class="net.sf.jasperreports.engine.design.JasperDesign">
+		<initialValueExpression><![CDATA[com.frs.jasperreports.JasperReportsScalerUtils.scaleJasperDesign(net.sf.jasperreports.engine.xml.JRXmlLoader.load($F{quoteItemizedSource}), ($P{REPORT_PAPER_SIZE}.equals("A4") ? com.frs.jasperreports.PaperSizeEnum.A4 : com.frs.jasperreports.PaperSizeEnum.US_LETTER), com.frs.jasperreports.PageOrientationEnum.PORTRAIT)]]></initialValueExpression>
+	</variable>
+	<variable name="titlePageScaled" class="net.sf.jasperreports.engine.design.JasperDesign">
+		<initialValueExpression><![CDATA[com.frs.jasperreports.JasperReportsScalerUtils.scaleJasperDesign(net.sf.jasperreports.engine.xml.JRXmlLoader.load($P{REPORT_PAPER_SIZE}.equals("A4") ? new ByteArrayInputStream($F{titlePageSource}.replaceAll("width=\"612\" height=\"792\"","width=\"669\" height=\"842\"").replaceAll(" height=\"792\""," height=\"842\"").replaceAll("x=\"270\"","x=\"301\"").replaceAll("y=\"168\"","y=\"178\"").replaceAll("y=\"290\"","y=\"312\"").getBytes()) : new ByteArrayInputStream($F{titlePageSource}.getBytes())), ($P{REPORT_PAPER_SIZE}.equals("A4") ? com.frs.jasperreports.PaperSizeEnum.A4 : com.frs.jasperreports.PaperSizeEnum.US_LETTER), com.frs.jasperreports.PageOrientationEnum.PORTRAIT)]]></initialValueExpression>
+	</variable>
+	<variable name="coverLetterScaled" class="net.sf.jasperreports.engine.design.JasperDesign">
+		<initialValueExpression><![CDATA[com.frs.jasperreports.JasperReportsScalerUtils.scaleJasperDesign(net.sf.jasperreports.engine.xml.JRXmlLoader.load($F{coverLetterSource}), ($P{REPORT_PAPER_SIZE}.equals("A4") ? com.frs.jasperreports.PaperSizeEnum.A4 : com.frs.jasperreports.PaperSizeEnum.US_LETTER), com.frs.jasperreports.PageOrientationEnum.PORTRAIT)]]></initialValueExpression>
+	</variable>
+	<variable name="quoteSummaryScaled" class="net.sf.jasperreports.engine.design.JasperDesign">
+		<initialValueExpression><![CDATA[com.frs.jasperreports.JasperReportsScalerUtils.scaleJasperDesign(net.sf.jasperreports.engine.xml.JRXmlLoader.load($F{quoteSummarySource}), ($P{REPORT_PAPER_SIZE}.equals("A4") ? com.frs.jasperreports.PaperSizeEnum.A4 : com.frs.jasperreports.PaperSizeEnum.US_LETTER), com.frs.jasperreports.PageOrientationEnum.PORTRAIT)]]></initialValueExpression>
+	</variable>
+	<variable name="tandCScaled" class="net.sf.jasperreports.engine.design.JasperDesign">
+		<initialValueExpression><![CDATA[com.frs.jasperreports.JasperReportsScalerUtils.scaleJasperDesign(net.sf.jasperreports.engine.xml.JRXmlLoader.load($F{tandCSource}), ($P{REPORT_PAPER_SIZE}.equals("A4") ? com.frs.jasperreports.PaperSizeEnum.A4 : com.frs.jasperreports.PaperSizeEnum.US_LETTER), com.frs.jasperreports.PageOrientationEnum.PORTRAIT)]]></initialValueExpression>
+	</variable>
+	<variable name="quoteItemizedSubreport" class="net.sf.jasperreports.engine.JasperReport" calculation="System">
+		<initialValueExpression><![CDATA[net.sf.jasperreports.engine.JasperCompileManager.compileReport($V{quoteItemizedScaled})]]></initialValueExpression>
+	</variable>
+	<variable name="titlePageSubreport" class="net.sf.jasperreports.engine.JasperReport" calculation="System">
+		<initialValueExpression><![CDATA[net.sf.jasperreports.engine.JasperCompileManager.compileReport($V{titlePageScaled})]]></initialValueExpression>
+	</variable>
+	<variable name="coverLetterSubreport" class="net.sf.jasperreports.engine.JasperReport" calculation="System">
+		<initialValueExpression><![CDATA[net.sf.jasperreports.engine.JasperCompileManager.compileReport($V{coverLetterScaled})]]></initialValueExpression>
+	</variable>
+	<variable name="quoteSummarySubreport" class="net.sf.jasperreports.engine.JasperReport" calculation="System">
+		<initialValueExpression><![CDATA[net.sf.jasperreports.engine.JasperCompileManager.compileReport($V{quoteSummaryScaled})]]></initialValueExpression>
+	</variable>
+	<variable name="tandCSubreport" class="net.sf.jasperreports.engine.JasperReport" calculation="System">
+		<initialValueExpression><![CDATA[net.sf.jasperreports.engine.JasperCompileManager.compileReport($V{tandCScaled})]]></initialValueExpression>
+	</variable>
+	<group name="Title Page">
+		<groupHeader>
+			<band height="792">
+				<printWhenExpression><![CDATA[$P{PRINT_TITLE_PAGE}.equals("true")]]></printWhenExpression>
+				<subreport isUsingCache="true" runToBottom="true" overflowType="Stretch">
+					<reportElement x="0" y="0" width="595" height="792" uuid="d24fb798-8510-47d2-a1ed-a0027ba50feb">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<subreportParameter name="PROJECT_ELEMENT_ID">
+						<subreportParameterExpression><![CDATA[$P{PROJECT_ELEMENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="XML_PRODUCER_BEAN_ID">
+						<subreportParameterExpression><![CDATA[$P{XML_PRODUCER_BEAN_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PROPOSAL_MODE">
+						<subreportParameterExpression><![CDATA[true]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="REPORT_PAPER_SIZE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_PAPER_SIZE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PROJECT_ELEMENT_DEFINITION_ID">
+						<subreportParameterExpression><![CDATA[$P{PROJECT_ELEMENT_DEFINITION_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="CHILD_DEFS">
+						<subreportParameterExpression><![CDATA[$P{CHILD_DEFS}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SERVER_ROOT_URL">
+						<subreportParameterExpression><![CDATA[$P{SERVER_ROOT_URL}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportId">
+						<subreportParameterExpression><![CDATA[$F{titlePageReportId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_TITLE_PAGE">
+						<subreportParameterExpression><![CDATA[$P{PRINT_TITLE_PAGE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_COVER_LETTER">
+						<subreportParameterExpression><![CDATA[$P{PRINT_COVER_LETTER}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_QUOTE_SUMMARY">
+						<subreportParameterExpression><![CDATA[$P{PRINT_QUOTE_SUMMARY}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_QUOTE_ITEMIZED">
+						<subreportParameterExpression><![CDATA[$P{PRINT_QUOTE_ITEMIZED}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_TERMS_CONDITIONS">
+						<subreportParameterExpression><![CDATA[$P{PRINT_TERMS_CONDITIONS}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="parameterSubmission">
+						<subreportParameterExpression><![CDATA[$P{parameterSubmission}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="REPORT_ORIENTATION">
+						<subreportParameterExpression><![CDATA[$P{REPORT_ORIENTATION}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$V{titlePageSubreport}]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Cover Letter">
+		<groupHeader>
+			<band height="792">
+				<printWhenExpression><![CDATA[$P{PRINT_COVER_LETTER}.equals("true")]]></printWhenExpression>
+				<subreport isUsingCache="true" runToBottom="true" overflowType="Stretch">
+					<reportElement x="0" y="0" width="595" height="792" uuid="34ef1998-0194-426e-8434-3eb64a6e638d">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<subreportParameter name="PROJECT_ELEMENT_ID">
+						<subreportParameterExpression><![CDATA[$P{PROJECT_ELEMENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="XML_PRODUCER_BEAN_ID">
+						<subreportParameterExpression><![CDATA[$P{XML_PRODUCER_BEAN_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PROPOSAL_MODE">
+						<subreportParameterExpression><![CDATA[true]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="REPORT_PAPER_SIZE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_PAPER_SIZE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PROJECT_ELEMENT_DEFINITION_ID">
+						<subreportParameterExpression><![CDATA[$P{PROJECT_ELEMENT_DEFINITION_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="CHILD_DEFS">
+						<subreportParameterExpression><![CDATA[$P{CHILD_DEFS}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SERVER_ROOT_URL">
+						<subreportParameterExpression><![CDATA[$P{SERVER_ROOT_URL}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportId">
+						<subreportParameterExpression><![CDATA[$F{coverLetterReportId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_TITLE_PAGE">
+						<subreportParameterExpression><![CDATA[$P{PRINT_TITLE_PAGE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_COVER_LETTER">
+						<subreportParameterExpression><![CDATA[$P{PRINT_COVER_LETTER}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_QUOTE_SUMMARY">
+						<subreportParameterExpression><![CDATA[$P{PRINT_QUOTE_SUMMARY}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_QUOTE_ITEMIZED">
+						<subreportParameterExpression><![CDATA[$P{PRINT_QUOTE_ITEMIZED}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_TERMS_CONDITIONS">
+						<subreportParameterExpression><![CDATA[$P{PRINT_TERMS_CONDITIONS}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="parameterSubmission">
+						<subreportParameterExpression><![CDATA[$P{parameterSubmission}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="REPORT_ORIENTATION">
+						<subreportParameterExpression><![CDATA[$P{REPORT_ORIENTATION}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$V{coverLetterSubreport}]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Quote Summary">
+		<groupHeader>
+			<band height="792">
+				<printWhenExpression><![CDATA[$P{PRINT_QUOTE_SUMMARY}.equals("true")]]></printWhenExpression>
+				<subreport isUsingCache="true" runToBottom="true" overflowType="Stretch">
+					<reportElement x="0" y="0" width="595" height="792" uuid="3cc20f6d-6095-4c64-983c-d2e6b07fd703">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<subreportParameter name="PROJECT_ELEMENT_ID">
+						<subreportParameterExpression><![CDATA[$P{PROJECT_ELEMENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="XML_PRODUCER_BEAN_ID">
+						<subreportParameterExpression><![CDATA[$P{XML_PRODUCER_BEAN_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PROPOSAL_MODE">
+						<subreportParameterExpression><![CDATA[true]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="REPORT_PAPER_SIZE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_PAPER_SIZE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PROJECT_ELEMENT_DEFINITION_ID">
+						<subreportParameterExpression><![CDATA[$P{PROJECT_ELEMENT_DEFINITION_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="CHILD_DEFS">
+						<subreportParameterExpression><![CDATA[$P{CHILD_DEFS}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SERVER_ROOT_URL">
+						<subreportParameterExpression><![CDATA[$P{SERVER_ROOT_URL}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportId">
+						<subreportParameterExpression><![CDATA[$F{quoteSummaryReportId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_TITLE_PAGE">
+						<subreportParameterExpression><![CDATA[$P{PRINT_TITLE_PAGE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_COVER_LETTER">
+						<subreportParameterExpression><![CDATA[$P{PRINT_COVER_LETTER}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_QUOTE_SUMMARY">
+						<subreportParameterExpression><![CDATA[$P{PRINT_QUOTE_SUMMARY}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_QUOTE_ITEMIZED">
+						<subreportParameterExpression><![CDATA[$P{PRINT_QUOTE_ITEMIZED}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_TERMS_CONDITIONS">
+						<subreportParameterExpression><![CDATA[$P{PRINT_TERMS_CONDITIONS}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="parameterSubmission">
+						<subreportParameterExpression><![CDATA[$P{parameterSubmission}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="REPORT_ORIENTATION">
+						<subreportParameterExpression><![CDATA[$P{REPORT_ORIENTATION}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$V{quoteSummarySubreport}]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Terms &amp; Conditions">
+		<groupFooter>
+			<band height="792">
+				<printWhenExpression><![CDATA[$P{PRINT_TERMS_CONDITIONS}.equals("true")]]></printWhenExpression>
+				<subreport isUsingCache="true" runToBottom="true" overflowType="Stretch">
+					<reportElement x="0" y="0" width="595" height="792" uuid="856766d5-a14d-4c06-8993-115adfbd8cc3">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<subreportParameter name="PROJECT_ELEMENT_ID">
+						<subreportParameterExpression><![CDATA[$P{PROJECT_ELEMENT_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="XML_PRODUCER_BEAN_ID">
+						<subreportParameterExpression><![CDATA[$P{XML_PRODUCER_BEAN_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PROPOSAL_MODE">
+						<subreportParameterExpression><![CDATA[true]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportId">
+						<subreportParameterExpression><![CDATA[$F{tandCReportId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="REPORT_PAPER_SIZE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_PAPER_SIZE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="CHILD_DEFS">
+						<subreportParameterExpression><![CDATA[$P{CHILD_DEFS}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SERVER_ROOT_URL">
+						<subreportParameterExpression><![CDATA[$P{SERVER_ROOT_URL}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PROJECT_ELEMENT_DEFINITION_ID">
+						<subreportParameterExpression><![CDATA[$P{PROJECT_ELEMENT_DEFINITION_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_TITLE_PAGE">
+						<subreportParameterExpression><![CDATA[$P{PRINT_TITLE_PAGE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_COVER_LETTER">
+						<subreportParameterExpression><![CDATA[$P{PRINT_COVER_LETTER}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_QUOTE_SUMMARY">
+						<subreportParameterExpression><![CDATA[$P{PRINT_QUOTE_SUMMARY}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_QUOTE_ITEMIZED">
+						<subreportParameterExpression><![CDATA[$P{PRINT_QUOTE_ITEMIZED}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRINT_TERMS_CONDITIONS">
+						<subreportParameterExpression><![CDATA[$P{PRINT_TERMS_CONDITIONS}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="parameterSubmission">
+						<subreportParameterExpression><![CDATA[$P{parameterSubmission}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="REPORT_ORIENTATION">
+						<subreportParameterExpression><![CDATA[$P{REPORT_ORIENTATION}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$V{tandCSubreport}]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="792" splitType="Immediate">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<printWhenExpression><![CDATA[$P{PRINT_QUOTE_ITEMIZED}.equals("true")]]></printWhenExpression>
+			<subreport isUsingCache="true" runToBottom="true" overflowType="Stretch">
+				<reportElement x="0" y="0" width="595" height="792" uuid="320d6ed9-54ee-489d-a809-a01c8e3939a5">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<subreportParameter name="PROJECT_ELEMENT_ID">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="XML_PRODUCER_BEAN_ID">
+					<subreportParameterExpression><![CDATA[$P{XML_PRODUCER_BEAN_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROPOSAL_MODE">
+					<subreportParameterExpression><![CDATA[true]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_PAPER_SIZE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_PAPER_SIZE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROJECT_ELEMENT_DEFINITION_ID">
+					<subreportParameterExpression><![CDATA[$P{PROJECT_ELEMENT_DEFINITION_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CHILD_DEFS">
+					<subreportParameterExpression><![CDATA[$P{CHILD_DEFS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SERVER_ROOT_URL">
+					<subreportParameterExpression><![CDATA[$P{SERVER_ROOT_URL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="reportId">
+					<subreportParameterExpression><![CDATA[$F{quoteItemizedReportId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRINT_TITLE_PAGE">
+					<subreportParameterExpression><![CDATA[$P{PRINT_TITLE_PAGE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRINT_COVER_LETTER">
+					<subreportParameterExpression><![CDATA[$P{PRINT_COVER_LETTER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRINT_QUOTE_SUMMARY">
+					<subreportParameterExpression><![CDATA[$P{PRINT_QUOTE_SUMMARY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRINT_QUOTE_ITEMIZED">
+					<subreportParameterExpression><![CDATA[$P{PRINT_QUOTE_ITEMIZED}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRINT_TERMS_CONDITIONS">
+					<subreportParameterExpression><![CDATA[$P{PRINT_TERMS_CONDITIONS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="parameterSubmission">
+					<subreportParameterExpression><![CDATA[$P{parameterSubmission}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_ORIENTATION">
+					<subreportParameterExpression><![CDATA[$P{REPORT_ORIENTATION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$V{quoteItemizedSubreport}]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>
