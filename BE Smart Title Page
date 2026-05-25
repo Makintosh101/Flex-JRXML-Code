@@ -1,0 +1,1295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.1.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Smart Title Page" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="363fd1c7-c02f-484c-9ec2-821c6be9b51f">
+	<property name="ireport.zoom" value="1.0000000000000009"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="844"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="techrun_dev"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="Text Style" isDefault="true" isBlankWhenNull="true">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$P{COVER_PAGE_CAPTION}.equals("Title Page Rhombus")]]></conditionExpression>
+			<style forecolor="#565657" hTextAlign="Left" vTextAlign="Middle" isBlankWhenNull="true" fontName="Arial" isBold="true"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$P{COVER_PAGE_CAPTION}.equals("Title Page Bar")]]></conditionExpression>
+			<style forecolor="#000000" fontName="DejaVu Sans"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$P{COVER_PAGE_CAPTION}.equals("Proposal Cover Page")]]></conditionExpression>
+			<style/>
+		</conditionalStyle>
+	</style>
+	<style name="Color" mode="Opaque" backcolor="#0B2F9E"/>
+	<parameter name="PROJECT_ELEMENT_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["23a969c4-fb92-4428-b4c5-9491bd90974e"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COVER_PAGE_CAPTION" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Title Page Rhombus"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="reportId" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}.get("reportId")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CHILD_DEFS" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[OPTIONAL]]></parameterDescription>
+	</parameter>
+	<parameter name="DatePattern" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["MM/dd/yyyy"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TimePattern" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["hh:mm a"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[###############################################################################################################################
+######### SQUARE WAVE ELEMENT MASTER QUERY ####################################################################################
+############ DO NOT MODIFY THIS SECTION #######################################################################################
+###############################################################################################################################
+SELECT
+######### ELEMENT INFO #########
+(SELECT last_edit_date from st_biz_custom_report where id =  $P{reportId}) as reportLastEditDate,
+(SELECT report_name from st_biz_custom_report where id =  $P{reportId}) as reportName,
+IF((SELECT report_name from st_biz_custom_report where id =  $P{reportId}) LIKE '%TESTING',true,false) as reportTesting,
+prj.document_number as elementNumber,
+prj_def.has_document_number as elementHasDocumentNumber,
+prj_def.document_number_caption as elementNumberCaption,
+prj.element_name as elementName,
+prj_def.name_singular as elementDefinitionName,
+
+parent_prj.document_number as parentElementNumber,
+parent_prj_def.has_document_number as parentHasDocumentNumber,
+parent_prj_def.document_number_caption as parentElementNumberCaption,
+parent_prj.element_name as parentElementName,
+parent_prj_def.name_singular as parentElementDefinitionName,
+
+CASE
+WHEN ISNULL(prj.parent_id) THEN prj.element_name
+WHEN ISNULL(parent_prj.parent_id) THEN parent_prj.element_name
+WHEN ISNULL(parent_prj_2.parent_id) THEN parent_prj_2.element_name
+WHEN ISNULL(parent_prj_3.parent_id) THEN parent_prj_3.element_name
+WHEN ISNULL(parent_prj_4.parent_id) THEN parent_prj_4.element_name
+WHEN ISNULL(parent_prj_5.parent_id) THEN parent_prj_5.element_name
+WHEN ISNULL(parent_prj_6.parent_id) THEN parent_prj_6.element_name
+END as topLevelElementName,
+
+CASE
+WHEN ISNULL(prj.parent_id) THEN prj.document_number
+WHEN ISNULL(parent_prj.parent_id) THEN parent_prj.document_number
+WHEN ISNULL(parent_prj_2.parent_id) THEN parent_prj_2.document_number
+WHEN ISNULL(parent_prj_3.parent_id) THEN parent_prj_3.document_number
+WHEN ISNULL(parent_prj_4.parent_id) THEN parent_prj_4.element_name
+WHEN ISNULL(parent_prj_5.parent_id) THEN parent_prj_5.element_name
+WHEN ISNULL(parent_prj_6.parent_id) THEN parent_prj_6.element_name
+END as topLevelElementNumber,
+
+CASE
+WHEN ISNULL(prj.parent_id) THEN prj_def.name_singular
+WHEN ISNULL(parent_prj.parent_id) THEN parent_prj_def.name_singular
+WHEN ISNULL(parent_prj_2.parent_id) THEN parent_prj_def_2.name_singular
+WHEN ISNULL(parent_prj_3.parent_id) THEN parent_prj_def_3.name_singular
+WHEN ISNULL(parent_prj_4.parent_id) THEN parent_prj_def_4.name_singular
+WHEN ISNULL(parent_prj_5.parent_id) THEN parent_prj_def_5.name_singular
+WHEN ISNULL(parent_prj_6.parent_id) THEN parent_prj_def_6.name_singular
+END as topLevelElementDefinitionName,
+
+CASE
+WHEN ISNULL(prj.parent_id) THEN prj_def.has_document_number
+WHEN ISNULL(parent_prj.parent_id) THEN parent_prj_def.has_document_number
+WHEN ISNULL(parent_prj_2.parent_id) THEN parent_prj_def_2.has_document_number
+WHEN ISNULL(parent_prj_3.parent_id) THEN parent_prj_def_3.has_document_number
+WHEN ISNULL(parent_prj_4.parent_id) THEN parent_prj_def_4.has_document_number
+WHEN ISNULL(parent_prj_5.parent_id) THEN parent_prj_def_5.has_document_number
+WHEN ISNULL(parent_prj_6.parent_id) THEN parent_prj_def_6.has_document_number
+END as topLevelElementHasDocumentNumber,
+
+CASE
+WHEN ISNULL(prj.parent_id) THEN prj_def.document_number_caption
+WHEN ISNULL(parent_prj.parent_id) THEN parent_prj_def.document_number_caption
+WHEN ISNULL(parent_prj_2.parent_id) THEN parent_prj_def_2.document_number_caption
+WHEN ISNULL(parent_prj_3.parent_id) THEN parent_prj_def_3.document_number_caption
+WHEN ISNULL(parent_prj_4.parent_id) THEN parent_prj_def_4.document_number_caption
+WHEN ISNULL(parent_prj_5.parent_id) THEN parent_prj_def_5.document_number_caption
+WHEN ISNULL(parent_prj_6.parent_id) THEN parent_prj_def_6.document_number_caption
+END as topLevelElementNumberCaption,
+######### ELEMENT INFO #########
+
+######### CONTACT ASSOCIATIONS #########
+(SELECT name from rh_userprofile where userprofileid = prj.assigned_to_user) as assignedTo,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.venue_id) as venue,
+(SELECT company from st_crm_contact where id = prj.venue_id) as venueCompany,
+prj_def.venue_caption as venueCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.person_responsible_id) as personResponsible,
+(SELECT company from st_crm_contact where id = prj.person_responsible_id) as personResponsibleCompany,
+prj_def.person_responsible_title as personResponsibleCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.sales_person_id) as salesPerson,
+(SELECT company from st_crm_contact where id = prj.sales_person_id) as salesPersonCompany,
+prj_def.sales_person_caption as salesPersonCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.project_manager_id) as projectManager,
+(SELECT company from st_crm_contact where id = prj.project_manager_id) as projectManagerCompany,
+prj_def.project_manager_caption as projectManagerCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.event_planner_id) as eventPlanner,
+(SELECT company from st_crm_contact where id = prj.event_planner_id) as eventPlannerCompany,
+prj_def.event_planner_caption as eventPlannerCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.account_executive_id) as accountExecutive,
+(SELECT company from st_crm_contact where id = prj.account_executive_id) as accountExecutiveCompany,
+prj_def.account_executive_caption as accountExecutiveCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.technical_director_id) as technicalDirector,
+(SELECT company from st_crm_contact where id = prj.technical_director_id) as technicalDirectorCompany,
+prj_def.technical_director_caption as technicalDirectorCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.administrative_assistant_id) as administrativeAssistant,
+(SELECT company from st_crm_contact where id = prj.administrative_assistant_id) as administrativeAssistantCompany,
+prj_def.administrative_assistant_caption as administrativeAssistantCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.stage_director_id) as stageDirector,
+(SELECT company from st_crm_contact where id = prj.stage_director_id) as stageDirectorCompany,
+prj_def.stage_director_caption as stageDirectorCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.backstage_manager_id) as backstageManager,
+(SELECT company from st_crm_contact where id = prj.backstage_manager_id) as backstageManagerCompany,
+prj_def.backstage_manager_caption as backstageManagerCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.secondary_venue_id) as secondaryVenue,
+(SELECT company from st_crm_contact where id = prj.secondary_venue_id) as secondaryVenueCompany,
+prj_def.secondary_venue_caption as secondaryVenueCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.artist_id) as artist,
+(SELECT company from st_crm_contact where id = prj.artist_id) as artistCompany,
+prj_def.artist_caption as artistCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.secondary_client_id) as secondaryClient,
+(SELECT company from st_crm_contact where id = prj.secondary_client_id) as secondaryClientCompany,
+prj_def.secondary_client_caption as secondaryClientCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.vendor_id) as vendor,
+(SELECT company from st_crm_contact where id = prj.vendor_id) as vendorCompany,
+prj_def.vendor_caption as vendorCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.secondary_bill_to_id) as secondaryBillTo,
+(SELECT company from st_crm_contact where id = prj.secondary_bill_to_id) as secondaryBillToCompany,
+prj_def.secondary_bill_to_caption as secondaryBillToCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.bill_to_id) as billTo,
+(SELECT company from st_crm_contact where id = prj.bill_to_id) as billToCompany,
+prj_def.bill_to_caption as billToCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.client_id) as `client`,
+(SELECT company from st_crm_contact where id = prj.client_id) as clientCompany,
+prj_def.client_caption as clientCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.return_location_id) as returnLocation,
+(SELECT company from st_crm_contact where id = prj.return_location_id) as returnLocationCompany,
+prj_def.return_location_caption as returnLocationCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.pickup_location_id) as pickupLocation,
+(SELECT company from st_crm_contact where id = prj.pickup_location_id) as pickupLocationCompany,
+prj_def.pickup_location_caption as pickupLocationCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.sec_location_id) as secondaryLocation,
+(SELECT company from st_crm_contact where id = prj.sec_location_id) as secondaryLocationCompany,
+prj_def.sec_location_caption as secondaryLocationCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.custom_one_contact_id) as customContactOne,
+(SELECT company from st_crm_contact where id = prj.custom_one_contact_id) as customContactOneCompany,
+prj_def.custom_one_contact_caption as customContactOneCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.custom_two_contact_id) as customContactTwo,
+(SELECT company from st_crm_contact where id = prj.custom_two_contact_id) as customContactTwoCompany,
+prj_def.custom_two_contact_caption as customContactTwoCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id = prj.custom_three_contact_id) as customContactThree,
+(SELECT company from st_crm_contact where id = prj.custom_three_contact_id) as customContactThreeCompany,
+prj_def.custom_three_contact_caption as customContactThreeCaption,
+
+(SELECT resource_name from st_biz_managed_resource where id=bizLoc.id) as businessLocationName,
+prj_def.location_caption as businessLocationCaption,
+######### CONTACT ASSOCIATIONS #########
+
+######### PROJECT ELEMENT USER FIELDS #########
+custom_fields.storage_string_1 as userFieldOne,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 1) as userFieldOneType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 1) as userFieldOneCaption,
+custom_fields.storage_string_2 as userFieldTwo,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 2) as userFieldTwoType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 2) as userFieldTwoCaption,
+custom_fields.storage_string_3 as userFieldThree,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 3) as userFieldThreeType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 3) as userFieldThreeCaption,
+custom_fields.storage_string_4 as userFieldFour,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 4) as userFieldFourType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 4) as userFieldFourCaption,
+custom_fields.storage_string_5 as userFieldFive,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 5) as userFieldFiveType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 5) as userFieldFiveCaption,
+custom_fields.storage_string_6 as userFieldSix,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 6) as userFieldSixType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 6) as userFieldSixCaption,
+custom_fields.storage_string_7 as userFieldSeven,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 7) as userFieldSevenType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 7) as userFieldSevenCaption,
+custom_fields.storage_string_8 as userFieldEight,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 8) as userFieldEightType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 8) as userFieldEightCaption,
+custom_fields.storage_string_9 as userFieldNine,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 9) as userFieldNineType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 9) as userFieldNineCaption,
+custom_fields.storage_string_10 as userFieldTen,
+(SELECT field_type from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 10) as userFieldTenType,
+(SELECT caption from st_prj_project_element_def_custom_field where def_id = prj.def_id and ordinal = 10) as userFieldTenCaption,
+######### PROJECT ELEMENT USER FIELDS #########
+
+#### ELEMENT DATES #####
+prj.due_date as dueDate,
+prj.prepared_date as preparedDate,
+prj.planned_start_date as plannedStartDate,
+prj.planned_end_date as plannedEndDate,
+prj.show_start as showStart,
+prj.show_end as showEnd,
+prj.load_in_date as loadInDate,
+prj.load_out_date as loadOutDate,
+prj.rehearsal_date as rehearsalDate,
+prj_def.planned_start_date_caption as plannedStartDateCaption,
+prj_def.planned_end_date_caption as plannedEndDateCaption,
+prj.event_date as eventDate,
+prj.doors_time as doorsDate,
+prj.deposit_due_date as depositDueDate,
+now() as generatedDate,
+prj.last_edit_date as lastEditDate,
+prj.created_by_date as createdByDate,
+#### ELEMENT DATES #####
+
+#### HEADER INFO #####
+(SELECT status.status_name from st_biz_status_option status where prj.status_id = status.id) as statusName,
+(SELECT status.probability_percent from st_biz_status_option status where prj.status_id = status.id) as statusProbability,
+(SELECT dept.dept_name from st_biz_department dept where prj.department_id = dept.id) as department,
+shipping_method.method_name as shippingMethodName,
+return_method.method_name as returnMethodName,
+prj.deposit as depositAmount,
+prj.deposit_percentage as depositPercentage,
+(SELECT curr.currency_name from st_biz_currency as curr where curr.id=prj.currency_id) as currencyName,
+prj.customer_po as customerPO,
+CASE WHEN prj.is_print_notes THEN prj.notes ELSE NULL END as elementNotes,
+(SELECT name from rh_userprofile where userprofileid = prj.last_edit_user) as lastEditUser,
+(SELECT name from rh_userprofile where userprofileid = prj.created_by_user) as createdByUser,
+bizLoc.time_zone as timeZone,
+#### HEADER INFO #####
+
+######## CORP INFO ########
+(SELECT rh_images.blobhandle
+	FROM rh_images
+	WHERE rh_images.caption LIKE "BE Logo") AS logoImageBlob,
+corp.duns_number as dunsNumber,
+
+corp.company_name as corpIdentCompany,
+corp.web_site as corpIdentWebsite,
+corpHqLocDefEmail.address_url as corpIdentEmail,
+corpHqLocPh.dial_number as corpIdentPhoneNumber,
+CONCAT(
+	IF(TRIM(IFNULL(corpHqLocAddr.line1, '')) > '',concat(corpHqLocAddr.line1,'\n'),''),
+	IF(TRIM(IFNULL(corpHqLocAddr.line2, '')) > '',concat(corpHqLocAddr.line2,'\n'),''),
+	IF(TRIM(IFNULL(corpHqLocAddr.line3, '')) > '',concat(corpHqLocAddr.line3,'\n'),''),
+	IF(TRIM(IFNULL(corpHqLocAddr.city, '')) > '',concat(corpHqLocAddr.city,', '),''),
+	IF(TRIM(IFNULL(corpHqLocAddr.state_or_province, '')) > '',concat(corpHqLocAddr.state_or_province,' '),''),
+	IF(TRIM(IFNULL(corpHqLocAddr.postal_code, '')) > '',corpHqLocAddr.postal_code,'')
+) as corpHqLocAddressString,
+
+-- businessLocationName in CONTACT ASSOCIATIONS
+(SELECT address_url from st_biz_loc_inet_addr WHERE address_name = 'Website' and prj.location_id = st_biz_loc_inet_addr.location_id limit 1) as businessLocationWebsite,
+(SELECT address_url from st_biz_loc_inet_addr WHERE address_name = 'Email' and prj.location_id = st_biz_loc_inet_addr.location_id limit 1) as businessLocationEmail,
+bizLocPh.dial_number as businessLocationPhoneNumber,
+CONCAT(
+	IF(TRIM(IFNULL(bizLocAddr.line1, '')) > '',concat(bizLocAddr.line1,'\n'),''),
+	IF(TRIM(IFNULL(bizLocAddr.line2, '')) > '',concat(bizLocAddr.line2,'\n'),''),
+	IF(TRIM(IFNULL(bizLocAddr.line3, '')) > '',concat(bizLocAddr.line3,'\n'),''),
+	IF(TRIM(IFNULL(bizLocAddr.city, '')) > '',concat(bizLocAddr.city,', '),''),
+	IF(TRIM(IFNULL(bizLocAddr.state_or_province, '')) > '',concat(bizLocAddr.state_or_province,' '),''),
+	IF(TRIM(IFNULL(bizLocAddr.postal_code, '')) > '',bizLocAddr.postal_code,'')
+) as businessLocationAddressString,
+
+parentCorp.company_name as parenEntityCompany,
+parentCorp.web_site as parentEntityWebsite,
+parentCorpHqLocDefEmail.address_url as parentEntityEmail,
+parentCorpHqLocDefPhone.dial_number as parentEntityPhoneNumber,
+CONCAT(
+	IF(TRIM(IFNULL(parentCorpHqLocAddr.line1, '')) > '',concat(parentCorpHqLocAddr.line1,'\n'),''),
+	IF(TRIM(IFNULL(parentCorpHqLocAddr.line2, '')) > '',concat(parentCorpHqLocAddr.line2,'\n'),''),
+	IF(TRIM(IFNULL(parentCorpHqLocAddr.line3, '')) > '',concat(parentCorpHqLocAddr.line3,'\n'),''),
+	IF(TRIM(IFNULL(parentCorpHqLocAddr.city, '')) > '',concat(parentCorpHqLocAddr.city,', '),''),
+	IF(TRIM(IFNULL(parentCorpHqLocAddr.state_or_province, '')) > '',concat(parentCorpHqLocAddr.state_or_province,' '),''),
+	IF(TRIM(IFNULL(parentCorpHqLocAddr.postal_code, '')) > '',parentCorpHqLocAddr.postal_code,'')
+) as parentEntityAddressString,
+######## CORP INFO ########
+###############################################################################################################################
+######### END SQUARE WAVE ELEMENT MASTER QUERY ################################################################################
+###############################################################################################################################
+CONCAT(
+	IF(TRIM(IFNULL(leftContact.COMPANY, '')) > '',concat(leftContact.COMPANY,'\n'),''),
+	IF(TRIM(IFNULL(leftContact.FIRST_NAME, '')) > '' or TRIM(IFNULL(leftContact.LAST_NAME, '')) > '',concat(leftContact.FIRST_NAME,' ',leftContact.LAST_NAME,'\n'),''),
+	IF(TRIM(IFNULL(leftContact_addr.line1, '')) > '',concat(leftContact_addr.line1,'\n'),''),
+	IF(TRIM(IFNULL(leftContact_addr.line2, '')) > '',concat(leftContact_addr.line2,'\n'),''),
+	IF(TRIM(IFNULL(leftContact_addr.line3, '')) > '',concat(leftContact_addr.line3,'\n'),''),
+	IF(TRIM(IFNULL(leftContact_addr.city, '')) > '',concat(leftContact_addr.city,', '),''),
+	IF(TRIM(IFNULL(leftContact_addr.state_or_province, '')) > '',concat(leftContact_addr.state_or_province,' '),''),
+	IF(TRIM(IFNULL(leftContact_addr.postal_code, '')) > '',leftContact_addr.postal_code,''),
+	IF(TRIM(IFNULL(leftContact_mob.dial_number, '')) > '',CONCAT('\nMobile: ',leftContact_mob.dial_number),''),
+	IF(TRIM(IFNULL(leftContact_ph.dial_number, '')) > '',CONCAT('\nPhone: ',leftContact_ph.dial_number),''),
+	IF(TRIM(IFNULL(leftContact_email.address_url, '')) > '',CONCAT('\n',leftContact_email.address_url),'')
+) as leftAddressBlock,
+
+ (SELECT blobhandle from rh_images where rh_images.caption like '%$P!{COVER_PAGE_CAPTION}' ORDER BY upload_date DESC LIMIT 1) as backgroundImage
+
+
+
+
+###############################################################################################################################
+######### SQUARE WAVE ELEMENT MASTER QUERY ####################################################################################
+############ DO NOT MODIFY THIS SECTION #######################################################################################
+###############################################################################################################################
+FROM st_prj_project_element as prj
+LEFT JOIN st_prj_element_definition AS prj_def ON (prj.DEF_ID = prj_def.ID)
+LEFT JOIN st_prj_project_element AS parent_prj ON (parent_prj.ID = prj.PARENT_ID)
+LEFT JOIN st_prj_element_definition AS parent_prj_def ON parent_prj.DEF_ID = parent_prj_def.ID
+LEFT JOIN st_prj_project_element AS parent_prj_2 ON (parent_prj_2.ID = parent_prj.PARENT_ID)
+LEFT JOIN st_prj_element_definition AS parent_prj_def_2 ON parent_prj_2.DEF_ID = parent_prj_def_2.ID
+LEFT JOIN st_prj_project_element AS parent_prj_3 ON (parent_prj_3.ID = parent_prj_2.PARENT_ID)
+LEFT JOIN st_prj_element_definition AS parent_prj_def_3 ON parent_prj_3.DEF_ID = parent_prj_def_3.ID
+LEFT JOIN st_prj_project_element AS parent_prj_4 ON (parent_prj_4.ID = parent_prj_3.PARENT_ID)
+LEFT JOIN st_prj_element_definition AS parent_prj_def_4 ON parent_prj_4.DEF_ID = parent_prj_def_4.ID
+LEFT JOIN st_prj_project_element AS parent_prj_5 ON (parent_prj_5.ID = parent_prj_4.PARENT_ID)
+LEFT JOIN st_prj_element_definition AS parent_prj_def_5 ON parent_prj_5.DEF_ID = parent_prj_def_5.ID
+LEFT JOIN st_prj_project_element AS parent_prj_6 ON (parent_prj_6.ID = parent_prj_5.PARENT_ID)
+LEFT JOIN st_prj_element_definition AS parent_prj_def_6 ON parent_prj_6.DEF_ID = parent_prj_def_6.ID
+LEFT JOIN st_biz_shipping_method as shipping_method on shipping_method.id = prj.shipping_method_id
+LEFT JOIN st_biz_shipping_method as return_method  on return_method.id = prj.return_method_id
+######### Corp Header Info #########
+LEFT JOIN st_biz_corp_identity as corp on corp.id = IFNULL(prj.corp_identity_id,(SELECT id from st_biz_corp_identity where is_hq)) -- Corp Identity of current project element
+LEFT JOIN st_biz_location as corpHqLoc on corp.hq_location_id = corpHqLoc.id -- HQ of corporate identity of current element
+LEFT JOIN st_biz_loc_address as corpHqLocAddr ON (corpHqLoc.def_ship_id = corpHqLocAddr.id) -- address for HQ for given corporate identity
+LEFT JOIN st_biz_loc_phone as corpHqLocPh ON (corpHqLoc.DEF_PHONE_ID = corpHqLocPh.ID) -- phone number for HQ of corporate identity of current element
+LEFT JOIN st_biz_loc_inet_addr as corpHqLocDefEmail ON (corpHqLoc.def_email_id = corpHqLocDefEmail.id) --  email for HQ of corporate identity of current element
+LEFT JOIN rh_images AS corplogo ON corplogo.imageid = IFNULL(corp.logo_id,corpHqLoc.document_image_id)
+LEFT JOIN st_biz_location as bizLoc ON (prj.location_id = bizLoc.id) -- Business Location (Warehouse of current project element )
+LEFT JOIN st_biz_loc_phone as bizLocPh ON (bizLoc.DEF_PHONE_ID = bizLocPh.ID) -- Business location phone number for current project element
+LEFT JOIN st_biz_loc_address as bizLocAddr ON (bizLoc.DEF_MAIL_ID = bizLocAddr.id) -- Business location address for current project element
+LEFT JOIN st_biz_corp_identity as parentCorp ON (parentCorp.is_hq) -- corporate identity that is marked as "Parent Entity"
+LEFT JOIN st_biz_location as parentCorpHqLoc on parentCorp.hq_location_id = parentCorpHqLoc.id -- Hq location of the corporate identity marked as "Parent Entity"
+LEFT JOIN st_biz_loc_address as parentCorpHqLocAddr ON (parentCorpHqLoc.def_ship_id = parentCorpHqLocAddr.id) -- address for HQ for given corporate identity
+LEFT JOIN st_biz_loc_inet_addr as parentCorpHqLocDefEmail ON (parentCorpHqLoc.def_email_id = parentCorpHqLocDefEmail.id) -- default email for the Hq location of the corporate identity marked as "Parent Entity"
+LEFT JOIN st_biz_loc_phone as parentCorpHqLocDefPhone ON (parentCorpHqLoc.def_phone_id = parentCorpHqLocDefPhone.id) -- default phone number for the Hq location of the corporate identity marked as "Parent Entity"
+######### Corp Header Info #########
+######### Project Element Custom Fields #########
+left join (SELECT 
+GROUP_CONCAT(CASE WHEN ordinal = 1 THEN storage_string ELSE NULL END) as storage_string_1,
+GROUP_CONCAT(CASE WHEN ordinal = 2 THEN storage_string ELSE NULL END) as storage_string_2,
+GROUP_CONCAT(CASE WHEN ordinal = 3 THEN storage_string ELSE NULL END) as storage_string_3,
+GROUP_CONCAT(CASE WHEN ordinal = 4 THEN storage_string ELSE NULL END) as storage_string_4,
+GROUP_CONCAT(CASE WHEN ordinal = 5 THEN storage_string ELSE NULL END) as storage_string_5,
+GROUP_CONCAT(CASE WHEN ordinal = 6 THEN storage_string ELSE NULL END) as storage_string_6,
+GROUP_CONCAT(CASE WHEN ordinal = 7 THEN storage_string ELSE NULL END) as storage_string_7,
+GROUP_CONCAT(CASE WHEN ordinal = 8 THEN storage_string ELSE NULL END) as storage_string_8,
+GROUP_CONCAT(CASE WHEN ordinal = 9 THEN storage_string ELSE NULL END) as storage_string_9,
+GROUP_CONCAT(CASE WHEN ordinal = 10 THEN storage_string ELSE NULL END) as storage_string_10,
+element_id
+FROM(SELECT CASE
+WHEN prj_def_cf.field_type IN ('timestamp','date') THEN CAST(from_unixtime(storage_string/1000) as DATETIME)
+WHEN prj_def_cf.field_type IN ('location','contact','employee','inventory') THEN (SELECT resource_name from st_biz_managed_resource where id = storage_string)
+WHEN prj_def_cf.field_type = 'calendarTemplate' THEN (SELECT group_name from st_prj_calendar_template where id = storage_string)
+WHEN prj_def_cf.field_type = 'currency' THEN (SELECT currency_name from st_biz_currency where id = storage_string)
+WHEN prj_def_cf.field_type IN ('customReport','instance-report') THEN (SELECT report_name from st_biz_custom_report where id = storage_string)
+WHEN prj_def_cf.field_type IN ('element-definition','document-definition') THEN (SELECT name_singular from st_prj_element_definition where id = storage_string)
+WHEN prj_def_cf.field_type IN ('statusOption','definitionStatusOption') THEN (SELECT status_name from st_biz_status_option where id = storage_string)
+WHEN prj_def_cf.field_type = 'inventory-group' THEN (SELECT group_name from st_ivt_inventory_group where id = storage_string)
+WHEN prj_def_cf.field_type = 'scheduledInventoryCount' THEN (SELECT count_name from st_ivt_inventory_count where id = storage_string)
+WHEN prj_def_cf.field_type IN ('stockTypes','serviceResourceType') THEN (SELECT resource_name from st_biz_resource_type where id = storage_string)
+WHEN prj_def_cf.field_type = 'terms-conditions' THEN (SELECT content from st_biz_terms_conditions where id = storage_string)
+WHEN prj_def_cf.field_type = 'pricingModel' THEN (SELECT name from st_biz_pricing_model where id = storage_string)
+WHEN prj_def_cf.field_type = 'user-id' THEN (SELECT name from rh_userprofile where userprofileid = storage_string)
+WHEN prj_def_cf.field_type = 'option-list' THEN (SELECT caption from st_prj_project_element_def_custom_field_list_options where id = storage_string)
+ELSE storage_string END as storage_string, element_id, ordinal, prj_def_cf.field_type, prj_def_cf.caption FROM st_prj_project_element_def_custom_field_value as prj_def_cf_value
+left join st_prj_project_element_def_custom_field as prj_def_cf on prj_def_cf.id = prj_def_cf_value.custom_field_id) custom_fields GROUP BY element_id) as custom_fields on custom_fields.element_id = prj.id
+######### Project Element Custom Fields #########
+###############################################################################################################################
+######### END SQUARE WAVE ELEMENT MASTER QUERY ################################################################################
+###############################################################################################################################
+
+######### Event Folder Address Lookup #########
+left join st_crm_contact as leftContact on leftContact.id = (SELECT
+	CASE 
+	WHEN (address_source) LIKE 'client%' THEN prj.client_id
+	WHEN (address_source) LIKE 'billTo%' THEN prj.bill_to_id
+	WHEN (address_source) LIKE 'personResponsible%' THEN prj.person_responsible_id
+	WHEN (address_source) LIKE 'location%' THEN prj.location_id
+	WHEN (address_source) LIKE 'pickupLocation%' THEN prj.pickup_location_id
+	WHEN (address_source) LIKE 'returnLocation%' THEN prj.return_location_id
+	WHEN (address_source) LIKE 'secondaryLocation%' THEN prj.sec_location_id
+	WHEN (address_source) LIKE 'venue%' THEN prj.venue_id
+	WHEN (address_source) LIKE 'secondaryVenue%' THEN prj.secondary_venue_id
+	WHEN (address_source) LIKE 'secondaryclient%' THEN prj.secondary_client_id
+	WHEN (address_source) LIKE 'secondaryBillTo%' THEN prj.secondary_bill_to_id
+	WHEN (address_source) LIKE 'customOneContact%' THEN prj.custom_one_contact_id
+	WHEN (address_source) LIKE 'customTwoContact%' THEN prj.custom_two_contact_id
+	WHEN (address_source) LIKE 'customThreeContact%' THEN prj.custom_three_contact_id
+	WHEN (address_source) LIKE 'vendor%' THEN prj.vendor_id
+	END as leftBlockSource
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.left_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
+left join st_crm_address as leftContact_addr on leftContact_addr.id = (SELECT
+	CASE 
+	WHEN (address_source) LIKE '%Ship' THEN leftContact.def_ship_id
+	ELSE leftContact.def_mail_id
+	END
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.left_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
+
+left join st_crm_phone as leftContact_ph on leftContact_ph.id = leftContact.def_phone_id
+left join st_crm_phone as leftContact_mob on leftContact_mob.id = (SELECT st_crm_phone.id from st_crm_phone where phone_name LIKE 'Mobile%' and contact_id = leftContact.id LIMIT 1)
+left join st_crm_inet_addr as leftContact_email on leftContact_email.id = leftContact.def_email_id
+
+left join st_crm_contact as centerContact on centerContact.id = (SELECT
+	CASE 
+	WHEN (address_source) LIKE 'client%' THEN prj.client_id
+	WHEN (address_source) LIKE 'billTo%' THEN prj.bill_to_id
+	WHEN (address_source) LIKE 'personResponsible%' THEN prj.person_responsible_id
+	WHEN (address_source) LIKE 'location%' THEN prj.location_id
+	WHEN (address_source) LIKE 'pickupLocation%' THEN prj.pickup_location_id
+	WHEN (address_source) LIKE 'returnLocation%' THEN prj.return_location_id
+	WHEN (address_source) LIKE 'secondaryLocation%' THEN prj.sec_location_id
+	WHEN (address_source) LIKE 'venue%' THEN prj.venue_id
+	WHEN (address_source) LIKE 'secondaryVenue%' THEN prj.secondary_venue_id
+	WHEN (address_source) LIKE 'secondaryclient%' THEN prj.secondary_client_id
+	WHEN (address_source) LIKE 'secondaryBillTo%' THEN prj.secondary_bill_to_id
+	WHEN (address_source) LIKE 'customOneContact%' THEN prj.custom_one_contact_id
+	WHEN (address_source) LIKE 'customTwoContact%' THEN prj.custom_two_contact_id
+	WHEN (address_source) LIKE 'customThreeContact%' THEN prj.custom_three_contact_id
+	WHEN (address_source) LIKE 'vendor%' THEN prj.vendor_id
+	END as centerBlockSource
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.center_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
+left join st_crm_address as centerContact_addr on centerContact_addr.id = (SELECT
+	CASE 
+	WHEN (address_source) LIKE '%Ship' THEN centerContact.def_ship_id
+	ELSE centerContact.def_mail_id
+	END
+	FROM st_fin_address_block_def
+	left join st_fin_document_def on st_fin_document_def.center_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
+left join st_crm_phone as centerContact_ph on centerContact_ph.id = centerContact.def_phone_id
+left join st_crm_phone as centerContact_mob on centerContact_mob.id = (SELECT st_crm_phone.id from st_crm_phone where phone_name LIKE 'Mobile%' and contact_id = centerContact.id LIMIT 1)
+left join st_crm_inet_addr as centerContact_email on centerContact_email.id = centerContact.def_email_id
+
+left join st_crm_contact as rightContact on rightContact.id = (SELECT
+	CASE 
+	WHEN (address_source) LIKE 'client%' THEN prj.client_id
+	WHEN (address_source) LIKE 'billTo%' THEN prj.bill_to_id
+	WHEN (address_source) LIKE 'personResponsible%' THEN prj.person_responsible_id
+	WHEN (address_source) LIKE 'location%' THEN prj.location_id
+	WHEN (address_source) LIKE 'pickupLocation%' THEN prj.pickup_location_id
+	WHEN (address_source) LIKE 'returnLocation%' THEN prj.return_location_id
+	WHEN (address_source) LIKE 'secondaryLocation%' THEN prj.sec_location_id
+	WHEN (address_source) LIKE 'venue%' THEN prj.venue_id
+	WHEN (address_source) LIKE 'secondaryVenue%' THEN prj.secondary_venue_id
+	WHEN (address_source) LIKE 'secondaryclient%' THEN prj.secondary_client_id
+	WHEN (address_source) LIKE 'secondaryBillTo%' THEN prj.secondary_bill_to_id
+	WHEN (address_source) LIKE 'customOneContact%' THEN prj.custom_one_contact_id
+	WHEN (address_source) LIKE 'customTwoContact%' THEN prj.custom_two_contact_id
+	WHEN (address_source) LIKE 'customThreeContact%' THEN prj.custom_three_contact_id
+	WHEN (address_source) LIKE 'vendor%' THEN prj.vendor_id
+	END as rightBlockSource
+	FROM st_fin_address_block_def 
+	left join st_fin_document_def on st_fin_document_def.right_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
+left join st_crm_address as rightContact_addr on rightContact_addr.id = (SELECT
+	CASE 
+	WHEN (address_source) LIKE '%Ship' THEN rightContact.def_ship_id
+	ELSE rightContact.def_mail_id
+	END
+	FROM st_fin_address_block_def
+	left join st_fin_document_def on st_fin_document_def.center_block_id = st_fin_address_block_def.id 
+	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
+	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
+left join st_crm_phone as rightContact_ph on rightContact_ph.id = rightContact.def_phone_id
+left join st_crm_phone as rightContact_mob on rightContact_mob.id = (SELECT st_crm_phone.id from st_crm_phone where phone_name LIKE 'Mobile%' and contact_id = rightContact.id LIMIT 1)
+left join st_crm_inet_addr as rightContact_email on rightContact_email.id = rightContact.def_email_id
+######### Event Folder Address Lookup #########
+
+WHERE
+prj.id = $P{PROJECT_ELEMENT_ID}]]>
+	</queryString>
+	<field name="reportLastEditDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="reportLastEditDate"/>
+		<property name="com.jaspersoft.studio.field.label" value="reportLastEditDate"/>
+	</field>
+	<field name="reportName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="reportName"/>
+		<property name="com.jaspersoft.studio.field.label" value="reportName"/>
+	</field>
+	<field name="reportTesting" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="reportTesting"/>
+		<property name="com.jaspersoft.studio.field.label" value="reportTesting"/>
+	</field>
+	<field name="elementNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="document_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="elementNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="elementHasDocumentNumber" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="has_document_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="elementHasDocumentNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="elementNumberCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="document_number_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="elementNumberCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="elementName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="element_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="elementName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="elementDefinitionName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name_singular"/>
+		<property name="com.jaspersoft.studio.field.label" value="elementDefinitionName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="parentElementNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="document_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentElementNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="parentHasDocumentNumber" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="has_document_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentHasDocumentNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="parentElementNumberCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="document_number_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentElementNumberCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="parentElementName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="element_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentElementName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="parentElementDefinitionName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name_singular"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentElementDefinitionName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="topLevelElementName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="topLevelElementName"/>
+		<property name="com.jaspersoft.studio.field.label" value="topLevelElementName"/>
+	</field>
+	<field name="topLevelElementNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="topLevelElementNumber"/>
+		<property name="com.jaspersoft.studio.field.label" value="topLevelElementNumber"/>
+	</field>
+	<field name="topLevelElementDefinitionName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="topLevelElementDefinitionName"/>
+		<property name="com.jaspersoft.studio.field.label" value="topLevelElementDefinitionName"/>
+	</field>
+	<field name="topLevelElementHasDocumentNumber" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="topLevelElementHasDocumentNumber"/>
+		<property name="com.jaspersoft.studio.field.label" value="topLevelElementHasDocumentNumber"/>
+	</field>
+	<field name="topLevelElementNumberCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="topLevelElementNumberCaption"/>
+		<property name="com.jaspersoft.studio.field.label" value="topLevelElementNumberCaption"/>
+	</field>
+	<field name="assignedTo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assignedTo"/>
+		<property name="com.jaspersoft.studio.field.label" value="assignedTo"/>
+	</field>
+	<field name="venue" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="venue"/>
+		<property name="com.jaspersoft.studio.field.label" value="venue"/>
+	</field>
+	<field name="venueCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="venueCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="venueCompany"/>
+	</field>
+	<field name="venueCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="venue_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="venueCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="personResponsible" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personResponsible"/>
+		<property name="com.jaspersoft.studio.field.label" value="personResponsible"/>
+	</field>
+	<field name="personResponsibleCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personResponsibleCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="personResponsibleCompany"/>
+	</field>
+	<field name="personResponsibleCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="person_responsible_title"/>
+		<property name="com.jaspersoft.studio.field.label" value="personResponsibleCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="salesPerson" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="salesPerson"/>
+		<property name="com.jaspersoft.studio.field.label" value="salesPerson"/>
+	</field>
+	<field name="salesPersonCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="salesPersonCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="salesPersonCompany"/>
+	</field>
+	<field name="salesPersonCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sales_person_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="salesPersonCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="projectManager" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="projectManager"/>
+		<property name="com.jaspersoft.studio.field.label" value="projectManager"/>
+	</field>
+	<field name="projectManagerCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="projectManagerCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="projectManagerCompany"/>
+	</field>
+	<field name="projectManagerCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="project_manager_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="projectManagerCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="eventPlanner" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="eventPlanner"/>
+		<property name="com.jaspersoft.studio.field.label" value="eventPlanner"/>
+	</field>
+	<field name="eventPlannerCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="eventPlannerCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="eventPlannerCompany"/>
+	</field>
+	<field name="eventPlannerCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="event_planner_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="eventPlannerCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="accountExecutive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="accountExecutive"/>
+		<property name="com.jaspersoft.studio.field.label" value="accountExecutive"/>
+	</field>
+	<field name="accountExecutiveCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="accountExecutiveCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="accountExecutiveCompany"/>
+	</field>
+	<field name="accountExecutiveCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="account_executive_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="accountExecutiveCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="technicalDirector" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="technicalDirector"/>
+		<property name="com.jaspersoft.studio.field.label" value="technicalDirector"/>
+	</field>
+	<field name="technicalDirectorCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="technicalDirectorCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="technicalDirectorCompany"/>
+	</field>
+	<field name="technicalDirectorCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="technical_director_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="technicalDirectorCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="administrativeAssistant" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="administrativeAssistant"/>
+		<property name="com.jaspersoft.studio.field.label" value="administrativeAssistant"/>
+	</field>
+	<field name="administrativeAssistantCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="administrativeAssistantCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="administrativeAssistantCompany"/>
+	</field>
+	<field name="administrativeAssistantCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="administrative_assistant_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="administrativeAssistantCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="stageDirector" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stageDirector"/>
+		<property name="com.jaspersoft.studio.field.label" value="stageDirector"/>
+	</field>
+	<field name="stageDirectorCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stageDirectorCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="stageDirectorCompany"/>
+	</field>
+	<field name="stageDirectorCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stage_director_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="stageDirectorCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="backstageManager" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="backstageManager"/>
+		<property name="com.jaspersoft.studio.field.label" value="backstageManager"/>
+	</field>
+	<field name="backstageManagerCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="backstageManagerCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="backstageManagerCompany"/>
+	</field>
+	<field name="backstageManagerCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="backstage_manager_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="backstageManagerCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="secondaryVenue" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryVenue"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryVenue"/>
+	</field>
+	<field name="secondaryVenueCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryVenueCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryVenueCompany"/>
+	</field>
+	<field name="secondaryVenueCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondary_venue_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryVenueCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="artist" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="artist"/>
+		<property name="com.jaspersoft.studio.field.label" value="artist"/>
+	</field>
+	<field name="artistCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="artistCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="artistCompany"/>
+	</field>
+	<field name="artistCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="artist_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="artistCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="secondaryClient" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryClient"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryClient"/>
+	</field>
+	<field name="secondaryClientCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryClientCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryClientCompany"/>
+	</field>
+	<field name="secondaryClientCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondary_client_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryClientCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="vendor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="vendor"/>
+		<property name="com.jaspersoft.studio.field.label" value="vendor"/>
+	</field>
+	<field name="vendorCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="vendorCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="vendorCompany"/>
+	</field>
+	<field name="vendorCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="vendor_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="vendorCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="secondaryBillTo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryBillTo"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryBillTo"/>
+	</field>
+	<field name="secondaryBillToCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryBillToCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryBillToCompany"/>
+	</field>
+	<field name="secondaryBillToCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondary_bill_to_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryBillToCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="billTo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="billTo"/>
+		<property name="com.jaspersoft.studio.field.label" value="billTo"/>
+	</field>
+	<field name="billToCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="billToCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="billToCompany"/>
+	</field>
+	<field name="billToCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="bill_to_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="billToCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="client" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="client"/>
+		<property name="com.jaspersoft.studio.field.label" value="client"/>
+	</field>
+	<field name="clientCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="clientCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="clientCompany"/>
+	</field>
+	<field name="clientCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="client_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="clientCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="returnLocation" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="returnLocation"/>
+		<property name="com.jaspersoft.studio.field.label" value="returnLocation"/>
+	</field>
+	<field name="returnLocationCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="returnLocationCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="returnLocationCompany"/>
+	</field>
+	<field name="returnLocationCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="return_location_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="returnLocationCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="pickupLocation" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pickupLocation"/>
+		<property name="com.jaspersoft.studio.field.label" value="pickupLocation"/>
+	</field>
+	<field name="pickupLocationCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pickupLocationCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="pickupLocationCompany"/>
+	</field>
+	<field name="pickupLocationCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pickup_location_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="pickupLocationCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="secondaryLocation" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryLocation"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryLocation"/>
+	</field>
+	<field name="secondaryLocationCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="secondaryLocationCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryLocationCompany"/>
+	</field>
+	<field name="secondaryLocationCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sec_location_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="secondaryLocationCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="customContactOne" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customContactOne"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactOne"/>
+	</field>
+	<field name="customContactOneCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customContactOneCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactOneCompany"/>
+	</field>
+	<field name="customContactOneCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="custom_one_contact_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactOneCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="customContactTwo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customContactTwo"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactTwo"/>
+	</field>
+	<field name="customContactTwoCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customContactTwoCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactTwoCompany"/>
+	</field>
+	<field name="customContactTwoCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="custom_two_contact_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactTwoCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="customContactThree" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customContactThree"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactThree"/>
+	</field>
+	<field name="customContactThreeCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customContactThreeCompany"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactThreeCompany"/>
+	</field>
+	<field name="customContactThreeCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="custom_three_contact_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="customContactThreeCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="businessLocationName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="businessLocationName"/>
+		<property name="com.jaspersoft.studio.field.label" value="businessLocationName"/>
+	</field>
+	<field name="businessLocationCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="location_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="businessLocationCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="dueDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="due_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="dueDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="preparedDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="prepared_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="preparedDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="plannedStartDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="planned_start_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="plannedStartDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="plannedEndDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="planned_end_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="plannedEndDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="showStart" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="show_start"/>
+		<property name="com.jaspersoft.studio.field.label" value="showStart"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="showEnd" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="show_end"/>
+		<property name="com.jaspersoft.studio.field.label" value="showEnd"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="loadInDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="load_in_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="loadInDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="loadOutDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="load_out_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="loadOutDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="rehearsalDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="rehearsal_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="rehearsalDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="plannedStartDateCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="planned_start_date_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="plannedStartDateCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="plannedEndDateCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="planned_end_date_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="plannedEndDateCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="eventDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="event_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="eventDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="doorsDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="doors_time"/>
+		<property name="com.jaspersoft.studio.field.label" value="doorsDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="depositDueDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="deposit_due_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="depositDueDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="generatedDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="generatedDate"/>
+		<property name="com.jaspersoft.studio.field.label" value="generatedDate"/>
+	</field>
+	<field name="lastEditDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="last_edit_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="lastEditDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="createdByDate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created_by_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdByDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="statusName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="statusName"/>
+		<property name="com.jaspersoft.studio.field.label" value="statusName"/>
+	</field>
+	<field name="statusProbability" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="statusProbability"/>
+		<property name="com.jaspersoft.studio.field.label" value="statusProbability"/>
+	</field>
+	<field name="department" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="department"/>
+		<property name="com.jaspersoft.studio.field.label" value="department"/>
+	</field>
+	<field name="shippingMethodName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="method_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="shippingMethodName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_shipping_method"/>
+	</field>
+	<field name="returnMethodName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="method_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="returnMethodName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_shipping_method"/>
+	</field>
+	<field name="depositAmount" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="deposit"/>
+		<property name="com.jaspersoft.studio.field.label" value="depositAmount"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="depositPercentage" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="deposit_percentage"/>
+		<property name="com.jaspersoft.studio.field.label" value="depositPercentage"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="currencyName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="currencyName"/>
+		<property name="com.jaspersoft.studio.field.label" value="currencyName"/>
+	</field>
+	<field name="customerPO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customer_po"/>
+		<property name="com.jaspersoft.studio.field.label" value="customerPO"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="elementNotes" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="elementNotes"/>
+		<property name="com.jaspersoft.studio.field.label" value="elementNotes"/>
+	</field>
+	<field name="lastEditUser" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lastEditUser"/>
+		<property name="com.jaspersoft.studio.field.label" value="lastEditUser"/>
+	</field>
+	<field name="createdByUser" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="createdByUser"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdByUser"/>
+	</field>
+	<field name="timeZone" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="time_zone"/>
+		<property name="com.jaspersoft.studio.field.label" value="timeZone"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_location"/>
+	</field>
+	<field name="logoImageBlob" class="java.io.InputStream">
+		<property name="com.jaspersoft.studio.field.name" value="blobhandle"/>
+		<property name="com.jaspersoft.studio.field.label" value="logoImageBlob"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rh_images"/>
+	</field>
+	<field name="dunsNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="duns_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="dunsNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_corp_identity"/>
+	</field>
+	<field name="corpIdentCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="company_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="corpIdentCompany"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_corp_identity"/>
+	</field>
+	<field name="corpIdentWebsite" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="web_site"/>
+		<property name="com.jaspersoft.studio.field.label" value="corpIdentWebsite"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_corp_identity"/>
+	</field>
+	<field name="corpIdentEmail" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="address_url"/>
+		<property name="com.jaspersoft.studio.field.label" value="corpIdentEmail"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_loc_inet_addr"/>
+	</field>
+	<field name="corpIdentPhoneNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="dial_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="corpIdentPhoneNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_loc_phone"/>
+	</field>
+	<field name="corpHqLocAddressString" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="corpHqLocAddressString"/>
+		<property name="com.jaspersoft.studio.field.label" value="corpHqLocAddressString"/>
+	</field>
+	<field name="businessLocationWebsite" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="businessLocationWebsite"/>
+		<property name="com.jaspersoft.studio.field.label" value="businessLocationWebsite"/>
+	</field>
+	<field name="businessLocationEmail" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="businessLocationEmail"/>
+		<property name="com.jaspersoft.studio.field.label" value="businessLocationEmail"/>
+	</field>
+	<field name="businessLocationPhoneNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="dial_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="businessLocationPhoneNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_loc_phone"/>
+	</field>
+	<field name="businessLocationAddressString" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="businessLocationAddressString"/>
+		<property name="com.jaspersoft.studio.field.label" value="businessLocationAddressString"/>
+	</field>
+	<field name="parenEntityCompany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="company_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="parenEntityCompany"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_corp_identity"/>
+	</field>
+	<field name="parentEntityWebsite" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="web_site"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentEntityWebsite"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_corp_identity"/>
+	</field>
+	<field name="parentEntityEmail" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="address_url"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentEntityEmail"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_loc_inet_addr"/>
+	</field>
+	<field name="parentEntityPhoneNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="dial_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentEntityPhoneNumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_biz_loc_phone"/>
+	</field>
+	<field name="parentEntityAddressString" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="parentEntityAddressString"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentEntityAddressString"/>
+	</field>
+	<field name="backgroundImage" class="java.io.InputStream">
+		<property name="com.jaspersoft.studio.field.name" value="backgroundImage"/>
+		<property name="com.jaspersoft.studio.field.label" value="backgroundImage"/>
+	</field>
+	<field name="leftAddressBlock" class="java.lang.String"/>
+	<field name="userFieldOne" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldOne"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldOne"/>
+	</field>
+	<field name="userFieldOneCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_one_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldOneCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldTwo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldTwo"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldTwo"/>
+	</field>
+	<field name="userFieldTwoCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_two_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldTwoCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldThree" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldThree"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldThree"/>
+	</field>
+	<field name="userFieldThreeCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_three_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldThreeCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldFour" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldFour"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldFour"/>
+	</field>
+	<field name="userFieldFourCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_four_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldFourCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldFive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldFive"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldFive"/>
+	</field>
+	<field name="userFieldFiveCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_five_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldFiveCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldSix" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldSix"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldSix"/>
+	</field>
+	<field name="userFieldSixCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_six_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldSixCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldSeven" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldSeven"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldSeven"/>
+	</field>
+	<field name="userFieldSevenCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_seven_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldSevenCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldEight" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldEight"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldEight"/>
+	</field>
+	<field name="userFieldEightCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_eight_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldEightCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldNine" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldNine"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldNine"/>
+	</field>
+	<field name="userFieldNineCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_nine_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldNineCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldTen" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldTen"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldTen"/>
+	</field>
+	<field name="userFieldTenCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_ten_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldTenCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldTenType" class="java.lang.String"/>
+	<field name="userFieldNineType" class="java.lang.String"/>
+	<field name="userFieldEightType" class="java.lang.String"/>
+	<field name="userFieldSevenType" class="java.lang.String"/>
+	<field name="userFieldSixType" class="java.lang.String"/>
+	<field name="userFieldFiveType" class="java.lang.String"/>
+	<field name="userFieldFourType" class="java.lang.String"/>
+	<field name="userFieldThreeType" class="java.lang.String"/>
+	<field name="userFieldTwoType" class="java.lang.String"/>
+	<field name="userFieldOneType" class="java.lang.String"/>
+	<group name="Rhombus">
+		<groupHeader>
+			<band height="842">
+				<printWhenExpression><![CDATA[$P{COVER_PAGE_CAPTION}.equals("Title Page Rhombus")]]></printWhenExpression>
+				<image>
+					<reportElement x="0" y="0" width="595" height="842" uuid="dac60cc2-3500-4c60-af57-14bb5a74b7cc">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<imageExpression><![CDATA[$F{backgroundImage}]]></imageExpression>
+				</image>
+				<frame>
+					<reportElement x="240" y="250" width="330" height="120" uuid="7720e097-d5b4-4d05-a936-5b54655400fb"/>
+					<textField>
+						<reportElement x="0" y="46" width="330" height="30" uuid="1923a79e-8e90-4ca0-a750-bb1674d9df1c"/>
+						<textElement markup="styled"/>
+						<textFieldExpression><![CDATA["<font size=\"" + new Integer(Math.min(((int)(Math.floor(330 / (new Double((new java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB).createGraphics().getFontMetrics(new java.awt.Font("ArialMT",0,16)).stringWidth($F{venueCompany})-3))/16)))),(int)14)).toString() +"\">" + $F{venueCompany}.replaceAll("&","&amp;") + "</font>"]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="0" y="90" width="330" height="30" uuid="a49904ac-a0ea-400f-bea9-60a4a3624ba2"/>
+						<textElement markup="styled"/>
+						<textFieldExpression><![CDATA["<font size=\"" + new Integer(Math.min(((int)(Math.floor(330 / (new Double((new java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB).createGraphics().getFontMetrics(new java.awt.Font("ArialMT",0,16)).stringWidth($F{clientCompany})-3))/16)))),(int)14)).toString() +"\">" + $F{clientCompany}.replaceAll("&","&amp;") + "</font>"]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="0" y="4" width="330" height="30" uuid="348bf501-25fe-4643-9740-4bcd82fa11c8"/>
+						<textElement markup="styled">
+							<font size="26"/>
+						</textElement>
+						<textFieldExpression><![CDATA["<font size=\"" + new Integer(Math.min(((int)(Math.floor(330 / (new Double((new java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB).createGraphics().getFontMetrics(new java.awt.Font("ArialMT",1,16)).stringWidth($F{elementName})-3))/16)))),(int)22)).toString() +"\">" + $F{elementName}.replaceAll("&","&amp;") + "</font>"]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+	</group>
+</jasperReport>
