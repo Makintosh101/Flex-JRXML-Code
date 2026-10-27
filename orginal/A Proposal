@@ -95,21 +95,19 @@ and id != IFNULL($P{reportId},"")
 ORDER BY last_edit_date DESC LIMIT 1) AS tandCReportId,
 
 
-CONCAT_WS("-", 
-      lpad(parent_child_prj_6.ordinal,3,0),
-    parent_child_prj_6.id,
-      lpad(parent_child_prj_5.ordinal,3,0),
-    parent_child_prj_5.id,
-      lpad(parent_child_prj_4.ordinal,3,0),
-    parent_child_prj_4.id,
-      lpad(parent_child_prj_3.ordinal,3,0),
-    parent_child_prj_3.id,
-      lpad(parent_child_prj_2.ordinal,3,0),
-    parent_child_prj_2.id,
-      lpad(parent_child_prj_2.ordinal,3,0),
-    parent_child_prj.id,
-      lpad(child_prj.ordinal,3,0),
-    child_prj.id) as elementOrdinal
+CASE WHEN child_prj.PARENT_ID IS NULL
+			THEN lpad(child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = child_prj.PARENT_ID and ordinal = child_prj.ordinal and !is_deleted and created_by_date < child_prj.created_by_date),3,0)
+		WHEN child_prj.PARENT_ID IS NOT NULL AND parent_child_prj.PARENT_ID IS NULL
+			THEN CONCAT(lpad(parent_child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj.PARENT_ID and ordinal = parent_child_prj.ordinal and !is_deleted and created_by_date < parent_child_prj.created_by_date),3,0),lpad(child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = child_prj.PARENT_ID and ordinal = child_prj.ordinal and !is_deleted and created_by_date < child_prj.created_by_date),3,0))
+		WHEN child_prj.PARENT_ID IS NOT NULL AND parent_child_prj.PARENT_ID IS NOT NULL AND parent_child_prj_2.PARENT_ID IS NULL
+			THEN CONCAT(lpad(parent_child_prj_2.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_2.PARENT_ID and ordinal = parent_child_prj_2.ordinal and !is_deleted and created_by_date < parent_child_prj_2.created_by_date),3,0),lpad(parent_child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj.PARENT_ID and ordinal = parent_child_prj.ordinal and !is_deleted and created_by_date < parent_child_prj.created_by_date),3,0),lpad(child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = child_prj.PARENT_ID and ordinal = child_prj.ordinal and !is_deleted and created_by_date < child_prj.created_by_date),3,0))
+		WHEN child_prj.PARENT_ID IS NOT NULL AND parent_child_prj.PARENT_ID IS NOT NULL AND parent_child_prj_2.PARENT_ID IS NOT NULL AND parent_child_prj_3.PARENT_ID IS NULL
+			THEN CONCAT(lpad(parent_child_prj_3.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_3.PARENT_ID and ordinal = parent_child_prj_3.ordinal and !is_deleted and created_by_date < parent_child_prj_3.created_by_date),3,0),lpad(parent_child_prj_2.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_2.PARENT_ID and ordinal = parent_child_prj_2.ordinal and !is_deleted and created_by_date < parent_child_prj_2.created_by_date),3,0),lpad(parent_child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj.PARENT_ID and ordinal = parent_child_prj.ordinal and !is_deleted and created_by_date < parent_child_prj.created_by_date),3,0),lpad(child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = child_prj.PARENT_ID and ordinal = child_prj.ordinal and !is_deleted and created_by_date < child_prj.created_by_date),3,0))
+		WHEN child_prj.PARENT_ID IS NOT NULL AND parent_child_prj.PARENT_ID IS NOT NULL AND parent_child_prj_2.PARENT_ID IS NOT NULL AND parent_child_prj_3.PARENT_ID IS NOT NULL AND parent_child_prj_4.PARENT_ID IS NULL
+			THEN CONCAT(lpad(parent_child_prj_4.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_4.PARENT_ID and ordinal = parent_child_prj_4.ordinal and !is_deleted and created_by_date < parent_child_prj_4.created_by_date),3,0),lpad(parent_child_prj_3.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_3.PARENT_ID and ordinal = parent_child_prj_3.ordinal and !is_deleted and created_by_date < parent_child_prj_3.created_by_date),3,0),lpad(parent_child_prj_2.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_2.PARENT_ID and ordinal = parent_child_prj_2.ordinal and !is_deleted and created_by_date < parent_child_prj_2.created_by_date),3,0),lpad(parent_child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj.PARENT_ID and ordinal = parent_child_prj.ordinal and !is_deleted and created_by_date < parent_child_prj.created_by_date),3,0),lpad(child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = child_prj.PARENT_ID and ordinal = child_prj.ordinal and !is_deleted and created_by_date < child_prj.created_by_date),3,0))
+		WHEN child_prj.PARENT_ID IS NOT NULL AND parent_child_prj.PARENT_ID IS NOT NULL AND parent_child_prj_2.PARENT_ID IS NOT NULL AND parent_child_prj_3.PARENT_ID IS NOT NULL AND parent_child_prj_4.PARENT_ID IS NOT NULL AND parent_child_prj_5.PARENT_ID IS NULL
+			THEN CONCAT(lpad(parent_child_prj_5.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_5.PARENT_ID and ordinal = parent_child_prj_5.ordinal and !is_deleted and created_by_date < parent_child_prj_5.created_by_date),3,0),lpad(parent_child_prj_4.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_4.PARENT_ID and ordinal = parent_child_prj_4.ordinal and !is_deleted and created_by_date < parent_child_prj_4.created_by_date),3,0),lpad(parent_child_prj_3.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_3.PARENT_ID and ordinal = parent_child_prj_3.ordinal and !is_deleted and created_by_date < parent_child_prj_3.created_by_date),3,0),lpad(parent_child_prj_2.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj_2.PARENT_ID and ordinal = parent_child_prj_2.ordinal and !is_deleted and created_by_date < parent_child_prj_2.created_by_date),3,0),lpad(parent_child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = parent_child_prj.PARENT_ID and ordinal = parent_child_prj.ordinal and !is_deleted and created_by_date < parent_child_prj.created_by_date),3,0),lpad(child_prj.ordinal+(SELECT count(id) from st_prj_project_element where PARENT_ID = child_prj.PARENT_ID and ordinal = child_prj.ordinal and !is_deleted and created_by_date < child_prj.created_by_date),3,0))
+	END as elementOrdinal
 
   FROM st_prj_project_element AS child_prj
   LEFT JOIN st_prj_element_definition AS child_prj_def ON child_prj.def_id = child_prj_def.id
@@ -143,7 +141,7 @@ AND cf_def.field_id='toggle_subfolders'),TRUE)))
   AND !child_prj.is_deleted
   GROUP BY child_prj.id
   HAVING count(litem.id) > 0
-ORDER BY elementOrdinal]]>
+ORDER BY elementOrdinal, child_prj.created_by_date, child_prj.id]]>
 	</queryString>
 	<field name="id" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="id"/>

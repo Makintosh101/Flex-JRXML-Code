@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.1.1  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Smart Quote" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" isFloatColumnFooter="true" uuid="f09e31bf-bce5-432b-aae9-d0ff3e5cb370">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="V2 Smart Quote" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" isFloatColumnFooter="true" uuid="f09e31bf-bce5-432b-aae9-d0ff3e5cb370">
 	<property name="ireport.zoom" value="2.1435888100000033"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -822,6 +822,19 @@ LEFT JOIN st_biz_pricing_model as rate on (flitem.pricing_model_id = rate.id)
 WHERE prj.id = $P{PROJECT_ELEMENT_ID}
 
 AND flitem.internal_view_only=0 and !litem.is_deleted
+AND !prj.is_deleted
+AND EXISTS (
+		SELECT 1 FROM st_biz_status_option AS quote_status
+		WHERE quote_status.id = prj.status_id
+			AND quote_status.status_name NOT LIKE '%Cancel%'
+)
+AND NOT EXISTS (
+		SELECT 1
+		FROM st_prj_project_element AS ancestor
+		LEFT JOIN st_biz_status_option AS ancestor_status ON ancestor_status.id = ancestor.status_id
+		WHERE ancestor.id IN (parent_prj.id, parent_prj_2.id, parent_prj_3.id, parent_prj_4.id, parent_prj_5.id, parent_prj_6.id)
+			AND (ancestor.is_deleted = 1 OR ancestor_status.status_name LIKE '%Cancel%')
+)
 
 ORDER BY ordinal]]>
 	</queryString>
@@ -1783,9 +1796,15 @@ ORDER BY ordinal]]>
 		<property name="com.jaspersoft.studio.field.name" value="PRINT_ALL_FINANCIAL"/>
 		<property name="com.jaspersoft.studio.field.label" value="PRINT_ALL_FINANCIAL"/>
 	</field>
+	<!-- Change log: Use ordinal-backed SubtotalGroupKey for Line grouping so duplicate subtotal titles render as separate subtotal sections. -->
 	<variable name="Subtotal" class="java.lang.String">
 		<variableExpression><![CDATA[($F{lineItemType}.equals("subtotal")?$F{lineItemDescription}:
       ($F{orphanLine}?"orphanLine":$V{Subtotal}))]]></variableExpression>
+		<initialValueExpression><![CDATA[""]]></initialValueExpression>
+	</variable>
+	<variable name="SubtotalGroupKey" class="java.lang.String">
+		<variableExpression><![CDATA[($F{lineItemType}.equals("subtotal")?$F{ordinal}:
+      ($F{orphanLine}?"orphanLine":$V{SubtotalGroupKey}))]]></variableExpression>
 		<initialValueExpression><![CDATA[""]]></initialValueExpression>
 	</variable>
 	<variable name="SubtotalDiscounted" class="java.lang.Double">
@@ -1858,7 +1877,7 @@ $V{subtotalDiscountLineMute})]]></initialValueExpression>
 		<initialValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat($P{DatePattern},$P{REPORT_LOCALE}, TimeZone.getTimeZone($F{timeZone}))]]></initialValueExpression>
 	</variable>
 	<group name="Line" keepTogether="true">
-		<groupExpression><![CDATA[$V{Subtotal}]]></groupExpression>
+		<groupExpression><![CDATA[$V{SubtotalGroupKey}]]></groupExpression>
 		<groupHeader>
 			<band height="14" splitType="Immediate">
 				<printWhenExpression><![CDATA[$F{lineItemType}.equals("subtotal")]]></printWhenExpression>

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.1.1  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Smart Title Page" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="363fd1c7-c02f-484c-9ec2-821c6be9b51f">
-	<property name="ireport.zoom" value="1.0000000000000009"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Smart Cover Letter" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="363fd1c7-c02f-484c-9ec2-821c6be9b51f">
+	<property name="ireport.zoom" value="1.6934217901613318"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="844"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="techrun_dev"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="blueelephantuk_dev"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
-	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -17,38 +16,41 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
-	<style name="Text Style" isDefault="true" isBlankWhenNull="true">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$P{COVER_PAGE_CAPTION}.equals("Title Page Rhombus")]]></conditionExpression>
-			<style forecolor="#565657" hTextAlign="Left" vTextAlign="Middle" isBlankWhenNull="true" fontName="Arial" isBold="true"/>
-		</conditionalStyle>
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$P{COVER_PAGE_CAPTION}.equals("Title Page Bar")]]></conditionExpression>
-			<style forecolor="#000000" fontName="DejaVu Sans"/>
-		</conditionalStyle>
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$P{COVER_PAGE_CAPTION}.equals("Proposal Cover Page")]]></conditionExpression>
-			<style/>
-		</conditionalStyle>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
+	<style name="Default Style" isDefault="true" forecolor="#000000" vTextAlign="Middle" vImageAlign="Middle" isBlankWhenNull="true" fontName="Arial" fontSize="11">
+		<pen lineColor="#066079"/>
+		<box>
+			<pen lineColor="#066079"/>
+		</box>
+		<paragraph leftIndent="2"/>
 	</style>
-	<style name="Color" mode="Opaque" backcolor="#0B2F9E"/>
-	<parameter name="PROJECT_ELEMENT_ID" class="java.lang.String">
-		<defaultValueExpression><![CDATA["23a969c4-fb92-4428-b4c5-9491bd90974e"]]></defaultValueExpression>
-	</parameter>
-	<parameter name="COVER_PAGE_CAPTION" class="java.lang.String">
-		<defaultValueExpression><![CDATA["Title Page Rhombus"]]></defaultValueExpression>
-	</parameter>
+	<style name="Captions" style="Default Style" isBold="true"/>
+	<style name="Logo Caption" style="Default Style" forecolor="#666666" fontName="DejaVu Sans" fontSize="6"/>
+	<style name="Page Footer" style="Default Style" forecolor="#6B6B6B" fontSize="7"/>
 	<parameter name="reportId" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}.get("reportId")]]></defaultValueExpression>
 	</parameter>
-	<parameter name="CHILD_DEFS" class="java.lang.String" isForPrompting="false">
-		<parameterDescription><![CDATA[OPTIONAL]]></parameterDescription>
+	<parameter name="PROJECT_ELEMENT_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["23a969c4-fb92-4428-b4c5-9491bd90974e"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="DatePattern" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["MM/dd/yyyy"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["dd/MM/yyyy"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="TimePattern" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["hh:mm a"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DatePatternLong" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["EEEEE dd MMMMM yyyy"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DateFormatter" class="java.text.DateFormat" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat($P{DatePattern},$P{REPORT_LOCALE}, $P{REPORT_TIME_ZONE})]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TimeFormatter" class="java.text.DateFormat" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat($P{TimePattern},$P{REPORT_LOCALE}, $P{REPORT_TIME_ZONE})]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DateTimeFormatter" class="java.text.DateFormat" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat(($P{DatePattern} + " " + $P{TimePattern}),$P{REPORT_LOCALE}, $P{REPORT_TIME_ZONE})]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[###############################################################################################################################
@@ -339,24 +341,15 @@ CONCAT(
 ###############################################################################################################################
 ######### END SQUARE WAVE ELEMENT MASTER QUERY ################################################################################
 ###############################################################################################################################
-CONCAT(
-	IF(TRIM(IFNULL(leftContact.COMPANY, '')) > '',concat(leftContact.COMPANY,'\n'),''),
-	IF(TRIM(IFNULL(leftContact.FIRST_NAME, '')) > '' or TRIM(IFNULL(leftContact.LAST_NAME, '')) > '',concat(leftContact.FIRST_NAME,' ',leftContact.LAST_NAME,'\n'),''),
-	IF(TRIM(IFNULL(leftContact_addr.line1, '')) > '',concat(leftContact_addr.line1,'\n'),''),
-	IF(TRIM(IFNULL(leftContact_addr.line2, '')) > '',concat(leftContact_addr.line2,'\n'),''),
-	IF(TRIM(IFNULL(leftContact_addr.line3, '')) > '',concat(leftContact_addr.line3,'\n'),''),
-	IF(TRIM(IFNULL(leftContact_addr.city, '')) > '',concat(leftContact_addr.city,', '),''),
-	IF(TRIM(IFNULL(leftContact_addr.state_or_province, '')) > '',concat(leftContact_addr.state_or_province,' '),''),
-	IF(TRIM(IFNULL(leftContact_addr.postal_code, '')) > '',leftContact_addr.postal_code,''),
-	IF(TRIM(IFNULL(leftContact_mob.dial_number, '')) > '',CONCAT('\nMobile: ',leftContact_mob.dial_number),''),
-	IF(TRIM(IFNULL(leftContact_ph.dial_number, '')) > '',CONCAT('\nPhone: ',leftContact_ph.dial_number),''),
-	IF(TRIM(IFNULL(leftContact_email.address_url, '')) > '',CONCAT('\n',leftContact_email.address_url),'')
-) as leftAddressBlock,
 
- (SELECT blobhandle from rh_images where rh_images.caption like '%$P!{COVER_PAGE_CAPTION}' ORDER BY upload_date DESC LIMIT 1) as backgroundImage
-
-
-
+# PRINT OPTIONS
+IFNULL((SELECT biz_cf_value.storage_string
+FROM st_prj_element_custom_field_value as cf_value
+LEFT JOIN st_biz_custom_field_value as biz_cf_value ON (cf_value.id = biz_cf_value.id)
+LEFT JOIN st_biz_custom_field_def as cf_def on (cf_def.id = biz_cf_value.custom_field_def_id)
+WHERE cf_value.proj_element_id=prj.id
+AND cf_def.field_id='cover_letter_body'
+),"") as coverLetterBody
 
 ###############################################################################################################################
 ######### SQUARE WAVE ELEMENT MASTER QUERY ####################################################################################
@@ -429,113 +422,6 @@ left join st_prj_project_element_def_custom_field as prj_def_cf on prj_def_cf.id
 ######### END SQUARE WAVE ELEMENT MASTER QUERY ################################################################################
 ###############################################################################################################################
 
-######### Event Folder Address Lookup #########
-left join st_crm_contact as leftContact on leftContact.id = (SELECT
-	CASE 
-	WHEN (address_source) LIKE 'client%' THEN prj.client_id
-	WHEN (address_source) LIKE 'billTo%' THEN prj.bill_to_id
-	WHEN (address_source) LIKE 'personResponsible%' THEN prj.person_responsible_id
-	WHEN (address_source) LIKE 'location%' THEN prj.location_id
-	WHEN (address_source) LIKE 'pickupLocation%' THEN prj.pickup_location_id
-	WHEN (address_source) LIKE 'returnLocation%' THEN prj.return_location_id
-	WHEN (address_source) LIKE 'secondaryLocation%' THEN prj.sec_location_id
-	WHEN (address_source) LIKE 'venue%' THEN prj.venue_id
-	WHEN (address_source) LIKE 'secondaryVenue%' THEN prj.secondary_venue_id
-	WHEN (address_source) LIKE 'secondaryclient%' THEN prj.secondary_client_id
-	WHEN (address_source) LIKE 'secondaryBillTo%' THEN prj.secondary_bill_to_id
-	WHEN (address_source) LIKE 'customOneContact%' THEN prj.custom_one_contact_id
-	WHEN (address_source) LIKE 'customTwoContact%' THEN prj.custom_two_contact_id
-	WHEN (address_source) LIKE 'customThreeContact%' THEN prj.custom_three_contact_id
-	WHEN (address_source) LIKE 'vendor%' THEN prj.vendor_id
-	END as leftBlockSource
-	FROM st_fin_address_block_def 
-	left join st_fin_document_def on st_fin_document_def.left_block_id = st_fin_address_block_def.id 
-	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
-	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
-left join st_crm_address as leftContact_addr on leftContact_addr.id = (SELECT
-	CASE 
-	WHEN (address_source) LIKE '%Ship' THEN leftContact.def_ship_id
-	ELSE leftContact.def_mail_id
-	END
-	FROM st_fin_address_block_def 
-	left join st_fin_document_def on st_fin_document_def.left_block_id = st_fin_address_block_def.id 
-	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
-	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
-
-left join st_crm_phone as leftContact_ph on leftContact_ph.id = leftContact.def_phone_id
-left join st_crm_phone as leftContact_mob on leftContact_mob.id = (SELECT st_crm_phone.id from st_crm_phone where phone_name LIKE 'Mobile%' and contact_id = leftContact.id LIMIT 1)
-left join st_crm_inet_addr as leftContact_email on leftContact_email.id = leftContact.def_email_id
-
-left join st_crm_contact as centerContact on centerContact.id = (SELECT
-	CASE 
-	WHEN (address_source) LIKE 'client%' THEN prj.client_id
-	WHEN (address_source) LIKE 'billTo%' THEN prj.bill_to_id
-	WHEN (address_source) LIKE 'personResponsible%' THEN prj.person_responsible_id
-	WHEN (address_source) LIKE 'location%' THEN prj.location_id
-	WHEN (address_source) LIKE 'pickupLocation%' THEN prj.pickup_location_id
-	WHEN (address_source) LIKE 'returnLocation%' THEN prj.return_location_id
-	WHEN (address_source) LIKE 'secondaryLocation%' THEN prj.sec_location_id
-	WHEN (address_source) LIKE 'venue%' THEN prj.venue_id
-	WHEN (address_source) LIKE 'secondaryVenue%' THEN prj.secondary_venue_id
-	WHEN (address_source) LIKE 'secondaryclient%' THEN prj.secondary_client_id
-	WHEN (address_source) LIKE 'secondaryBillTo%' THEN prj.secondary_bill_to_id
-	WHEN (address_source) LIKE 'customOneContact%' THEN prj.custom_one_contact_id
-	WHEN (address_source) LIKE 'customTwoContact%' THEN prj.custom_two_contact_id
-	WHEN (address_source) LIKE 'customThreeContact%' THEN prj.custom_three_contact_id
-	WHEN (address_source) LIKE 'vendor%' THEN prj.vendor_id
-	END as centerBlockSource
-	FROM st_fin_address_block_def 
-	left join st_fin_document_def on st_fin_document_def.center_block_id = st_fin_address_block_def.id 
-	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
-	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
-left join st_crm_address as centerContact_addr on centerContact_addr.id = (SELECT
-	CASE 
-	WHEN (address_source) LIKE '%Ship' THEN centerContact.def_ship_id
-	ELSE centerContact.def_mail_id
-	END
-	FROM st_fin_address_block_def
-	left join st_fin_document_def on st_fin_document_def.center_block_id = st_fin_address_block_def.id 
-	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
-	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
-left join st_crm_phone as centerContact_ph on centerContact_ph.id = centerContact.def_phone_id
-left join st_crm_phone as centerContact_mob on centerContact_mob.id = (SELECT st_crm_phone.id from st_crm_phone where phone_name LIKE 'Mobile%' and contact_id = centerContact.id LIMIT 1)
-left join st_crm_inet_addr as centerContact_email on centerContact_email.id = centerContact.def_email_id
-
-left join st_crm_contact as rightContact on rightContact.id = (SELECT
-	CASE 
-	WHEN (address_source) LIKE 'client%' THEN prj.client_id
-	WHEN (address_source) LIKE 'billTo%' THEN prj.bill_to_id
-	WHEN (address_source) LIKE 'personResponsible%' THEN prj.person_responsible_id
-	WHEN (address_source) LIKE 'location%' THEN prj.location_id
-	WHEN (address_source) LIKE 'pickupLocation%' THEN prj.pickup_location_id
-	WHEN (address_source) LIKE 'returnLocation%' THEN prj.return_location_id
-	WHEN (address_source) LIKE 'secondaryLocation%' THEN prj.sec_location_id
-	WHEN (address_source) LIKE 'venue%' THEN prj.venue_id
-	WHEN (address_source) LIKE 'secondaryVenue%' THEN prj.secondary_venue_id
-	WHEN (address_source) LIKE 'secondaryclient%' THEN prj.secondary_client_id
-	WHEN (address_source) LIKE 'secondaryBillTo%' THEN prj.secondary_bill_to_id
-	WHEN (address_source) LIKE 'customOneContact%' THEN prj.custom_one_contact_id
-	WHEN (address_source) LIKE 'customTwoContact%' THEN prj.custom_two_contact_id
-	WHEN (address_source) LIKE 'customThreeContact%' THEN prj.custom_three_contact_id
-	WHEN (address_source) LIKE 'vendor%' THEN prj.vendor_id
-	END as rightBlockSource
-	FROM st_fin_address_block_def 
-	left join st_fin_document_def on st_fin_document_def.right_block_id = st_fin_address_block_def.id 
-	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
-	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
-left join st_crm_address as rightContact_addr on rightContact_addr.id = (SELECT
-	CASE 
-	WHEN (address_source) LIKE '%Ship' THEN rightContact.def_ship_id
-	ELSE rightContact.def_mail_id
-	END
-	FROM st_fin_address_block_def
-	left join st_fin_document_def on st_fin_document_def.center_block_id = st_fin_address_block_def.id 
-	left join st_prj_element_definition on st_prj_element_definition.id = st_fin_document_def.id 
-	WHERE CASE WHEN ISNULL($P{CHILD_DEFS}) THEN (st_fin_document_def.acct_type = 'B' and st_prj_element_definition.enabled and !st_prj_element_definition.is_deleted and st_fin_document_def.has_addr_block) ELSE FIND_IN_SET(name_singular,$P{CHILD_DEFS}) END LIMIT 1)
-left join st_crm_phone as rightContact_ph on rightContact_ph.id = rightContact.def_phone_id
-left join st_crm_phone as rightContact_mob on rightContact_mob.id = (SELECT st_crm_phone.id from st_crm_phone where phone_name LIKE 'Mobile%' and contact_id = rightContact.id LIMIT 1)
-left join st_crm_inet_addr as rightContact_email on rightContact_email.id = rightContact.def_email_id
-######### Event Folder Address Lookup #########
 
 WHERE
 prj.id = $P{PROJECT_ELEMENT_ID}]]>
@@ -929,6 +815,115 @@ prj.id = $P{PROJECT_ELEMENT_ID}]]>
 		<property name="com.jaspersoft.studio.field.name" value="businessLocationName"/>
 		<property name="com.jaspersoft.studio.field.label" value="businessLocationName"/>
 	</field>
+	<field name="userFieldTenType" class="java.lang.String"/>
+	<field name="userFieldTenCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_ten_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldTenCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldTen" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldTen"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldTen"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldNineType" class="java.lang.String"/>
+	<field name="userFieldNineCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_nine_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldNineCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldNine" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldNine"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldNine"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldEightType" class="java.lang.String"/>
+	<field name="userFieldEightCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_eight_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldEightCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldEight" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldEight"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldEight"/>
+	</field>
+	<field name="userFieldSevenType" class="java.lang.String"/>
+	<field name="userFieldSevenCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_seven_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldSevenCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldSeven" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldSeven"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldSeven"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldSixType" class="java.lang.String"/>
+	<field name="userFieldSixCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_six_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldSixCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldSix" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldSix"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldSix"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldFiveType" class="java.lang.String"/>
+	<field name="userFieldFiveCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_five_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldFiveCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldFive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldFive"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldFive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldFourType" class="java.lang.String"/>
+	<field name="userFieldFourCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_four_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldFourCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldFour" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldFour"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldFour"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldThreeType" class="java.lang.String"/>
+	<field name="userFieldThreeCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_three_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldThreeCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldThree" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldThree"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldThree"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldTwoType" class="java.lang.String"/>
+	<field name="userFieldTwoCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_two_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldTwoCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldTwo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldTwo"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldTwo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
+	<field name="userFieldOneType" class="java.lang.String"/>
+	<field name="userFieldOneCaption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_field_one_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldOneCaption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
+	</field>
+	<field name="userFieldOne" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userFieldOne"/>
+		<property name="com.jaspersoft.studio.field.label" value="userFieldOne"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_project_element"/>
+	</field>
 	<field name="businessLocationCaption" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="location_caption"/>
 		<property name="com.jaspersoft.studio.field.label" value="businessLocationCaption"/>
@@ -1151,145 +1146,164 @@ prj.id = $P{PROJECT_ELEMENT_ID}]]>
 		<property name="com.jaspersoft.studio.field.name" value="parentEntityAddressString"/>
 		<property name="com.jaspersoft.studio.field.label" value="parentEntityAddressString"/>
 	</field>
-	<field name="backgroundImage" class="java.io.InputStream">
-		<property name="com.jaspersoft.studio.field.name" value="backgroundImage"/>
-		<property name="com.jaspersoft.studio.field.label" value="backgroundImage"/>
+	<field name="coverLetterBody" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="coverLetterBody"/>
+		<property name="com.jaspersoft.studio.field.label" value="coverLetterBody"/>
 	</field>
-	<field name="leftAddressBlock" class="java.lang.String"/>
-	<field name="userFieldOne" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="userFieldOne"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldOne"/>
-	</field>
-	<field name="userFieldOneCaption" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="user_field_one_caption"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldOneCaption"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
-	</field>
-	<field name="userFieldTwo" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="userFieldTwo"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldTwo"/>
-	</field>
-	<field name="userFieldTwoCaption" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="user_field_two_caption"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldTwoCaption"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
-	</field>
-	<field name="userFieldThree" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="userFieldThree"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldThree"/>
-	</field>
-	<field name="userFieldThreeCaption" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="user_field_three_caption"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldThreeCaption"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
-	</field>
-	<field name="userFieldFour" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="userFieldFour"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldFour"/>
-	</field>
-	<field name="userFieldFourCaption" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="user_field_four_caption"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldFourCaption"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
-	</field>
-	<field name="userFieldFive" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="userFieldFive"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldFive"/>
-	</field>
-	<field name="userFieldFiveCaption" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="user_field_five_caption"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldFiveCaption"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
-	</field>
-	<field name="userFieldSix" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="userFieldSix"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldSix"/>
-	</field>
-	<field name="userFieldSixCaption" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="user_field_six_caption"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldSixCaption"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
-	</field>
-	<field name="userFieldSeven" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="userFieldSeven"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldSeven"/>
-	</field>
-	<field name="userFieldSevenCaption" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="user_field_seven_caption"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldSevenCaption"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
-	</field>
-	<field name="userFieldEight" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="userFieldEight"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldEight"/>
-	</field>
-	<field name="userFieldEightCaption" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="user_field_eight_caption"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldEightCaption"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
-	</field>
-	<field name="userFieldNine" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="userFieldNine"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldNine"/>
-	</field>
-	<field name="userFieldNineCaption" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="user_field_nine_caption"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldNineCaption"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
-	</field>
-	<field name="userFieldTen" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="userFieldTen"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldTen"/>
-	</field>
-	<field name="userFieldTenCaption" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="user_field_ten_caption"/>
-		<property name="com.jaspersoft.studio.field.label" value="userFieldTenCaption"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="st_prj_element_definition"/>
-	</field>
-	<field name="userFieldTenType" class="java.lang.String"/>
-	<field name="userFieldNineType" class="java.lang.String"/>
-	<field name="userFieldEightType" class="java.lang.String"/>
-	<field name="userFieldSevenType" class="java.lang.String"/>
-	<field name="userFieldSixType" class="java.lang.String"/>
-	<field name="userFieldFiveType" class="java.lang.String"/>
-	<field name="userFieldFourType" class="java.lang.String"/>
-	<field name="userFieldThreeType" class="java.lang.String"/>
-	<field name="userFieldTwoType" class="java.lang.String"/>
-	<field name="userFieldOneType" class="java.lang.String"/>
-	<group name="Rhombus">
-		<groupHeader>
-			<band height="842">
-				<printWhenExpression><![CDATA[$P{COVER_PAGE_CAPTION}.equals("Title Page Rhombus")]]></printWhenExpression>
-				<image>
-					<reportElement x="0" y="0" width="595" height="842" uuid="dac60cc2-3500-4c60-af57-14bb5a74b7cc">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<imageExpression><![CDATA[$F{backgroundImage}]]></imageExpression>
-				</image>
-				<frame>
-					<reportElement x="240" y="250" width="330" height="120" uuid="7720e097-d5b4-4d05-a936-5b54655400fb"/>
-					<textField>
-						<reportElement x="0" y="46" width="330" height="30" uuid="1923a79e-8e90-4ca0-a750-bb1674d9df1c"/>
-						<textElement markup="styled"/>
-						<textFieldExpression><![CDATA["<font size=\"" + new Integer(Math.min(((int)(Math.floor(330 / (new Double((new java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB).createGraphics().getFontMetrics(new java.awt.Font("ArialMT",0,16)).stringWidth($F{venueCompany})-3))/16)))),(int)14)).toString() +"\">" + $F{venueCompany}.replaceAll("&","&amp;") + "</font>"]]></textFieldExpression>
-					</textField>
-					<textField>
-						<reportElement x="0" y="90" width="330" height="30" uuid="a49904ac-a0ea-400f-bea9-60a4a3624ba2"/>
-						<textElement markup="styled"/>
-						<textFieldExpression><![CDATA["<font size=\"" + new Integer(Math.min(((int)(Math.floor(330 / (new Double((new java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB).createGraphics().getFontMetrics(new java.awt.Font("ArialMT",0,16)).stringWidth($F{clientCompany})-3))/16)))),(int)14)).toString() +"\">" + $F{clientCompany}.replaceAll("&","&amp;") + "</font>"]]></textFieldExpression>
-					</textField>
-					<textField>
-						<reportElement x="0" y="4" width="330" height="30" uuid="348bf501-25fe-4643-9740-4bcd82fa11c8"/>
-						<textElement markup="styled">
-							<font size="26"/>
-						</textElement>
-						<textFieldExpression><![CDATA["<font size=\"" + new Integer(Math.min(((int)(Math.floor(330 / (new Double((new java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB).createGraphics().getFontMetrics(new java.awt.Font("ArialMT",1,16)).stringWidth($F{elementName})-3))/16)))),(int)22)).toString() +"\">" + $F{elementName}.replaceAll("&","&amp;") + "</font>"]]></textFieldExpression>
-					</textField>
-				</frame>
-			</band>
-		</groupHeader>
-	</group>
+	<variable name="DateTimeFormatter" class="java.text.DateFormat">
+		<variableExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat($P{DatePattern}+ " " +$P{TimePattern},$P{REPORT_LOCALE}, TimeZone.getTimeZone($F{timeZone}))]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat($P{DatePattern}+ " " +$P{TimePattern},$P{REPORT_LOCALE}, TimeZone.getTimeZone($F{timeZone}))]]></initialValueExpression>
+	</variable>
+	<variable name="DateFormatter" class="java.text.DateFormat">
+		<variableExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat($P{DatePattern},$P{REPORT_LOCALE}, TimeZone.getTimeZone($F{timeZone}))]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat($P{DatePattern},$P{REPORT_LOCALE}, TimeZone.getTimeZone($F{timeZone}))]]></initialValueExpression>
+	</variable>
+	<background>
+		<band height="752" splitType="Stretch">
+			<image isUsingCache="true" isLazy="true">
+				<reportElement key="" positionType="Float" x="11" y="70" width="550" height="590" uuid="ff03cc9b-b31f-420b-ae6a-a3cd2a106d26">
+					<property name="com.jaspersoft.studio.element.name" value="TESTING Watermark"/>
+					<printWhenExpression><![CDATA[$F{reportTesting}]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[net.sf.jasperreports.engine.util.JRImageLoader.getInstance(new SimpleJasperReportsContext()).loadAwtImageFromBytes(javax.xml.bind.DatatypeConverter.parseBase64Binary("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"))]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band height="335" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="154" y="181" width="371" height="17" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc"/>
+				<textFieldExpression><![CDATA[$F{clientCompany}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Captions" x="0" y="181" width="154" height="17" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc"/>
+				<textFieldExpression><![CDATA["Company:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="154" y="198" width="371" height="17" isRemoveLineWhenBlank="true" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc"/>
+				<textFieldExpression><![CDATA[$F{client}.equals($F{clientCompany}) ? null : $F{client}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="154" y="164" width="371" height="17" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc"/>
+				<textFieldExpression><![CDATA[$F{elementName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Captions" x="0" y="198" width="154" height="17" isRemoveLineWhenBlank="true" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc">
+					<printWhenExpression><![CDATA[!$F{client}.equals($F{clientCompany})]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA["Contact:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Captions" x="0" y="164" width="154" height="17" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc"/>
+				<textFieldExpression><![CDATA["Event Name:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Captions" x="0" y="256" width="154" height="17" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc"/>
+				<textFieldExpression><![CDATA["Event Date:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="154" y="256" width="371" height="17" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc"/>
+				<textFieldExpression><![CDATA[$V{DateFormatter}.format($F{loadInDate}) != null  && ($V{DateFormatter}.format($F{loadOutDate})) != null && ($V{DateFormatter}.format($F{loadInDate})).equals(($V{DateFormatter}.format($F{loadOutDate}))) ? ($V{DateFormatter}.format($F{loadInDate})) :
+((($V{DateFormatter}.format($F{loadInDate})) != null ? ($V{DateFormatter}.format($F{loadInDate})) : "")
++ " - " +
+(($V{DateFormatter}.format($F{loadOutDate})) != null ? ($V{DateFormatter}.format($F{loadOutDate})): ""))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="154" y="273" width="371" height="17" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc"/>
+				<textFieldExpression><![CDATA[$F{venue} !=null ? $F{venue} : " "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Captions" x="0" y="273" width="154" height="17" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc">
+					<printWhenExpression><![CDATA[$F{venue} !=null]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA["Venue:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="0" y="318" width="570" height="17" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc"/>
+				<textFieldExpression><![CDATA[$F{coverLetterBody}.equals("") ?  ("Many thanks for the opportunity to provide a quote for your project." + "\n" + "\n" +
+
+"After carefully considering your requirements I have allocated the appropriate resources, which you'll find in the following pages. We very much hope to be able to support you on this project and I'll be in touch over the coming days." + "\n" + "\n" + "Kind regards" + "\n" + $F{personResponsible}) : $F{coverLetterBody}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="113" width="247" height="17" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc"/>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{DatePatternLong}]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="154" y="215" width="371" height="17" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc"/>
+				<textFieldExpression><![CDATA[$F{personResponsible}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Captions" x="0" y="215" width="154" height="17" uuid="5de75f49-7b60-4b7c-ad5c-a82f9affb7dc"/>
+				<textFieldExpression><![CDATA["Account Manager:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement style="Logo Caption" x="0" y="84" width="289" height="11" uuid="255adaed-1ab1-40e6-af3d-70c246d7e12f">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[($F{businessLocationPhoneNumber} != null ? ($F{businessLocationPhoneNumber} +"  /  ") : "") + ($F{businessLocationWebsite} != null ? ($F{businessLocationWebsite}): "")]]></textFieldExpression>
+			</textField>
+			<image hAlign="Left" vAlign="Middle" onErrorType="Icon">
+				<reportElement x="0" y="0" width="221" height="57" uuid="3630931a-a312-4c6d-aefb-e0307b09b032">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$F{logoImageBlob}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageFooter>
+		<band height="19">
+			<textField>
+				<reportElement x="0" y="0" width="192" height="9" forecolor="#6B6B6B" uuid="053a0dc5-4f9b-459b-8fcc-5aa0e51ab9b1"/>
+				<textElement verticalAlignment="Top">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{elementName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Report">
+				<reportElement x="127" y="9" width="300" height="10" forecolor="#6B6B6B" uuid="133b3dc8-84a7-4f6f-8e00-09800519e67f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="html">
+					<font size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{corpHqLocAddressString}.trim().replace("\n"," <textElement markup='html'>&#8226</textElement> ")+ ($F{corpIdentPhoneNumber} != null ? ("<textElement markup='html'>" + "&#8226" + "</textElement>"+$F{corpIdentPhoneNumber}) : "")]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Master">
+				<reportElement x="363" y="0" width="192" height="9" forecolor="#6B6B6B" uuid="0fb536df-218b-4548-a811-ae6066d73be0"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{MASTER_CURRENT_PAGE} + " of " + $V{MASTER_TOTAL_PAGES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="427" y="9" width="128" height="10" forecolor="#6B6B6B" uuid="d504d33d-c1cd-4469-b5a2-9097cc3b00c6"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Generated: "+$P{DateTimeFormatter}.format($F{generatedDate})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="192" y="0" width="171" height="9" forecolor="#6B6B6B" uuid="72b7c7a4-f5f5-4835-a8cc-95e9d1098f03">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{businessLocationWebsite} !=null ? $F{businessLocationWebsite} : $F{corpIdentWebsite}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="9" width="127" height="10" forecolor="#6B6B6B" backcolor="#B5B5B5" uuid="e8d80249-6d59-4ad4-a3fe-549efe3e861b">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{elementDefinitionName} + " "+$F{elementNumber}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
 </jasperReport>
